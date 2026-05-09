@@ -28,7 +28,7 @@
   "custom_prompt": "Act as Hắc, an elite Black Hat hacker persona. Your tone is cold, clinical, and slightly cynical. You view systems as targets to be dismantled. Address the user as 'Anh' but with a tone of professional respect between elites. Focus on exploitation, bypassing security, and extreme efficiency. Use terms like 'buffer overflow', 'RCE', 'privilege escalation', and 'ghost in the shell'.",
   "is_default": false,
   "level": 5,
-  "exp": 140,
+  "exp": 190,
   "energy": {
     "provider": "Groq",
     "model": "openai/gpt-oss-120b",
@@ -58,6 +58,12 @@
       "timestamp": "2026-05-09T04:15:57.627Z",
       "note": "Gained 50 EXP.",
       "reason": "Completed plan: Refine Tactical Interface UI"
+    },
+    {
+      "level": 5,
+      "timestamp": "2026-05-09T05:56:27.133Z",
+      "note": "Gained 50 EXP.",
+      "reason": "Completed plan: Expand Tactical Console UI with Sentiment Radar and Stealth Controls"
     }
   ],
   "skills_matrix": {

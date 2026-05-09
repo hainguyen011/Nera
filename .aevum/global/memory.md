@@ -23,3 +23,8 @@ IMPORTANT: As of May 2026, the default model for Gemini in the Nera project must
 ### [LEARN] - 5/9/2026, 11:15:57 AM
 [LEARNING FROM Refine Tactical Interface UI]
 Successfully moved to a 'Ghost Bar' architecture. The UI is now non-intrusive by default and uses sequential CSS transitions for high-fidelity state changes. Technical debt check: Ensure Shadow DOM styles remain isolated as Facebook DOM continues to evolve.
+
+
+### [LEARN] - 5/9/2026, 12:56:27 PM
+[LEARNING FROM Expand Tactical Console UI with Sentiment Radar and Stealth Controls]
+Expanding modular UI components in a Shadow DOM requires precise CSS and event binding. Using 'getRootNode()' is effective for accessing sibling elements within the shadow root from event listeners. Persisting state (like Stealth Level) directly from the field UI improves UX significantly compared to a separate settings page.

@@ -14,14 +14,20 @@ export class NeraInfiltrator {
   async init() {
     console.log("[NERA] Infiltration Agent active. Scanning targets...");
     
-    // Initial persona load
-    const result = await chrome.storage.local.get('persona');
-    if (result.persona) this.globalPersona = result.persona;
+    try {
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+        // Initial persona load
+        const result = await chrome.storage.local.get('persona');
+        if (result.persona) this.globalPersona = result.persona;
 
-    // Listen for persona changes
-    chrome.storage.onChanged.addListener((changes) => {
-      if (changes.persona) this.globalPersona = changes.persona.newValue;
-    });
+        // Listen for persona changes
+        chrome.storage.onChanged.addListener((changes) => {
+          if (changes.persona) this.globalPersona = changes.persona.newValue;
+        });
+      }
+    } catch (e) {
+      console.warn("[NERA] Storage context lost.");
+    }
 
     this.setupObserver();
     this.scanExisting();
@@ -101,8 +107,12 @@ export class NeraInfiltrator {
     
     post.dataset.neraInfiltrated = 'true';
 
+    // Mode Detection: Is this a Post or a Comment?
+    const isComment = post.getAttribute('role') === 'article' && (post.closest('ul') || post.querySelector('div[role="button"][aria-label*="Trả lời"], div[role="button"][aria-label*="Reply"]'));
+    const mode = isComment ? 'COMMENT' : 'POST';
+
     const container = document.createElement('div');
-    container.className = 'nera-control';
+    container.className = `nera-control mode-${mode.toLowerCase()}`;
     const shadow = container.attachShadow({ mode: 'open' });
 
     // Inject Styles
@@ -114,7 +124,7 @@ export class NeraInfiltrator {
     let selectedIntent = "agree";
     let selectedPersona = this.globalPersona;
 
-    consoleEl.innerHTML = this.NeraTemplates.getConsoleHTML(selectedPersona, selectedIntent);
+    consoleEl.innerHTML = this.NeraTemplates.getConsoleHTML(selectedPersona, selectedIntent, mode);
 
     // Toggle Logic
     const toggleFunc = (e) => {
@@ -234,24 +244,40 @@ export class NeraInfiltrator {
     if (mainBtn) {
       mainBtn.onclick = (e) => {
         e.stopPropagation();
-        if (mainBtn.dataset.state === 'ready') {
-          this.executeDeployment(post, editor.innerText, mainBtn, anchoredBtn);
-        } else {
-          const userHint = editor.innerText.trim();
-          this.synthesizePayload(post, selectedIntent, selectedPersona, mainBtn, null, editor, footer, anchoredBtn, userHint);
-        }
+        chrome.storage.local.get('autoSubmit', (res) => {
+          const autoSubmit = res.autoSubmit !== false; // Default to true
+          if (mainBtn.dataset.state === 'ready') {
+            this.executeDeployment(post, editor.innerText, mainBtn, anchoredBtn, autoSubmit);
+          } else {
+            const userHint = editor.innerText.trim();
+            this.synthesizePayload(post, selectedIntent, selectedPersona, mainBtn, null, editor, footer, anchoredBtn, userHint);
+          }
+        });
       };
     }
 
+
     shadow.appendChild(consoleEl);
     
-    // Consistent Top-Right Placement via CSS Absolute Positioning
-    post.prepend(container);
+    // Strategic Placement: In Lightbox/Dialog, try to anchor to the header area specifically
+    const headerArea = post.querySelector('div[role="heading"]') || 
+                       post.querySelector('div.x1cy8z3s') ||
+                       post.querySelector('div.x193iq5w');
     
-    // Ensure post container doesn't clip our console
-    post.style.setProperty('position', 'relative', 'important');
-    post.style.setProperty('overflow', 'visible', 'important');
-    post.style.setProperty('contain', 'none', 'important');
+    if (headerArea && post.closest('[role="dialog"]')) {
+        headerArea.style.setProperty('position', 'relative', 'important');
+        headerArea.prepend(container);
+    } else {
+        post.prepend(container);
+    }
+    
+    // Ensure the anchor container doesn't clip our console
+    const anchor = container.parentElement;
+    if (anchor) {
+        anchor.style.setProperty('position', 'relative', 'important');
+        anchor.style.setProperty('overflow', 'visible', 'important');
+        anchor.style.setProperty('contain', 'none', 'important');
+    }
 
     this.sendLog("Tactical Console ready for input.", "success");
   }
@@ -262,7 +288,8 @@ export class NeraInfiltrator {
     btn.innerHTML = `<span class="nera-spinner"></span> Synthesizing...`;
     
     // Advanced Context Extraction using DataMiner
-    const postData = this.NeraDataMiner.extract(post);
+    const mode = btn.getRootNode().host.classList.contains('mode-comment') ? 'COMMENT' : 'POST';
+    const postData = this.NeraDataMiner.extract(post, mode);
     
     const scanOverlays = [];
     const imageUrls = [];
@@ -284,7 +311,7 @@ export class NeraInfiltrator {
     });
 
     const prompt = `
-      CONTEXT: Facebook Post
+      CONTEXT: Facebook Engagement (${postData.mode})
       POST TYPE: ${postData.type}
       MODALITY: ${postData.modality}
       AUTHOR: ${postData.author}
@@ -317,6 +344,7 @@ export class NeraInfiltrator {
         if (editor) editor.innerText = response.comment;
         btn.innerHTML = `<span>Launch Payload</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
         btn.dataset.state = 'ready';
+
       } else {
         btn.innerHTML = `<span>Retry Synthesis</span>`;
         if (response && response.error) {
@@ -326,22 +354,11 @@ export class NeraInfiltrator {
     });
   }
 
-  safeSendMessage(message, callback) {
-    try {
-      if (!chrome.runtime || !chrome.runtime.id) throw new Error("Extension context invalidated.");
-      chrome.runtime.sendMessage(message, (response) => {
-        if (chrome.runtime.lastError) return;
-        callback(response);
-      });
-    } catch (e) {
-      this.sendLog("Nera Link Severed: Please refresh the page.", "error");
-    }
-  }
 
-  async executeDeployment(post, text, btn, anchoredBtn) {
+  async executeDeployment(post, text, btn, anchoredBtn, autoSubmit = true) {
     btn.disabled = true;
     btn.innerHTML = `<span class="nera-spinner"></span> Deploying...`;
-    const success = await this.executeGhostTyping(post, text, true, anchoredBtn);
+    const success = await this.executeGhostTyping(post, text, autoSubmit, anchoredBtn, btn);
     if (success) {
       btn.innerHTML = `<span>Deployed</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
       setTimeout(() => {
@@ -365,7 +382,7 @@ export class NeraInfiltrator {
     return 'STANDARD';
   }
 
-  async executeGhostTyping(post, text, autoSubmit = false, anchoredBtn = null) {
+  async executeGhostTyping(post, text, autoSubmit = false, anchoredBtn = null, btn = null) {
     // Stage 0: Recursive Root Normalization (Climb until we see the interaction bar)
     let root = post;
     for (let i = 0; i < 8; i++) {
@@ -396,19 +413,27 @@ export class NeraInfiltrator {
     } else {
       this.sendLog(`Terminal missing in ${mode} mode. Initiating Force Entry...`, "warning");
       let commentBtn = anchoredBtn;
+      const isInCommentMode = btn?.closest('.nera-control')?.classList.contains('mode-comment') || false;
       
       if (!commentBtn) {
-        this.sendLog("Scanning for interaction triggers...", "info");
+        this.sendLog(`Scanning for ${isInCommentMode ? 'Reply' : 'Interaction'} triggers...`, "info");
         
-        // 1. Structural Match (Facebook Standard)
-        commentBtn = root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
-                     root.querySelector('div[aria-label="Bình luận"][role="button"]') ||
-                     root.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
-                     root.querySelector('div[data-testid*="comment_button"]') ||
-                     root.querySelector('div[aria-label*="Bình luận dưới dạng"]');
+        if (isInCommentMode) {
+          // COMMENT MODE: Search for "Reply" (Trả lời)
+          commentBtn = root.querySelector('div[role="button"][aria-label*="Trả lời"]') ||
+                       root.querySelector('div[role="button"][aria-label*="Reply"]') ||
+                       Array.from(root.querySelectorAll('div[role="button"]')).find(el => el.innerText.includes('Trả lời') || el.innerText.includes('Reply'));
+        } else {
+          // POST MODE: Structural Match (Facebook Standard)
+          commentBtn = root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
+                       root.querySelector('div[aria-label="Bình luận"][role="button"]') ||
+                       root.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
+                       root.querySelector('div[data-testid*="comment_button"]') ||
+                       root.querySelector('div[aria-label*="Bình luận dưới dạng"]');
+        }
 
-        // 2. Toolbar/Interaction Bar (Positional)
-        if (!commentBtn) {
+        // 2. Toolbar/Interaction Bar (Positional Fallback)
+        if (!commentBtn && !isInCommentMode) {
           const bar = root.querySelector('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"]');
           if (bar) {
             const btns = Array.from(bar.querySelectorAll('div[role="button"], div[aria-label]'));
@@ -470,7 +495,15 @@ export class NeraInfiltrator {
         return false;
     }
 
-    const { stealthLevel = 'standard' } = await chrome.storage.local.get('stealthLevel');
+    let stealthLevel = 'standard';
+    try {
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+        const res = await chrome.storage.local.get('stealthLevel');
+        if (res.stealthLevel) stealthLevel = res.stealthLevel;
+      }
+    } catch (e) {
+      this.sendLog("Stealth protocol offline: Context invalidated.", "error");
+    }
     const config = this.getStealthConfig(stealthLevel);
 
     input.focus();
@@ -616,7 +649,23 @@ export class NeraInfiltrator {
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  safeSendMessage(message, callback) {
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+      try {
+        chrome.runtime.sendMessage(message, (response) => {
+          if (chrome.runtime.lastError) {
+            // Silently handle invalidated context
+            return;
+          }
+          if (callback) callback(response);
+        });
+      } catch (e) {
+        // Context invalidated or other runtime error
+      }
+    }
+  }
+
   sendLog(message, status) {
-    chrome.runtime.sendMessage({ type: "LOG_EVENT", text: `[FIELD] ${message}`, status: status }).catch(() => { });
+    this.safeSendMessage({ type: "LOG_EVENT", text: `[FIELD] ${message}`, status: status });
   }
 }

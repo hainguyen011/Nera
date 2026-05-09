@@ -99,7 +99,7 @@ export const AIHub = {
     return this.getChatCompletionText(response);
   },
 
-  async callOpenAI(userPrompt, systemPrompt, apiKey, modelId) {
+  async callOpenAI(userPrompt, systemPrompt, apiKey, modelId, forceJson = true) {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -113,24 +113,23 @@ export const AIHub = {
           { role: "user", content: userPrompt }
         ],
         temperature: 0.3,
-        max_tokens: 200,
-        response_format: { type: "json_object" }
+        max_tokens: 500,
+        response_format: forceJson ? { type: "json_object" } : undefined
       })
     });
     return this.getChatCompletionText(response);
   },
 
-  async callGemini(userPrompt, systemPrompt, apiKey, modelId) {
+  async callGemini(userPrompt, systemPrompt, apiKey, modelId, forceJson = true) {
     const targetModel = modelId || "models/gemini-2.5-flash";
     const url = `https://generativelanguage.googleapis.com/v1beta/${targetModel}:generateContent?key=${apiKey}`;
 
-    // We remove response_mime_type because it can cause models to "freeze" or return empty lead-ins in some beta regions
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{
-          parts: [{ text: `SYSTEM: ${systemPrompt}\n\nUSER: ${userPrompt}\n\nIMPORTANT: START YOUR RESPONSE WITH {` }]
+          parts: [{ text: `SYSTEM: ${systemPrompt}\n\nUSER: ${userPrompt}${forceJson ? "\n\nIMPORTANT: START YOUR RESPONSE WITH {" : ""}` }]
         }],
         generationConfig: {
           temperature: 0.3,

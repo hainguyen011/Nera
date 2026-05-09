@@ -24,27 +24,27 @@ export class NeraSelect {
         // Trigger
         this.trigger = document.createElement('div');
         this.trigger.className = 'nera-select-trigger';
+        
+        const label = document.createElement('span');
+        label.className = 'nera-select-label';
+        this.trigger.appendChild(label);
+
+        const arrow = document.createElement('div');
+        arrow.className = 'nera-select-arrow';
+        arrow.innerHTML = `
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        `;
+        this.trigger.appendChild(arrow);
+
         this.updateTriggerText();
 
         // Options list
         this.optionsList = document.createElement('div');
         this.optionsList.className = 'nera-select-options';
 
-        this.options.forEach(option => {
-            const optDiv = document.createElement('div');
-            optDiv.className = 'nera-select-option';
-            if (option.selected) optDiv.classList.add('selected');
-            optDiv.innerText = option.innerText;
-            optDiv.dataset.value = option.value;
-
-            optDiv.onclick = (e) => {
-                e.stopPropagation();
-                this.select(option.value);
-                this.close();
-            };
-
-            this.optionsList.appendChild(optDiv);
-        });
+        this.renderOptions();
 
         // Assemble
         this.container.appendChild(this.trigger);
@@ -62,7 +62,32 @@ export class NeraSelect {
         };
 
         // Close when clicking outside
-        document.addEventListener('click', () => this.close());
+        document.addEventListener('click', (e) => {
+            if (!this.container.contains(e.target)) {
+                this.close();
+            }
+        });
+    }
+
+    renderOptions() {
+        this.optionsList.innerHTML = '';
+        this.options = Array.from(this.nativeSelect.options);
+        
+        this.options.forEach(option => {
+            const optDiv = document.createElement('div');
+            optDiv.className = 'nera-select-option';
+            if (option.selected) optDiv.classList.add('selected');
+            optDiv.innerText = option.innerText;
+            optDiv.dataset.value = option.value;
+
+            optDiv.onclick = (e) => {
+                e.stopPropagation();
+                this.select(option.value);
+                this.close();
+            };
+
+            this.optionsList.appendChild(optDiv);
+        });
     }
 
     toggle() {
@@ -73,7 +98,9 @@ export class NeraSelect {
     open() {
         // Close all other NeraSelects first
         document.querySelectorAll('.nera-select-container.open').forEach(el => {
-            el.classList.remove('open');
+            if (el !== this.container) {
+                el.classList.remove('open');
+            }
         });
         
         this.isOpen = true;
@@ -96,7 +123,10 @@ export class NeraSelect {
 
     updateTriggerText() {
         const selectedOption = this.nativeSelect.options[this.nativeSelect.selectedIndex];
-        this.trigger.innerText = selectedOption ? selectedOption.innerText : 'Select...';
+        const label = this.trigger.querySelector('.nera-select-label');
+        if (label) {
+            label.innerText = selectedOption ? selectedOption.innerText : 'Select...';
+        }
     }
 
     updateOptionsList() {
@@ -111,34 +141,19 @@ export class NeraSelect {
     }
 
     refresh() {
-        // Clear current options list
-        this.optionsList.innerHTML = '';
-        this.options = Array.from(this.nativeSelect.options);
-
-        this.options.forEach(option => {
-            const optDiv = document.createElement('div');
-            optDiv.className = 'nera-select-option';
-            if (option.selected) optDiv.classList.add('selected');
-            optDiv.innerText = option.innerText;
-            optDiv.dataset.value = option.value;
-
-            optDiv.onclick = (e) => {
-                e.stopPropagation();
-                this.select(option.value);
-                this.close();
-            };
-
-            this.optionsList.appendChild(optDiv);
-        });
-
+        this.renderOptions();
         this.updateTriggerText();
     }
 
     /**
-     * Static helper to init all selects with a specific class
+     * Static helper to init all selects
      */
-    static createAll(selector = 'select.nera-modern') {
+    static createAll(selector = 'select') {
         const elements = document.querySelectorAll(selector);
-        return Array.from(elements).map(el => new NeraSelect(el));
+        return Array.from(elements).map(el => {
+            // Avoid double initialization
+            if (el.classList.contains('nera-select-native')) return null;
+            return new NeraSelect(el);
+        }).filter(Boolean);
     }
 }

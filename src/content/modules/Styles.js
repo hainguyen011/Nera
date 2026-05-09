@@ -2,14 +2,14 @@
  * Nera Content Styles - CSS Injection Logic
  */
 export const NeraStyles = {
-    inject(shadow) {
-        const style = document.createElement('style');
-        style.textContent = this.getRawCSS();
-        shadow.appendChild(style);
-    },
+  inject(shadow) {
+    const style = document.createElement('style');
+    style.textContent = this.getRawCSS();
+    shadow.appendChild(style);
+  },
 
-    getRawCSS() {
-        return `
+  getRawCSS() {
+    return `
       .nera-control { 
         position: absolute;
         right: 0;
@@ -18,7 +18,7 @@ export const NeraStyles = {
         width: 0;
         overflow: visible;
         pointer-events: none;
-        z-index: 10000;
+        z-index: 99999 !important;
         font-family: Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       }
       .tactical-console {
@@ -28,25 +28,32 @@ export const NeraStyles = {
         width: 90px; 
         height: 32px; 
         pointer-events: auto;
-        background: rgba(27, 27, 27, 0.85);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(27, 27, 27, 0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(16, 185, 129, 0.3); /* Subtle green border */
         border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.15), 0 4px 15px rgba(0,0,0,0.5);
         display: flex;
         flex-direction: column;
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 10000;
+        z-index: 99999 !important;
+      }
+      .nera-control.mode-comment .tactical-console {
+        background: rgba(45, 27, 60, 0.85); /* Indigo Dark */
+        border-color: rgba(139, 92, 246, 0.2);
+      }
+      .nera-control.mode-comment .nera-toggle-trigger {
+        color: #a78bfa; /* Violet/Indigo text */
       }
       .tactical-console.expanded {
-        width: 420px;
+        width: 520px;
         height: auto;
-        min-height: 180px; 
+        min-height: 140px; 
         border-radius: 12px;
         background: #1b1b1b;
         right: 15px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        box-shadow: 0 12px 60px rgba(0,0,0,0.7);
       }
       .nera-toggle-trigger {
         position: absolute;
@@ -130,19 +137,107 @@ export const NeraStyles = {
         background: transparent;
         color: #e4e6eb;
         border: none;
-        font-size: 13px;
+        border-radius: 0;
+        font-size: 15px;
         font-weight: 400;
-        line-height: 1.5;
+        line-height: 1.6;
         outline: none;
-        min-height: 40px;
-        max-height: 180px;
+        min-height: 80px;
+        max-height: 350px;
         overflow-y: auto;
-        padding: 0;
+        padding: 4px 0;
+        margin-bottom: 12px;
       }
       .payload-editor:empty:before {
         content: "What's the tactical plan today?";
         color: rgba(255, 255, 255, 0.2);
         pointer-events: none;
+      }
+      
+      /* Sentiment Radar */
+      .sentiment-radar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 24px;
+        padding: 12px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .radar-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .radar-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.3);
+        width: 24px;
+        letter-spacing: 0.5px;
+      }
+      .radar-bar {
+        flex: 1;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .radar-fill {
+        height: 100%;
+        width: 0%;
+        background: #2374e1;
+        transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 0 10px rgba(35, 116, 225, 0.5);
+      }
+      .radar-item[data-type="pos"] .radar-fill { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+      .radar-item[data-type="neg"] .radar-fill { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+      .radar-item[data-type="sar"] .radar-fill { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+      .radar-item[data-type="ser"] .radar-fill { background: #6366f1; box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+
+      .tactical-params {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 12px 0;
+      }
+      .param-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .param-item label {
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .stealth-select {
+        background: #2a2a2a;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        font-size: 11px;
+        padding: 2px 6px;
+        outline: none;
+        cursor: pointer;
+      }
+      .nera-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+      }
+      .nera-checkbox input {
+        accent-color: #2374e1;
+        cursor: pointer;
+      }
+      .nera-checkbox span {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.5);
       }
 
       .console-footer {
@@ -214,24 +309,32 @@ export const NeraStyles = {
       .btn-primary:hover { background: #1b64d2; transform: translateY(-1px); }
       .btn-primary svg { width: 14px; height: 14px; }
 
-      /* Suggestions Bar at the top */
       .suggestions-bar {
-        padding: 10px 14px;
+        padding: 8px 0;
         display: flex;
-        flex-direction: column;
-        gap: 10px;
-        background: #1b1b1b;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        pointer-events: auto;
-      }
-      .suggestion-group {
-        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: flex-start;
         gap: 12px;
-        align-items: center;
-        overflow-x: auto;
+        background: transparent;
         pointer-events: auto;
       }
-      .suggestion-group::-webkit-scrollbar { display: none; }
+      .suggestion-group:first-child {
+        flex: 0 0 calc(40% - 12px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .suggestion-group:last-child {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-start;
+      }
       
       .persona-mini {
         width: 28px; height: 28px;
@@ -251,16 +354,17 @@ export const NeraStyles = {
       .persona-mini svg { width: 16px; height: 16px; }
 
       .intent-mini {
-        padding: 4px 12px;
+        padding: 5px 10px;
         border-radius: 6px;
         background: rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.5);
         font-size: 11px;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
         white-space: nowrap;
         transition: all 0.2s;
         flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.03);
       }
       .intent-mini.active {
         background: rgba(255, 255, 255, 0.1);
@@ -311,5 +415,5 @@ export const NeraStyles = {
         100% { top: 100%; }
       }
     `;
-    }
+  }
 };

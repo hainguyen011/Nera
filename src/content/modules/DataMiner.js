@@ -3,15 +3,16 @@
  * Extracts deep context from various Facebook post types
  */
 export const NeraDataMiner = {
-    extract(post) {
+    extract(post, mode = 'POST') {
         const type = this.identifyType(post);
         const modality = this.identifyModality(post);
         
         return {
+            mode,
             type,
             modality,
-            author: this.getAuthor(post, type),
-            content: this.getContent(post, type, modality),
+            author: this.getAuthor(post, type, mode),
+            content: this.getContent(post, type, modality, mode),
             metrics: this.getMetrics(post),
             groupName: this.getGroupName(post),
             mediaDescription: this.getMediaAlt(post, modality),
@@ -34,7 +35,11 @@ export const NeraDataMiner = {
         return 'TEXT';
     },
 
-    getAuthor(post, type) {
+    getAuthor(post, type, mode = 'POST') {
+        if (mode === 'COMMENT') {
+            return post.querySelector('a[role="link"] span')?.innerText || 
+                   post.querySelector('div[dir="auto"] strong')?.innerText || "Commenter";
+        }
         if (type === 'SPONSORED') {
             return post.querySelector('h2 a span')?.innerText || 
                    post.querySelector('strong span')?.innerText || "Sponsored Brand";
@@ -43,7 +48,15 @@ export const NeraDataMiner = {
                post.querySelector('h3 span a')?.innerText || "Anonymous User";
     },
 
-    getContent(post, type, modality) {
+    getContent(post, type, modality, mode = 'POST') {
+        if (mode === 'COMMENT') {
+            // Find the specific comment text block
+            const commentText = post.querySelector('div[dir="auto"][style*="text-align"]')?.innerText ||
+                                post.querySelector('div[dir="auto"] span')?.innerText ||
+                                post.innerText;
+            return commentText.split('\n')[0]; // Take only the first line/comment part
+        }
+
         // 1. Standard Comet Message Container
         const messageEl = post.querySelector('div[data-ad-comet-preview="message"]') ||
                           post.querySelector('div[dir="auto"]');

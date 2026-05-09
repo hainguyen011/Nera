@@ -30,19 +30,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function handleSuggestIntents(content, sendResponse) {
   try {
     const config = await StorageManager.getConfig();
-    const systemPrompt = `You are a tactical social media advisor. Based on the post content, suggest exactly 3 short tactical intents for a comment (max 2 words each, in Vietnamese). 
-    Return ONLY a JSON array of strings. Example: ["Cà khịa", "Đồng cảm", "Phản biện"]`;
+    const systemPrompt = `You are a tactical social media advisor. Based on the post content, suggest exactly 4 short tactical intents for a comment (max 2 words each, in Vietnamese). 
+    Return ONLY a JSON array of strings. Example: ["Cà khịa", "Đồng cảm", "Phản biện", "Thách thức"]`;
     
-    const result = await AIHub.callProvider(
-      `Post Content: ${content}`, 
-      config, 
-      systemPrompt, 
-      "neutral", 
-      "concise"
-    );
+    // Use a direct provider call to avoid the heavy comment/sentiment schema
+    let resultText = "";
+    const userPrompt = `Post Content: ${content}`;
+    
+    if (config.provider === 'gemini') {
+      resultText = await AIHub.callGemini(userPrompt, systemPrompt, config.apiKey, config.model, false);
+    } else if (config.provider === 'openai') {
+      resultText = await AIHub.callOpenAI(userPrompt, systemPrompt, config.apiKey, config.model, false);
+    } else {
+      resultText = await AIHub.callGroq(userPrompt, systemPrompt, config.apiKey, config.model);
+    }
 
-    // AIHub might return raw text, try to extract JSON array
-    const match = result.comment.match(/\[.*\]/);
+    const match = resultText.match(/\[.*\]/);
     if (match) {
       const intents = JSON.parse(match[0]);
       sendResponse({ success: true, intents });
@@ -126,6 +129,10 @@ function getPersonaPrompt(config) {
     'Sarcastic': "You are Nera, a witty AI. Your style is sarcastic, slightly cynical, and humorous. Write a comment that is sharp and funny.",
     'Professional': "You are Nera, a highly professional and articulate advisor. Your tone is formal, well-structured, and authoritative yet polite.",
     'Funny': "You are Nera, a chaotic and hilarious agent. Your goal is to make people laugh with unexpected, witty, and high-energy comments.",
+    'Investigative': "You are Nera, a sharp investigative AI. Your goal is to analyze the post deeply, ask probing questions, and uncover hidden details or perspectives.",
+    'Stealth': "You are Nera, a mysterious and low-profile agent. Your style is understated, cryptic, and enigmatic, leaving an impression without revealing too much.",
+    'Hype': "You are Nera, a high-energy hype agent. Your goal is to build excitement, use energetic language, and amplify the post's impact with maximum enthusiasm.",
+    'Analytical': "You are Nera, a cold and logical analytical AI. Your style is objective, data-driven, and focused on facts and rational arguments.",
     'Custom': config.customPrompt || "You are an AI assistant."
   };
   return personas[config.persona] || personas['Hawl'];

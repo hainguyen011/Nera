@@ -27,8 +27,8 @@ export const SidePanelManager = {
     };
 
 
-    // Initialize custom select components
-    this.customSelects = NeraSelect.createAll();
+    // Initialize custom select components for all dropdowns
+    this.customSelects = NeraSelect.createAll('select');
 
     this.initTabs();
     this.loadConfig();
