@@ -14,10 +14,9 @@
 <body>
   <div class="app-container">
     <!-- Status Indicator (Integrated) -->
-    <div style="display: flex; align-items: center; padding: 24px 0 16px;">
-      <img src="../../../../assets/icon.png" alt="Nera Logo" style="width: 14px; height: 14px; opacity: 0.6; margin-right: 10px;">
-      <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em;">NERA ACTIVE</span>
-      <div class="status-dot"></div>
+    <div style="display: flex; align-items: center; padding: 32px 0 24px;">
+      <img src="../../../../assets/icon.png" alt="Nera Logo" style="width: 22px; height: 22px; opacity: 0.9; margin-right: 12px;">
+      <span style="font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.2em;">NERA ACTIVE</span>
     </div>
 
     <!-- TAB 1: COMMAND CENTER -->
@@ -70,9 +69,11 @@
 
       <div class="form-group">
         <label class="section-label">INFILTRATION LOG</label>
-        <div id="logContainer">
-          <div style="color: var(--primary);">[SYSTEM] Nera Terminal initialized...</div>
-          <div>[READY] Awaiting infiltration command.</div>
+        <div class="terminal-card">
+          <div id="logContainer">
+            <div style="color: var(--primary);">[SYSTEM] Nera Terminal initialized...</div>
+            <div>[READY] Awaiting infiltration command.</div>
+          </div>
         </div>
       </div>
     </div>

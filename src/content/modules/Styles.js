@@ -16,35 +16,77 @@ export const NeraStyles = {
         top: 0;
         height: 0;
         width: 0;
-        overflow: visible;
+        overflow: visible !important;
         pointer-events: none;
-        z-index: 99999 !important;
+        z-index: 2147483647 !important;
         font-family: Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       }
       .tactical-console {
         position: absolute;
-        top: 15px;
-        right: 15px;
-        width: 90px; 
-        height: 32px; 
+        top: 12px;
+        right: -92px; 
+        width: 86px; 
+        height: 28px; 
         pointer-events: auto;
-        background: rgba(27, 27, 27, 0.95);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(16, 185, 129, 0.3); /* Subtle green border */
-        border-radius: 20px;
-        box-shadow: 0 0 20px rgba(16, 185, 129, 0.15), 0 4px 15px rgba(0,0,0,0.5);
+        background: rgba(20, 20, 20, 0.9);
+        backdrop-filter: blur(8px);
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: hidden; /* Mask the internal glow effects */
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 99999 !important;
+        z-index: 2147483647 !important;
+      }
+      .tactical-console::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          rgba(35, 116, 225, 0.4) 25%,
+          rgba(35, 116, 225, 0.8) 50%,
+          rgba(35, 116, 225, 0.4) 75%,
+          transparent 100%
+        );
+        animation: rotateGlow 4s linear infinite;
+        z-index: -2;
+      }
+      .tactical-console::after {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        background: rgba(20, 20, 20, 0.95);
+        border-radius: inherit;
+        z-index: -1;
+      }
+      @keyframes rotateGlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
       .nera-control.mode-comment .tactical-console {
-        background: rgba(45, 27, 60, 0.85); /* Indigo Dark */
-        border-color: rgba(139, 92, 246, 0.2);
+        background: rgba(210, 80, 0, 0.85); /* Tactical Orange */
+        border: none;
+        right: 12px !important; /* Force comments to stay inside */
+        box-shadow: 0 4px 15px rgba(210, 80, 0, 0.3);
+      }
+      .nera-control.mode-comment .tactical-console::before {
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          rgba(255, 140, 0, 0.4) 25%,
+          rgba(255, 140, 0, 0.8) 50%,
+          rgba(255, 140, 0, 0.4) 75%,
+          transparent 100%
+        );
       }
       .nera-control.mode-comment .nera-toggle-trigger {
-        color: #a78bfa; /* Violet/Indigo text */
+        color: #ff9800; /* Tactical Orange text */
       }
       .tactical-console.expanded {
         width: 520px;
@@ -62,7 +104,7 @@ export const NeraStyles = {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        color: #10b981;
+        color: #2374e1;
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 1px;
@@ -111,15 +153,28 @@ export const NeraStyles = {
       .tactical-console.expanded::before {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #10b981, #3b82f6, #6366f1, #10b981);
-        background-size: 200% 100%;
-        opacity: 0.8;
-        z-index: 10;
-        animation: radarFlow 4s linear infinite;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          rgba(35, 116, 225, 0.4) 25%,
+          rgba(35, 116, 225, 0.8) 50%,
+          rgba(35, 116, 225, 0.4) 75%,
+          transparent 100%
+        );
+        animation: rotateGlow 6s linear infinite;
+        z-index: -2;
+      }
+      .tactical-console.expanded::after {
+        content: "";
+        position: absolute;
+        inset: 2px;
+        background: #1b1b1b;
+        border-radius: inherit;
+        z-index: -1;
       }
       @keyframes radarFlow {
         0% { background-position: 0% 0%; }
@@ -337,38 +392,40 @@ export const NeraStyles = {
       }
       
       .persona-mini {
-        width: 28px; height: 28px;
+        width: 32px; height: 32px;
         display: flex; align-items: center; justify-content: center;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.3);
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         flex-shrink: 0;
+        position: relative;
       }
       .persona-mini.active {
-        background: rgba(35, 116, 225, 0.2);
-        color: #2374e1;
-        box-shadow: 0 0 10px rgba(35, 116, 225, 0.2);
+        background: #2374e1;
+        color: white;
+        box-shadow: 0 4px 12px rgba(35, 116, 225, 0.4);
       }
       .persona-mini svg { width: 16px; height: 16px; }
 
       .intent-mini {
-        padding: 5px 10px;
+        padding: 6px 12px;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.4);
         font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         white-space: nowrap;
-        transition: all 0.2s;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         flex-shrink: 0;
-        border: 1px solid rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.02);
       }
       .intent-mini.active {
-        background: rgba(255, 255, 255, 0.1);
+        background: #2374e1;
         color: white;
+        box-shadow: 0 4px 12px rgba(35, 116, 225, 0.4);
       }
       
       @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }

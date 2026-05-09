@@ -244,12 +244,13 @@ export const SidePanelManager = {
     const logEntry = document.createElement('div');
     const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
     
-    let color = '#888';
-    if (status === 'success') color = '#10b981';
-    if (status === 'error') color = '#ef4444';
-    if (status === 'ai') color = '#3b82f6';
+    let color = '#ccc'; // Brighter default
+    if (status === 'success') color = '#34d399'; // Brighter green
+    if (status === 'error') color = '#f87171'; // Brighter red
+    if (status === 'ai') color = '#60a5fa'; // Brighter blue
+    if (status === 'info') color = '#94a3b8'; // Tactical slate
 
-    logEntry.innerHTML = `<span style="color: #444">[${time}]</span> <span style="color: ${color}">${text}</span>`;
+    logEntry.innerHTML = `<span style="color: rgba(255,255,255,0.2)">[${time}]</span> <span style="color: ${color}">${text}</span>`;
     this.elements.logContainer.appendChild(logEntry);
     this.elements.logContainer.scrollTop = this.elements.logContainer.scrollHeight;
   }

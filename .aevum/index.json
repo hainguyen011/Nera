@@ -39,6 +39,56 @@
               "updatedAt": "2026-05-09T05:55:14.277Z"
             }
           ]
+        },
+        {
+          "id": "neural-sentiment-radar",
+          "name": "Neural Sentiment Radar",
+          "path": ".aevum/domains/dominfiltration/features/neural-sentiment-radar",
+          "plans": [
+            {
+              "name": "expand_tactical_console_ui_with_sentiment_radar_and_stealth_controls_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T07:41:07.314Z"
+            }
+          ]
+        },
+        {
+          "id": "stealth-infiltration-protocol",
+          "name": "Stealth Infiltration Protocol",
+          "path": ".aevum/domains/dominfiltration/features/stealth-infiltration-protocol",
+          "plans": [
+            {
+              "name": "hydration_guard_protocol_implementation_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T07:41:06.332Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tactical-ui-console",
+      "name": "Tactical Ui Console",
+      "path": ".aevum/domains/tactical-ui-console",
+      "plans": [],
+      "features": [
+        {
+          "id": "deep-space-side-panel",
+          "name": "Deep Space Side Panel",
+          "path": ".aevum/domains/tactical-ui-console/features/deep-space-side-panel",
+          "plans": []
+        },
+        {
+          "id": "tactical-overlay-console",
+          "name": "Tactical Overlay Console",
+          "path": ".aevum/domains/tactical-ui-console/features/tactical-overlay-console",
+          "plans": [
+            {
+              "name": "refine_tactical_interface_ui_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T07:41:06.994Z"
+            }
+          ]
         }
       ]
     }

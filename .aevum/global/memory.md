@@ -28,3 +28,8 @@ Successfully moved to a 'Ghost Bar' architecture. The UI is now non-intrusive by
 ### [LEARN] - 5/9/2026, 12:56:27 PM
 [LEARNING FROM Expand Tactical Console UI with Sentiment Radar and Stealth Controls]
 Expanding modular UI components in a Shadow DOM requires precise CSS and event binding. Using 'getRootNode()' is effective for accessing sibling elements within the shadow root from event listeners. Persisting state (like Stealth Level) directly from the field UI improves UX significantly compared to a separate settings page.
+
+
+### [LEARN] - 5/9/2026, 2:39:56 PM
+[LEARNING FROM Hydration Guard Protocol Implementation]
+Implemented a readiness check (isNodeReady) to handle dynamic DOM hydration. Improved Post vs Comment heuristics for FB Comet. Added storage error handling.

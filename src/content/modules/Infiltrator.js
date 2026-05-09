@@ -26,7 +26,7 @@ export class NeraInfiltrator {
         });
       }
     } catch (e) {
-      console.warn("[NERA] Storage context lost.");
+      console.warn("[NERA] Storage context lost.", e);
     }
 
     this.setupObserver();
@@ -62,7 +62,9 @@ export class NeraInfiltrator {
       'div.x1pbtk8m',
       'div[data-pagelet*="FeedUnit"]',
       'div[data-pagelet*="GroupFeed"]',
-      'div[role="dialog"] [role="article"]'
+      'div[data-pagelet*="Biz"]',
+      'div[role="dialog"] [role="article"]',
+      'div.x1n2onr6.x1ja2u2z[role="dialog"]'
     ];
     
     // 1. Direct Selector Scan
@@ -88,8 +90,12 @@ export class NeraInfiltrator {
         'div.x1y1aw1k.xwib8y2.x1ye3wu6',
         'div.x1pbtk8m',
         'div[data-pagelet*="FeedUnit"]',
-        'div[role="dialog"] [role="article"]'
+        'div[data-pagelet*="GroupFeed"]',
+        'div[data-pagelet*="Biz"]',
+        'div[role="dialog"] [role="article"]',
+        'div.x1n2onr6.x1ja2u2z[role="dialog"]'
       ];
+      
       if (node.matches && postSelectors.some(s => node.matches(s))) {
         this.injectNeraControl(node);
       } else {
@@ -99,16 +105,44 @@ export class NeraInfiltrator {
     } catch (e) { /* Silent fail */ }
   }
 
+  /**
+   * Hydration Guard: Check if the node has enough context to be infiltrated
+   */
+  isNodeReady(node) {
+    // 1. Basic visibility check
+    if (node.offsetWidth === 0 && node.offsetHeight === 0) return false;
+
+    // 2. Ultra-Lenient Content Heuristic
+    // If it has a reasonable amount of text, or media, or a message block, it's ready.
+    const hasText = (node.innerText && node.innerText.trim().length > 15);
+    const hasMedia = node.querySelector('img, video, iframe');
+    const hasStructure = node.querySelector('h2, h3, [role="link"], [data-ad-comet-preview="message"]');
+    
+    return hasText || hasMedia || hasStructure;
+  }
+
   injectNeraControl(post) {
     if (post.dataset.neraInfiltrated) return;
     
     // Safety check: skip elements that are obviously not posts (like very small buttons)
     if (post.offsetWidth < 50 || post.offsetHeight < 50) return;
+
+    // Hydration Guard: Wait for content to load before claiming this node
+    if (!this.isNodeReady(post)) {
+        // If not ready, we don't mark as infiltrated, allowing scanExisting to pick it up later
+        return;
+    }
     
     post.dataset.neraInfiltrated = 'true';
 
     // Mode Detection: Is this a Post or a Comment?
-    const isComment = post.getAttribute('role') === 'article' && (post.closest('ul') || post.querySelector('div[role="button"][aria-label*="Trả lời"], div[role="button"][aria-label*="Reply"]'));
+    // Refined heuristic: Comments are articles inside lists OR have specific reply buttons
+    // AND they are NOT top-level post containers
+    const isComment = (post.closest('ul') || 
+                       post.querySelector('[aria-label*="Trả lời"], [aria-label*="Reply"], [aria-label*="Thích"], [aria-label*="Like"]') ||
+                       post.querySelector('div[data-comment-id]')) && 
+                      !post.querySelector('div[data-ad-comet-preview="message"]');
+    
     const mode = isComment ? 'COMMENT' : 'POST';
 
     const container = document.createElement('div');
@@ -129,8 +163,18 @@ export class NeraInfiltrator {
     // Toggle Logic
     const toggleFunc = (e) => {
       e.stopPropagation();
-      consoleEl.classList.toggle('expanded');
-      this.sendLog(consoleEl.classList.contains('expanded') ? "Console Expanded: High-Fidelity Mode" : "Console Minified: Stealth Mode", "info");
+      const isExpanded = consoleEl.classList.toggle('expanded');
+      
+      // Dynamic Stacking Priority: Bring the entire post to front when console is active
+      if (isExpanded) {
+          post.style.setProperty('z-index', '1000', 'important');
+          container.style.setProperty('z-index', '2147483647', 'important');
+      } else {
+          post.style.setProperty('z-index', 'auto', 'important');
+          container.style.setProperty('z-index', '2147483647', 'important');
+      }
+
+      this.sendLog(isExpanded ? "Console Expanded: High-Fidelity Mode" : "Console Minified: Stealth Mode", "info");
     };
 
     const trigger = consoleEl.querySelector('.nera-toggle-trigger');
@@ -183,7 +227,9 @@ export class NeraInfiltrator {
         mini.classList.add('active');
         selectedPersona = mini.dataset.persona;
         updateBadges();
-        chrome.storage.local.set({ persona: selectedPersona });
+        try {
+          chrome.storage.local.set({ persona: selectedPersona });
+        } catch (e) { /* Storage might be throttled or disconnected */ }
         this.sendLog(`Soul shifted: ${selectedPersona}`, "info");
       };
     });
@@ -268,18 +314,40 @@ export class NeraInfiltrator {
         headerArea.style.setProperty('position', 'relative', 'important');
         headerArea.prepend(container);
     } else {
+        post.style.setProperty('position', 'relative', 'important');
+        post.style.setProperty('z-index', '1', 'important'); // Base priority
         post.prepend(container);
     }
     
-    // Ensure the anchor container doesn't clip our console
-    const anchor = container.parentElement;
-    if (anchor) {
-        anchor.style.setProperty('position', 'relative', 'important');
-        anchor.style.setProperty('overflow', 'visible', 'important');
-        anchor.style.setProperty('contain', 'none', 'important');
-    }
+    // Overflow Bypass Protocol: Aggressively clear path to top
+    post.dataset.neraInfiltrated = "true";
+    this.fixAncestors(post);
+    this.fixAncestors(container);
 
     this.sendLog("Tactical Console ready for input.", "success");
+  }
+
+  /**
+   * Climb up DOM and force overflow visibility to prevent clipping
+   */
+  fixAncestors(el) {
+    let parent = el.parentElement;
+    let depth = 0;
+    while (parent && parent !== document.body && depth < 12) {
+      const style = window.getComputedStyle(parent);
+      if (style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden' || style.contain !== 'none') {
+        parent.style.setProperty('overflow', 'visible', 'important');
+        parent.style.setProperty('overflow-x', 'visible', 'important');
+        parent.style.setProperty('overflow-y', 'visible', 'important');
+        parent.style.setProperty('contain', 'none', 'important');
+      }
+      // Ensure z-index doesn't get buried
+      if (style.zIndex !== 'auto' && parseInt(style.zIndex) < 1000) {
+          parent.style.setProperty('z-index', 'auto', 'important');
+      }
+      parent = parent.parentElement;
+      depth++;
+    }
   }
 
   synthesizePayload(post, intent, persona, btn, box, editor, footer, anchoredBtn, userHint = "") {
@@ -420,9 +488,12 @@ export class NeraInfiltrator {
         
         if (isInCommentMode) {
           // COMMENT MODE: Search for "Reply" (Trả lời)
-          commentBtn = root.querySelector('div[role="button"][aria-label*="Trả lời"]') ||
-                       root.querySelector('div[role="button"][aria-label*="Reply"]') ||
-                       Array.from(root.querySelectorAll('div[role="button"]')).find(el => el.innerText.includes('Trả lời') || el.innerText.includes('Reply'));
+          // Aggressive search in the comment's subtree
+          commentBtn = post.querySelector('[aria-label*="Trả lời"], [aria-label*="Reply"]') ||
+                       Array.from(post.querySelectorAll('div[role="button"], span, a')).find(el => {
+                         const t = el.innerText || "";
+                         return (t.includes('Trả lời') || t.includes('Reply')) && el.offsetWidth > 0;
+                       });
         } else {
           // POST MODE: Structural Match (Facebook Standard)
           commentBtn = root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
@@ -481,7 +552,9 @@ export class NeraInfiltrator {
         
         for (let attempt = 0; attempt < 10; attempt++) {
             await new Promise(r => setTimeout(r, 500));
-            input = this.findInput(root, inputSelectors);
+            // Find input in the context of the comment (it might be a sibling or child of the parent)
+            const searchScope = isInCommentMode ? (post.parentElement?.parentElement || root) : root;
+            input = this.findInput(searchScope, inputSelectors);
             if (input) {
                 this.sendLog(`Terminal synchronized on attempt ${attempt + 1}.`, "success");
                 break;
@@ -524,20 +597,32 @@ export class NeraInfiltrator {
     }
 
     if (autoSubmit) {
-      await new Promise(r => setTimeout(r, 800));
-      const submitBtn = this.findSubmitButton(root);
-      if (submitBtn) submitBtn.click();
-      else {
-          this.dispatchKey(input, 'Enter');
+      this.sendLog("Payload delivered. Finalizing dispatch...", "success");
+      await new Promise(r => setTimeout(r, 600));
+      
+      // Attempt to find the submit button in the immediate context of the input
+      let submitBtn = input.closest('form')?.querySelector('div[role="button"][aria-label*="Đăng"], div[role="button"][aria-label*="Post"]') ||
+                      input.parentElement?.parentElement?.querySelector('div[role="button"][aria-label*="Đăng"]') ||
+                      this.findSubmitButton(root);
+
+      if (submitBtn) {
+        this.sendLog("Target locked. Executing Launch...", "success");
+        submitBtn.click();
+      } else {
+        // Fallback: Press Enter on the input
+        this.sendLog("Submission button obscured. Dispatched Enter signal.", "warning");
+        const enterOpts = { bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', keyCode: 13, which: 13 };
+        input.dispatchEvent(new KeyboardEvent('keydown', enterOpts));
+        input.dispatchEvent(new KeyboardEvent('keypress', enterOpts));
       }
+    }
 
       // FEED Mode: Auto-dismiss popup after successful injection
       if (mode === 'FEED') {
           this.sendLog("Deployment confirmed. Initiating automatic extraction...", "info");
           setTimeout(() => this.closePopup(), 2000);
       }
-    }
-    return true;
+      return true;
   }
 
   closePopup() {
@@ -610,10 +695,29 @@ export class NeraInfiltrator {
   }
 
   findSubmitButton(post) {
-    const selectors = ['div[aria-label="Đăng bình luận"]', 'div[aria-label="Post comment"]', 'div[aria-label="Đăng"]', 'div[aria-label="Send"]'];
+    const selectors = [
+      'div[aria-label="Đăng bình luận"]', 
+      'div[aria-label="Post comment"]', 
+      'div[aria-label="Đăng"]', 
+      'div[aria-label="Send"]',
+      'div[role="button"][aria-label*="Đăng"]'
+    ];
+    
+    // 1. Search in the post subtree
     for (const s of selectors) {
-      const btn = post.querySelector(s) || document.querySelector(s);
+      const btn = post.querySelector(s);
       if (btn && !btn.hasAttribute('aria-disabled')) return btn;
+    }
+
+    // 2. Search globally near the active element (fallback for replies)
+    for (const s of selectors) {
+      const btn = document.querySelector(s);
+      if (btn && !btn.hasAttribute('aria-disabled')) {
+          const btnRect = btn.getBoundingClientRect();
+          const postRect = post.getBoundingClientRect();
+          // Verify proximity
+          if (Math.abs(btnRect.top - postRect.bottom) < 1000) return btn;
+      }
     }
     return null;
   }

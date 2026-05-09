@@ -90,9 +90,8 @@ export class NeraOverlay {
         left: 0;
         width: 100%;
         height: 100%;
-        background: #0a0a0c;
-        box-shadow: 0 10px 50px rgba(0,0,0,0.6);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: transparent;
+        box-shadow: 0 10px 50px rgba(0,0,0,0.8);
         border-radius: 12px;
         display: flex;
         flex-direction: column;
@@ -143,12 +142,16 @@ export class NeraOverlay {
         background: transparent;
       }
       .drag-handle {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
         height: 3px;
         width: 30px;
-        background: rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.15);
         border-radius: 2px;
-        margin: 10px auto 0;
-        flex-shrink: 0;
+        z-index: 100;
+        pointer-events: none;
       }
     `;
 

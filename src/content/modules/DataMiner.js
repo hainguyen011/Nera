@@ -42,10 +42,13 @@ export const NeraDataMiner = {
         }
         if (type === 'SPONSORED') {
             return post.querySelector('h2 a span')?.innerText || 
-                   post.querySelector('strong span')?.innerText || "Sponsored Brand";
+                   post.querySelector('strong span')?.innerText || 
+                   post.querySelector('a[role="link"]')?.innerText || "Sponsored Brand";
         }
         return post.querySelector('h2 span a')?.innerText || 
-               post.querySelector('h3 span a')?.innerText || "Anonymous User";
+               post.querySelector('h3 span a')?.innerText || 
+               post.querySelector('h2 a')?.innerText ||
+               post.querySelector('h3 a')?.innerText || "Anonymous User";
     },
 
     getContent(post, type, modality, mode = 'POST') {
@@ -59,6 +62,7 @@ export const NeraDataMiner = {
 
         // 1. Standard Comet Message Container
         const messageEl = post.querySelector('div[data-ad-comet-preview="message"]') ||
+                          post.querySelector('div[data-ad-preview="message"]') ||
                           post.querySelector('div[dir="auto"]');
         
         // 2. Status with Background (Text-over-Background)
@@ -91,7 +95,7 @@ export const NeraDataMiner = {
 
         return {
             reactions: reactions?.innerText || "0",
-            comments: commentCount
+            comments: commentCount || "0"
         };
     },
 
