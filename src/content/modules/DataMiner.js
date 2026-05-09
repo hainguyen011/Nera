@@ -44,18 +44,28 @@ export const NeraDataMiner = {
     },
 
     getContent(post, type, modality) {
-        // Main message container for Facebook Comet
+        // 1. Standard Comet Message Container
         const messageEl = post.querySelector('div[data-ad-comet-preview="message"]') ||
                           post.querySelector('div[dir="auto"]');
         
-        let text = messageEl?.innerText || "";
+        // 2. Status with Background (Text-over-Background)
+        const backgroundPost = post.querySelector('div[style*="background-image"] div[dir="auto"]') ||
+                               post.querySelector('div[style*="background-image"] span[dir="auto"]');
+        
+        let text = (backgroundPost?.innerText || messageEl?.innerText || "").trim();
+
+        // 3. Brute force text extraction for status cards (if still empty)
+        if (!text) {
+          const largeText = post.querySelector('div[style*="font-size"]');
+          if (largeText) text = largeText.innerText;
+        }
 
         if (type === 'SHARED') {
             const sharedMsg = post.querySelector('div[aria-labelledby*="shared_"] div[dir="auto"]')?.innerText;
-            if (sharedMsg) text = `[Shared context]: ${text} \n [Original content]: ${sharedMsg}`;
+            if (sharedMsg) text = `[Context]: ${text} \n [Shared Content]: ${sharedMsg}`;
         }
 
-        return text || (modality !== 'TEXT' ? `Media post (${modality})` : "No text content found.");
+        return text || (modality !== 'TEXT' ? `Visual Post (${modality})` : "Scanning failed: Metadata inaccessible.");
     },
 
     getMetrics(post) {

@@ -12,64 +12,55 @@ export const NeraStyles = {
         return `
       .nera-control { 
         position: absolute;
-        left: 0;
+        right: 0;
         top: 0;
-        height: 100%;
-        width: 100%;
-        margin-top: 25px;
+        height: 0;
+        width: 0;
         overflow: visible;
         pointer-events: none;
         z-index: 10000;
         font-family: Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       }
       .tactical-console {
-        position: sticky;
-        top: 80px;
-        left: 15px;
-        width: 85px; 
-        height: 36px; 
-        margin-top: 15px;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 90px; 
+        height: 32px; 
         pointer-events: auto;
-        background: #1b1b1b;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 8px;
-        box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        background: rgba(27, 27, 27, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        /* COLLAPSE SEQUENCE: Height first (0.3s), then Width (starts at 0.3s) */
-        transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                    width 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
-                    border-radius 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         z-index: 10000;
       }
       .tactical-console.expanded {
-        width: calc(100% - 30px);
+        width: 420px;
         height: auto;
         min-height: 180px; 
-        border-radius: 16px;
-        /* EXPAND SEQUENCE: Width first (0.3s), then Height (starts at 0.3s) */
-        transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                    height 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
-                    border-radius 0.3s ease;
+        border-radius: 12px;
+        background: #1b1b1b;
+        right: 15px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.6);
       }
       .nera-toggle-trigger {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 85px; 
-        height: 36px;
+        inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         color: #10b981;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
         text-transform: uppercase;
         z-index: 100;
-        transition: all 0.3s;
       }
       .tactical-console.expanded .nera-toggle-trigger {
         display: none;

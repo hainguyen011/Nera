@@ -64,28 +64,33 @@ export class NeraInfiltrator {
     directPosts.forEach(post => this.injectNeraControl(post));
 
     // 2. Discovery by Interaction (The "Catch-all" failsafe)
-    // Find interaction bars or comment icons and climb to the post container
-    const triggers = document.querySelectorAll('div[role="toolbar"], div[aria-label*="Hành động"], i[style*="-487px"], div[data-ad-rendering-role="comment_button"]');
+    const triggers = document.querySelectorAll('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"], i[style*="-487px"], div[data-ad-rendering-role="comment_button"]');
     triggers.forEach(t => {
-      const post = t.closest('div[data-testid*="story"], [role="article"], div.x1y1aw1k, div.x1pbtk8m, div.x193iq5w, div[data-pagelet*="FeedUnit"]');
-      if (post) this.injectNeraControl(post);
+      try {
+        const post = t.closest('div[data-testid*="story"], [role="article"], div.x1y1aw1k, div.x1pbtk8m, div.x193iq5w, div[data-pagelet*="FeedUnit"], div[role="dialog"] div.x1n2onr6');
+        if (post) this.injectNeraControl(post);
+      } catch (e) { /* Skip invalid nodes */ }
     });
   }
 
   checkNode(node) {
-    const postSelectors = [
-      'div[data-testid="fbfeed_story"]',
-      '[role="article"]',
-      'div[data-ad-preview="message"]',
-      'div.x1y1aw1k.xwib8y2.x1ye3wu6',
-      'div.x1pbtk8m'
-    ];
-    if (node.matches && postSelectors.some(s => node.matches(s))) {
-      this.injectNeraControl(node);
-    } else {
-      const posts = node.querySelectorAll(postSelectors.join(','));
-      posts.forEach(post => this.injectNeraControl(post));
-    }
+    try {
+      const postSelectors = [
+        'div[data-testid="fbfeed_story"]',
+        '[role="article"]',
+        'div[data-ad-preview="message"]',
+        'div.x1y1aw1k.xwib8y2.x1ye3wu6',
+        'div.x1pbtk8m',
+        'div[data-pagelet*="FeedUnit"]',
+        'div[role="dialog"] [role="article"]'
+      ];
+      if (node.matches && postSelectors.some(s => node.matches(s))) {
+        this.injectNeraControl(node);
+      } else {
+        const posts = node.querySelectorAll(postSelectors.join(','));
+        posts.forEach(post => this.injectNeraControl(post));
+      }
+    } catch (e) { /* Silent fail */ }
   }
 
   injectNeraControl(post) {
@@ -240,13 +245,8 @@ export class NeraInfiltrator {
 
     shadow.appendChild(consoleEl);
     
-    // Strategic Placement: Insert at the top to ensure visibility on long posts
-    const header = post.querySelector('h2, h3, div[role="heading"], div.x1cy8z3s');
-    if (header) {
-        header.parentNode.insertBefore(container, header.nextSibling);
-    } else {
-        post.prepend(container);
-    }
+    // Consistent Top-Right Placement via CSS Absolute Positioning
+    post.prepend(container);
     
     // Ensure post container doesn't clip our console
     post.style.setProperty('position', 'relative', 'important');
