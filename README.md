@@ -3,6 +3,9 @@
 
 # Nera - AI Infiltration Agent
 
+> [!CAUTION]
+> **ETHICAL USE & LEGAL WARNING**: Nera is a high-performance tactical tool. Its capabilities for human-simulation and rapid payload deployment can be dangerous if used maliciously. By using this software, you agree to the [Ethical Use Addendum](LICENSE) and the [Operational Ethics Framework](ETHICS.md). The developer assumes **zero liability** for your actions.
+
 > **"Every system has a flaw. Every conversation is a target. Nera is the ghost in the machine."**
 
 Nera is a high-performance Chrome Extension designed for tactical social media infiltration. It doesn't just comment; it analyzes, synthesizes, and deploys high-fidelity AI payloads directly into the heart of the DOM.
@@ -80,9 +83,15 @@ Adjust your infiltration signature via the Stealth settings:
 3. Configure your Neural Links (API Keys).
 4. Lock the target and initiate infiltration.
 
-## Warning
+## Ethical Disclaimer
 
-Nera is designed for high-efficiency engagement. Use it responsibly. The "Paranoid" stealth mode is recommended for high-value targets.
+Nera is designed for high-efficiency engagement, but it must be used responsibly. The "Paranoid" stealth mode is a defensive tool, not a weapon for harassment.
+
+- **Liability**: You are solely responsible for any content generated.
+- **Non-Commercial**: Use for personal financial gain or commercial profit is strictly prohibited.
+- **Authorship**: hainguyen011 is the sole creator; attribution must be maintained.
+- **Rules**: Respect the Terms of Service of the platforms you inhabit.
+- **Framework**: Read the [ETHICS.md](ETHICS.md) for detailed guidelines.
 
 ---
 
