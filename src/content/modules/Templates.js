@@ -48,14 +48,23 @@ export const NeraTemplates = {
             </div>
             
             <div class="suggestion-group">
-              <div class="intent-mini active" data-intent="agree">Đồng ý</div>
-              <div class="intent-mini" data-intent="disagree">Phản đối</div>
-              <div class="intent-mini" data-intent="tease">Trêu chọc</div>
-              <div class="intent-mini" data-intent="empathize">Đồng cảm</div>
-              <div class="intent-mini" data-intent="ask">Hỏi cách</div>
-              <div class="intent-mini" data-intent="confirm">Xác nhận</div>
-              <div class="intent-mini" data-intent="cta">Kêu gọi</div>
-              <div class="intent-mini" data-intent="suggest" style="background: rgba(35, 116, 225, 0.1); color: #2374e1;">AI Suggest</div>
+              ${mode === 'COMMENT' ? `
+                <div class="intent-mini active" data-intent="agree">Đồng ý</div>
+                <div class="intent-mini" data-intent="expand">Bổ sung</div>
+                <div class="intent-mini" data-intent="question">Hỏi lại</div>
+                <div class="intent-mini" data-intent="humor">Hài hước</div>
+                <div class="intent-mini" data-intent="thanks">Cảm ơn</div>
+                <div class="intent-mini" data-intent="challenge">Phản biện</div>
+              ` : `
+                <div class="intent-mini active" data-intent="agree">Đồng ý</div>
+                <div class="intent-mini" data-intent="disagree">Phản đối</div>
+                <div class="intent-mini" data-intent="tease">Trêu chọc</div>
+                <div class="intent-mini" data-intent="empathize">Đồng cảm</div>
+                <div class="intent-mini" data-intent="ask">Hỏi cách</div>
+                <div class="intent-mini" data-intent="confirm">Xác nhận</div>
+                <div class="intent-mini" data-intent="cta">Kêu gọi</div>
+              `}
+              <div class="intent-mini" data-intent="suggest" style="background: rgba(${mode === 'COMMENT' ? '0, 200, 83' : '35, 116, 225'}, 0.1); color: ${mode === 'COMMENT' ? '#00e676' : '#2374e1'};">AI Suggest</div>
             </div>
           </div>
         </div>

@@ -165,12 +165,13 @@ export class NeraInfiltrator {
       e.stopPropagation();
       const isExpanded = consoleEl.classList.toggle('expanded');
       
-      // Dynamic Stacking Priority: Bring the entire post to front when console is active
+      // Dynamic Stacking Priority: Bring the entire post and its parents to front
       if (isExpanded) {
-          post.style.setProperty('z-index', '1000', 'important');
+          this.elevateStacking(post, true);
           container.style.setProperty('z-index', '2147483647', 'important');
+          this.fixAncestors(container); 
       } else {
-          post.style.setProperty('z-index', 'auto', 'important');
+          this.elevateStacking(post, false); // Revert to safe base priority
           container.style.setProperty('z-index', '2147483647', 'important');
       }
 
@@ -315,14 +316,14 @@ export class NeraInfiltrator {
         headerArea.prepend(container);
     } else {
         post.style.setProperty('position', 'relative', 'important');
-        post.style.setProperty('z-index', '1', 'important'); // Base priority
+        post.style.setProperty('z-index', '1000', 'important'); // Base priority elevated
         post.prepend(container);
     }
     
     // Overflow Bypass Protocol: Aggressively clear path to top
     post.dataset.neraInfiltrated = "true";
     this.fixAncestors(post);
-    this.fixAncestors(container);
+    if (mode === 'COMMENT') this.fixAncestors(container); // Extra safety for comments
 
     this.sendLog("Tactical Console ready for input.", "success");
   }
@@ -330,21 +331,53 @@ export class NeraInfiltrator {
   /**
    * Climb up DOM and force overflow visibility to prevent clipping
    */
+  elevateStacking(el, active) {
+    let parent = el;
+    let depth = 0;
+    // Elevate up to 12 levels to clear all potential FB stacking contexts
+    while (parent && parent !== document.body && depth < 12) {
+      if (active) {
+        // Store original values if not already stored
+        if (!parent.dataset.neraOrigZ) {
+          parent.dataset.neraOrigZ = parent.style.zIndex || 'auto';
+          parent.dataset.neraOrigIso = parent.style.isolation || 'auto';
+        }
+        parent.style.setProperty('z-index', '2147483647', 'important');
+        parent.style.setProperty('isolation', 'auto', 'important');
+      } else {
+        // Revert to original
+        if (parent.dataset.neraOrigZ) {
+          parent.style.zIndex = parent.dataset.neraOrigZ === 'auto' ? '' : parent.dataset.neraOrigZ;
+          parent.style.isolation = parent.dataset.neraOrigIso === 'auto' ? '' : parent.dataset.neraOrigIso;
+          delete parent.dataset.neraOrigZ;
+          delete parent.dataset.neraOrigIso;
+        }
+        // Apply a safe base z-index for the trigger button
+        if (depth === 0) parent.style.setProperty('z-index', '1000', 'important');
+      }
+      parent = parent.parentElement;
+      depth++;
+    }
+  }
+
   fixAncestors(el) {
     let parent = el.parentElement;
     let depth = 0;
-    while (parent && parent !== document.body && depth < 12) {
+    // Surgical Depth: 8 levels is usually enough to clear the immediate feed item clipping
+    while (parent && parent !== document.body && depth < 8) {
       const style = window.getComputedStyle(parent);
-      if (style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden' || style.contain !== 'none') {
+      
+      // Only fix if it's actually clipping or creating a new stacking context that traps us
+      const hasOverflow = style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden';
+      const hasIsolation = style.isolation === 'isolate';
+      const hasContain = style.contain !== 'none' && style.contain !== 'auto';
+
+      if (hasOverflow || hasIsolation || hasContain) {
         parent.style.setProperty('overflow', 'visible', 'important');
-        parent.style.setProperty('overflow-x', 'visible', 'important');
-        parent.style.setProperty('overflow-y', 'visible', 'important');
         parent.style.setProperty('contain', 'none', 'important');
+        parent.style.setProperty('isolation', 'auto', 'important');
       }
-      // Ensure z-index doesn't get buried
-      if (style.zIndex !== 'auto' && parseInt(style.zIndex) < 1000) {
-          parent.style.setProperty('z-index', 'auto', 'important');
-      }
+      
       parent = parent.parentElement;
       depth++;
     }
@@ -451,138 +484,44 @@ export class NeraInfiltrator {
   }
 
   async executeGhostTyping(post, text, autoSubmit = false, anchoredBtn = null, btn = null) {
-    // Stage 0: Recursive Root Normalization (Climb until we see the interaction bar)
-    let root = post;
-    for (let i = 0; i < 8; i++) {
-      if (root.querySelector('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"], i[style*="-487px"]')) break;
-      if (root.parentElement && root.parentElement !== document.body) root = root.parentElement;
-      else break;
-    }
-
-    const mode = this.getCurrentMode();
-    this.sendLog(`Environment: ${mode}. Root identified: ${root.tagName}.${Array.from(root.classList).join('.')}`, "info");
-    
+    const host = btn?.getRootNode()?.host;
+    const isInCommentMode = host?.classList.contains('mode-comment') || false;
     const inputSelectors = [
+      'div[role="textbox"][data-lexical-editor="true"][aria-label*="Trả lời"]',
+      'div[role="textbox"][data-lexical-editor="true"][aria-label*="Reply"]',
       'div[role="textbox"][data-lexical-editor="true"]',
       'div[role="textbox"][aria-label*="Bình luận"]',
-      'div[role="textbox"][aria-label*="Comment"]',
+      'div[role="textbox"][aria-placeholder*="Trả lời"]',
       'div[role="textbox"][aria-label*="như"]',
-      'div.notranslate[contenteditable="true"]',
-      'div._5rpu[contenteditable="true"]',
-      'div[data-editor][contenteditable="true"]',
-      'div[contenteditable="true"]'
+      'div.notranslate[contenteditable="true"]'
     ];
 
-    // STAGE 1: Passive Probe (Passive Synchrony)
-    let input = this.findInput(root, inputSelectors);
+    let input = null;
 
-    if (input) {
-      this.sendLog(`Active ${mode} terminal detected. Synchronizing...`, "success");
+    if (isInCommentMode) {
+      input = await this.executeReplyFlow(post, inputSelectors, anchoredBtn);
     } else {
-      this.sendLog(`Terminal missing in ${mode} mode. Initiating Force Entry...`, "warning");
-      let commentBtn = anchoredBtn;
-      const isInCommentMode = btn?.closest('.nera-control')?.classList.contains('mode-comment') || false;
-      
-      if (!commentBtn) {
-        this.sendLog(`Scanning for ${isInCommentMode ? 'Reply' : 'Interaction'} triggers...`, "info");
-        
-        if (isInCommentMode) {
-          // COMMENT MODE: Search for "Reply" (Trả lời)
-          // Aggressive search in the comment's subtree
-          commentBtn = post.querySelector('[aria-label*="Trả lời"], [aria-label*="Reply"]') ||
-                       Array.from(post.querySelectorAll('div[role="button"], span, a')).find(el => {
-                         const t = el.innerText || "";
-                         return (t.includes('Trả lời') || t.includes('Reply')) && el.offsetWidth > 0;
-                       });
-        } else {
-          // POST MODE: Structural Match (Facebook Standard)
-          commentBtn = root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
-                       root.querySelector('div[aria-label="Bình luận"][role="button"]') ||
-                       root.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
-                       root.querySelector('div[data-testid*="comment_button"]') ||
-                       root.querySelector('div[aria-label*="Bình luận dưới dạng"]');
-        }
-
-        // 2. Toolbar/Interaction Bar (Positional Fallback)
-        if (!commentBtn && !isInCommentMode) {
-          const bar = root.querySelector('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"]');
-          if (bar) {
-            const btns = Array.from(bar.querySelectorAll('div[role="button"], div[aria-label]'));
-            if (btns.length >= 2) commentBtn = btns[1]; 
-          }
-        }
-
-        // 3. Visual Sprite/Icon Lock (High Priority for Ads)
-        if (!commentBtn) {
-          const icon = root.querySelector('i[style*="-487px"]') || 
-                       root.querySelector('i[class*="comment"]');
-          if (icon) commentBtn = icon.closest('div[role="button"]') || icon.closest('div[aria-label]') || icon.parentElement;
-        }
-
-        // 4. Lexical Search (Deep Text Scan)
-        if (!commentBtn) {
-          const allElements = Array.from(root.querySelectorAll('div, span, a'));
-          commentBtn = allElements.find(el => {
-            const text = (el.getAttribute('aria-label') || el.innerText || "").trim();
-            return (text === "Bình luận" || text === "Viết bình luận" || text === "Comment") && el.offsetWidth > 0;
-          });
-        }
-      }
-
-      if (commentBtn) {
-        // Visual Validation: Ensure the button is actually inside the root's visual range
-        const btnRect = commentBtn.getBoundingClientRect();
-        const rootRect = root.getBoundingClientRect();
-        const isInside = btnRect.top >= rootRect.top - 50 && btnRect.bottom <= rootRect.bottom + 100;
-        
-        if (!isInside) {
-          this.sendLog("Target mismatch: Discovered trigger is outside tactical zone. Aborting to prevent friendly fire.", "error");
-          return false;
-        }
-
-        this.sendLog("Target locked. Dispatching opening signal...", "success");
-        commentBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        if (typeof commentBtn.click === 'function') commentBtn.click();
-        ['mousedown', 'mouseup', 'click'].forEach(type => {
-          commentBtn.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
-        });
-
-        this.sendLog("Signal sent. Awaiting terminal initialization...", "info");
-        
-        for (let attempt = 0; attempt < 10; attempt++) {
-            await new Promise(r => setTimeout(r, 500));
-            // Find input in the context of the comment (it might be a sibling or child of the parent)
-            const searchScope = isInCommentMode ? (post.parentElement?.parentElement || root) : root;
-            input = this.findInput(searchScope, inputSelectors);
-            if (input) {
-                this.sendLog(`Terminal synchronized on attempt ${attempt + 1}.`, "success");
-                break;
-            }
-        }
-      }
+      input = await this.executePostFlow(post, inputSelectors, anchoredBtn);
     }
 
     if (!input) {
-        this.sendLog("Infiltration failed: Terminal unreachable. (No Lexical Editor found)", "error");
-        return false;
+      this.sendLog("Infiltration failed: Terminal unreachable.", "error");
+      return false;
     }
 
+    // STAGE 3: Ghost Typing Execution
     let stealthLevel = 'standard';
     try {
-      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
-        const res = await chrome.storage.local.get('stealthLevel');
-        if (res.stealthLevel) stealthLevel = res.stealthLevel;
-      }
-    } catch (e) {
-      this.sendLog("Stealth protocol offline: Context invalidated.", "error");
-    }
+      const res = await chrome.storage.local.get('stealthLevel');
+      if (res.stealthLevel) stealthLevel = res.stealthLevel;
+    } catch (e) {}
+
     const config = this.getStealthConfig(stealthLevel);
 
     input.focus();
     document.execCommand('selectAll', false, null);
     document.execCommand('delete', false, null);
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 200));
 
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
@@ -596,33 +535,212 @@ export class NeraInfiltrator {
       await new Promise(r => setTimeout(r, config.minDelay + Math.random() * (config.maxDelay - config.minDelay)));
     }
 
+    // STAGE 4: Tactical Launch
     if (autoSubmit) {
-      this.sendLog("Payload delivered. Finalizing dispatch...", "success");
-      await new Promise(r => setTimeout(r, 600));
+      this.sendLog("Payload delivered. Executing Launch...", "success");
+      await new Promise(r => setTimeout(r, 800));
       
-      // Attempt to find the submit button in the immediate context of the input
       let submitBtn = input.closest('form')?.querySelector('div[role="button"][aria-label*="Đăng"], div[role="button"][aria-label*="Post"]') ||
-                      input.parentElement?.parentElement?.querySelector('div[role="button"][aria-label*="Đăng"]') ||
-                      this.findSubmitButton(root);
+                      input.parentElement?.parentElement?.parentElement?.querySelector('div[role="button"][aria-label*="Đăng"]');
+
+      if (!submitBtn) {
+        submitBtn = this.findSubmitButton(input.closest('div[role="article"]') || post);
+      }
 
       if (submitBtn) {
-        this.sendLog("Target locked. Executing Launch...", "success");
         submitBtn.click();
       } else {
-        // Fallback: Press Enter on the input
-        this.sendLog("Submission button obscured. Dispatched Enter signal.", "warning");
         const enterOpts = { bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', keyCode: 13, which: 13 };
         input.dispatchEvent(new KeyboardEvent('keydown', enterOpts));
         input.dispatchEvent(new KeyboardEvent('keypress', enterOpts));
       }
     }
 
-      // FEED Mode: Auto-dismiss popup after successful injection
-      if (mode === 'FEED') {
-          this.sendLog("Deployment confirmed. Initiating automatic extraction...", "info");
-          setTimeout(() => this.closePopup(), 2000);
+    if (this.getCurrentMode() === 'FEED' && !isInCommentMode) {
+      setTimeout(() => this.closePopup(), 2000);
+    }
+    return true;
+  }
+
+  async executeReplyFlow(post, selectors, anchoredBtn) {
+    this.sendLog("[REPLY] Initiating Strict Protocol: Identifying target reply trigger...", "info");
+    
+    // Always attempt to find the reply button first
+    let replyBtn = anchoredBtn || 
+                   post.querySelector('[aria-label*="Trả lời"], [aria-label*="Reply"]') ||
+                   Array.from(post.querySelectorAll('div[role="button"], span, a')).find(el => {
+                     const t = (el.getAttribute('aria-label') || el.innerText || "").trim();
+                     return (t === 'Trả lời' || t === 'Reply' || t.includes('phản hồi')) && el.offsetWidth > 0;
+                   });
+
+    if (replyBtn) {
+      // Record existing editors to detect the new one
+      const existingEditors = new Set(Array.from(document.querySelectorAll(selectors.join(','))));
+      
+      this.sendLog("[REPLY] Step 1: Triggering Reply interaction...", "info");
+      replyBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Clear focus to detect focus-shift
+      if (document.activeElement) document.activeElement.blur();
+
+      const events = ['mousedown', 'mouseup', 'click'];
+      events.forEach(type => {
+        replyBtn.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
+      });
+      if (typeof replyBtn.click === 'function') replyBtn.click();
+      
+      this.sendLog("[REPLY] Step 2: Waiting for sub-terminal to mount...", "info");
+      
+      // Wait for behavioral changes (New element or Focus shift)
+      let input = null;
+      for (let attempt = 0; attempt < 20; attempt++) {
+        await new Promise(r => setTimeout(r, 400));
+        
+        // 1. Check for Active Element (Focus shift) - High Priority
+        const active = document.activeElement;
+        if (active && (active.getAttribute('role') === 'textbox' || active.hasAttribute('contenteditable'))) {
+            input = active;
+            this.sendLog("[REPLY] Step 3: Terminal identified via Focus-Shift.", "success");
+            break;
+        }
+
+        // 2. Check for New Editors (Structural change)
+        const currentEditors = Array.from(document.querySelectorAll(selectors.join(',')));
+        const newEditor = currentEditors.find(e => !existingEditors.has(e));
+        if (newEditor) {
+            input = newEditor;
+            this.sendLog("[REPLY] Step 3: Terminal identified via DOM Mutation.", "success");
+            break;
+        }
+
+        // 3. Proximity Fallback (Geometric Triangulation)
+        const nearby = this.findInputNear(post, selectors);
+        if (nearby && !existingEditors.has(nearby)) {
+            input = nearby;
+            this.sendLog("[REPLY] Step 3: Terminal identified via Geometric Proximity.", "success");
+            break;
+        }
       }
-      return true;
+
+      if (input) {
+          this.sendLog("[REPLY] Step 4: Synchronizing target for Ghost Typing...", "info");
+          input.focus();
+          await new Promise(r => setTimeout(r, 200));
+          // Clear drafts/mentions
+          document.execCommand('selectAll', false, null);
+          document.execCommand('delete', false, null);
+          return input;
+      }
+    }
+    
+    return this.findInputNear(post, selectors);
+  }
+
+  /**
+   * Specialized search for inputs near a target element with indentation support
+   */
+  findInputNear(target, selectors) {
+    const rect = target.getBoundingClientRect();
+    const allEditors = Array.from(document.querySelectorAll(selectors.join(',')));
+    
+    // Weight candidates by location: Below target AND indented (further right)
+    const candidates = allEditors.filter(el => {
+      const r = el.getBoundingClientRect();
+      const isBelow = r.top > rect.top - 10;
+      const isIndented = r.left > rect.left;
+      const isNear = Math.abs(r.top - rect.bottom) < 500;
+      return isBelow && isNear;
+    });
+
+    if (candidates.length === 0) {
+      // Relaxed search if no indented found
+      return allEditors.filter(el => {
+        const r = el.getBoundingClientRect();
+        return r.top > rect.top - 50 && r.top < rect.bottom + 500 && Math.abs(r.left - rect.left) < 500;
+      }).sort((a, b) => {
+        const distA = Math.abs(a.getBoundingClientRect().top - rect.bottom);
+        const distB = Math.abs(b.getBoundingClientRect().top - rect.bottom);
+        return distA - distB;
+      })[0];
+    }
+
+    return candidates.sort((a, b) => {
+      const aRect = a.getBoundingClientRect();
+      const bRect = b.getBoundingClientRect();
+      // Prioritize the one closest to the bottom of the target
+      return Math.abs(aRect.top - rect.bottom) - Math.abs(bRect.top - rect.bottom);
+    })[0];
+  }
+
+  async executePostFlow(post, selectors, anchoredBtn) {
+    this.sendLog("[POST] Engagement Protocol: Locating main terminal...", "info");
+    
+    // Find root for post context
+    let root = post;
+    for (let i = 0; i < 8; i++) {
+      if (root.querySelector('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"]')) break;
+      if (root.parentElement && root.parentElement !== document.body) root = root.parentElement;
+      else break;
+    }
+
+    let input = this.findInput(root, selectors);
+    
+    if (!input) {
+      this.sendLog("[POST] Terminal hidden. Dispatching interaction signal...", "warning");
+      let commentBtn = anchoredBtn || 
+                       root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
+                       root.querySelector('div[aria-label="Bình luận"][role="button"]') ||
+                       root.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
+                       root.querySelector('div[data-testid*="comment_button"]');
+
+      if (commentBtn) {
+        commentBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        commentBtn.click();
+        
+        for (let attempt = 0; attempt < 10; attempt++) {
+          await new Promise(r => setTimeout(r, 500));
+          input = this.findInput(root, selectors);
+          if (input) return input;
+        }
+      }
+    }
+    return input;
+  }
+
+  /**
+   * New specialized search for inputs near a target element
+   */
+  findInputNear(target, selectors) {
+    // 1. Check inside target subtree
+    for (const s of selectors) {
+      const el = target.querySelector(s);
+      if (el) return el;
+    }
+
+    // 2. Check nearby siblings or immediate parent container
+    const parent = target.parentElement;
+    if (parent) {
+      for (const s of selectors) {
+        const el = parent.querySelector(s);
+        if (el) return el;
+      }
+    }
+
+    // 3. Proximity-based global search
+    const rect = target.getBoundingClientRect();
+    const allEditors = Array.from(document.querySelectorAll(selectors.join(',')));
+    
+    const candidates = allEditors.filter(el => {
+      const r = el.getBoundingClientRect();
+      // Editor should be below or very close to the target
+      return r.top > rect.top - 50 && r.top < rect.bottom + 500 && Math.abs(r.left - rect.left) < 500;
+    });
+
+    return candidates.sort((a, b) => {
+      const distA = Math.abs(a.getBoundingClientRect().top - rect.bottom);
+      const distB = Math.abs(b.getBoundingClientRect().top - rect.bottom);
+      return distA - distB;
+    })[0];
   }
 
   closePopup() {
@@ -696,6 +814,7 @@ export class NeraInfiltrator {
 
   findSubmitButton(post) {
     const selectors = [
+      '#focused-state-composer-submit div[role="button"]',
       'div[aria-label="Đăng bình luận"]', 
       'div[aria-label="Post comment"]', 
       'div[aria-label="Đăng"]', 

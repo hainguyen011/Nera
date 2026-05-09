@@ -3,7 +3,7 @@
  */
 export const StorageManager = {
   async getConfig() {
-    return await chrome.storage.local.get(['apiKey', 'persona', 'customPrompt', 'provider', 'tone', 'style']);
+    return await chrome.storage.local.get(['apiKey', 'persona', 'customPrompt', 'provider', 'tone', 'style', 'agentProfiles', 'activeProfileId']);
   },
 
   async setConfig(config) {

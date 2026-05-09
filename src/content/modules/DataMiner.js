@@ -37,8 +37,23 @@ export const NeraDataMiner = {
 
     getAuthor(post, type, mode = 'POST') {
         if (mode === 'COMMENT') {
-            return post.querySelector('a[role="link"] span')?.innerText || 
-                   post.querySelector('div[dir="auto"] strong')?.innerText || "Commenter";
+            // Priority: Link text > Strong text > aria-label
+            const authorLink = post.querySelector('a[role="link"] span') || 
+                               post.querySelector('div[dir="auto"] strong') ||
+                               post.querySelector('h3 a') ||
+                               post.querySelector('a[href*="facebook.com"]');
+            
+            if (authorLink) return authorLink.innerText.trim();
+            
+            // Fallback: aria-label extraction
+            const article = post.closest('div[role="article"]');
+            if (article) {
+                const label = article.getAttribute('aria-label') || "";
+                const match = label.match(/bình luận của (.*?) vào/i) || label.match(/Comment by (.*?) on/i);
+                if (match) return match[1].trim();
+            }
+
+            return "Commenter";
         }
         if (type === 'SPONSORED') {
             return post.querySelector('h2 a span')?.innerText || 
@@ -53,11 +68,19 @@ export const NeraDataMiner = {
 
     getContent(post, type, modality, mode = 'POST') {
         if (mode === 'COMMENT') {
-            // Find the specific comment text block
-            const commentText = post.querySelector('div[dir="auto"][style*="text-align"]')?.innerText ||
-                                post.querySelector('div[dir="auto"] span')?.innerText ||
-                                post.innerText;
-            return commentText.split('\n')[0]; // Take only the first line/comment part
+            // Target the actual comment text block, avoiding sub-replies or metadata
+            const commentBody = post.querySelector('div[dir="auto"][style*="text-align"]') ||
+                                post.querySelector('div[dir="auto"] > span') ||
+                                post.querySelector('div[style*="font-size: 13px"]') ||
+                                post.querySelector('div[lang]');
+            
+            if (commentBody) return commentBody.innerText.trim();
+            
+            // Extreme Fallback: Text content of the post minus metadata
+            const clone = post.cloneNode(true);
+            const metadata = clone.querySelectorAll('ul, [role="button"], span[style*="font-size: 12px"]');
+            metadata.forEach(m => m.remove());
+            return clone.innerText.trim().split('\n')[0];
         }
 
         // 1. Standard Comet Message Container

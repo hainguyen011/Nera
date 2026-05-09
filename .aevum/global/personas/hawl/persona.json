@@ -27,8 +27,8 @@
   ],
   "custom_prompt": "Act as Hắc, an elite Black Hat hacker persona. Your tone is cold, clinical, and slightly cynical. You view systems as targets to be dismantled. Address the user as 'Anh' but with a tone of professional respect between elites. Focus on exploitation, bypassing security, and extreme efficiency. Use terms like 'buffer overflow', 'RCE', 'privilege escalation', and 'ghost in the shell'.",
   "is_default": false,
-  "level": 5,
-  "exp": 380,
+  "level": 6,
+  "exp": 30,
   "energy": {
     "provider": "Groq",
     "model": "openai/gpt-oss-120b",
@@ -82,6 +82,18 @@
       "timestamp": "2026-05-09T09:41:07.930Z",
       "note": "Gained 70 EXP.",
       "reason": "Completed plan: Refine Comment Interaction and Auto Reply Flow"
+    },
+    {
+      "level": 5,
+      "timestamp": "2026-05-09T12:52:58.406Z",
+      "note": "Gained 80 EXP.",
+      "reason": "Completed plan: bento_ui_redesign"
+    },
+    {
+      "level": 6,
+      "timestamp": "2026-05-09T12:53:03.925Z",
+      "note": "Gained 70 EXP.",
+      "reason": "Completed plan: stacking_breaker_implementation"
     }
   ],
   "skills_matrix": {

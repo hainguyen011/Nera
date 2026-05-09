@@ -42,6 +42,16 @@
               "name": "refine_comment_interaction_and_auto_reply_flow_plan.md",
               "status": "todo",
               "updatedAt": "2026-05-09T09:41:02.657Z"
+            },
+            {
+              "name": "strengthen_post_detection_and_infiltration_heuristics_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T10:21:38.257Z"
+            },
+            {
+              "name": "strict_reply_flow_protocol_implementation_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T11:01:41.573Z"
             }
           ]
         },
@@ -63,9 +73,19 @@
           "path": ".aevum/domains/dominfiltration/features/stealth-infiltration-protocol",
           "plans": [
             {
+              "name": "handle_dom_recycling_and_lazy_load_persistence_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T10:24:00.601Z"
+            },
+            {
               "name": "hydration_guard_protocol_implementation_plan.md",
               "status": "todo",
               "updatedAt": "2026-05-09T07:41:06.332Z"
+            },
+            {
+              "name": "universal_tactical_recognition_overhaul_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T10:38:45.449Z"
             }
           ]
         }
@@ -89,9 +109,24 @@
           "path": ".aevum/domains/tactical-ui-console/features/tactical-overlay-console",
           "plans": [
             {
+              "name": "elevate_stacking_priority_for_tactical_console_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T10:02:15.906Z"
+            },
+            {
+              "name": "fix_console_visibility_and_injection_specificity_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T10:28:52.411Z"
+            },
+            {
               "name": "refine_tactical_interface_ui_plan.md",
               "status": "todo",
               "updatedAt": "2026-05-09T07:41:06.994Z"
+            },
+            {
+              "name": "tactical_header_anchoring_and_collision_avoidance_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T10:44:48.218Z"
             }
           ]
         }

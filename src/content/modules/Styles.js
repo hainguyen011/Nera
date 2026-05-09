@@ -10,7 +10,7 @@ export const NeraStyles = {
 
   getRawCSS() {
     return `
-      .nera-control { 
+      :host { 
         position: absolute;
         right: 0;
         top: 0;
@@ -20,6 +20,10 @@ export const NeraStyles = {
         pointer-events: none;
         z-index: 2147483647 !important;
         font-family: Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        isolation: auto !important;
+        transform-style: flat !important;
+        will-change: transform !important;
+        contain: none !important;
       }
       .tactical-console {
         position: absolute;
@@ -37,7 +41,7 @@ export const NeraStyles = {
         flex-direction: column;
         overflow: hidden; /* Mask the internal glow effects */
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 2147483647 !important;
+        z-index: 2147483640 !important;
       }
       .tactical-console::before {
         content: "";
@@ -69,33 +73,68 @@ export const NeraStyles = {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
       }
-      .nera-control.mode-comment .tactical-console {
-        background: rgba(210, 80, 0, 0.85); /* Tactical Orange */
+      :host(.mode-comment) .tactical-console {
+        background: rgba(15, 40, 15, 0.9); /* Deep Green */
         border: none;
-        right: 12px !important; /* Force comments to stay inside */
-        box-shadow: 0 4px 15px rgba(210, 80, 0, 0.3);
+        right: 8px !important; 
+        top: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
       }
-      .nera-control.mode-comment .tactical-console::before {
+      :host(.mode-comment) .tactical-console::before {
         background: conic-gradient(
           from 0deg,
           transparent 0%,
-          rgba(255, 140, 0, 0.4) 25%,
-          rgba(255, 140, 0, 0.8) 50%,
-          rgba(255, 140, 0, 0.4) 75%,
+          rgba(0, 230, 118, 0.4) 25%,
+          rgba(0, 230, 118, 0.8) 50%,
+          rgba(0, 230, 118, 0.4) 75%,
           transparent 100%
         );
       }
-      .nera-control.mode-comment .nera-toggle-trigger {
-        color: #ff9800; /* Tactical Orange text */
+      :host(.mode-comment) .nera-toggle-trigger {
+        color: #00e676; /* Tactical Green text */
       }
       .tactical-console.expanded {
-        width: 520px;
+        width: 580px;
         height: auto;
         min-height: 140px; 
         border-radius: 12px;
         background: #1b1b1b;
         right: 15px;
-        box-shadow: 0 12px 60px rgba(0,0,0,0.7);
+        box-shadow: none;
+        z-index: 2147483647 !important;
+      }
+      :host(.mode-comment) .tactical-console.expanded {
+        width: 380px; /* Optimized Mini Board */
+        padding: 8px;
+        right: 10px !important;
+        left: auto !important;
+        margin-left: 0;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+      }
+      :host(.mode-comment) .payload-editor {
+        font-size: 13px;
+        min-height: 60px;
+      }
+      :host(.mode-comment) .intent-mini, 
+      :host(.mode-comment) .persona-mini {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+      :host(.mode-comment) #nera-main-action {
+        background: #00c853;
+        box-shadow: none;
+      }
+      :host(.mode-comment) .intent-mini.active,
+      :host(.mode-comment) .persona-mini.active {
+        background: rgba(0, 200, 83, 0.2);
+        border-color: #00c853;
+        color: #00e676;
+      }
+      :host(.mode-comment) .badge-persona,
+      :host(.mode-comment) .badge-intent {
+        background: rgba(0, 200, 83, 0.1);
+        color: #00e676;
+        border-color: rgba(0, 200, 83, 0.3);
       }
       .nera-toggle-trigger {
         position: absolute;
@@ -242,12 +281,12 @@ export const NeraStyles = {
         width: 0%;
         background: #2374e1;
         transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 0 10px rgba(35, 116, 225, 0.5);
+        box-shadow: none;
       }
-      .radar-item[data-type="pos"] .radar-fill { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
-      .radar-item[data-type="neg"] .radar-fill { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
-      .radar-item[data-type="sar"] .radar-fill { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
-      .radar-item[data-type="ser"] .radar-fill { background: #6366f1; box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+      .radar-item[data-type="pos"] .radar-fill { background: #10b981; box-shadow: none; }
+      .radar-item[data-type="neg"] .radar-fill { background: #ef4444; box-shadow: none; }
+      .radar-item[data-type="sar"] .radar-fill { background: #f59e0b; box-shadow: none; }
+      .radar-item[data-type="ser"] .radar-fill { background: #6366f1; box-shadow: none; }
 
       .tactical-params {
         display: flex;
@@ -376,7 +415,7 @@ export const NeraStyles = {
         pointer-events: auto;
       }
       .suggestion-group:first-child {
-        flex: 0 0 calc(40% - 12px);
+        flex: 0 0 calc(45% - 12px);
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
@@ -405,7 +444,7 @@ export const NeraStyles = {
       .persona-mini.active {
         background: #2374e1;
         color: white;
-        box-shadow: 0 4px 12px rgba(35, 116, 225, 0.4);
+        box-shadow: none;
       }
       .persona-mini svg { width: 16px; height: 16px; }
 
@@ -425,7 +464,7 @@ export const NeraStyles = {
       .intent-mini.active {
         background: #2374e1;
         color: white;
-        box-shadow: 0 4px 12px rgba(35, 116, 225, 0.4);
+        box-shadow: none;
       }
       
       @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
@@ -453,7 +492,7 @@ export const NeraStyles = {
         width: 100%;
         height: 2px;
         background: #2374e1;
-        box-shadow: 0 0 15px #2374e1, 0 0 5px #fff;
+        box-shadow: none;
         animation: scanMove 2s linear infinite;
       }
       .nera-scanning-text {

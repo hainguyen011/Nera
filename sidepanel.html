@@ -488,7 +488,7 @@
         </div>
       </div>
 
-      <button id="saveBtn" class="btn-save" style="width: 100%; border-radius: 8px;">
+      <button id="saveConfig" class="btn-save" style="width: 100%; border-radius: 8px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
@@ -497,6 +497,69 @@
         </svg>
         Save & Synchronize
       </button>
+    </div>
+
+    <!-- TAB 3: AGENT FORGE -->
+    <div id="forge" class="tab-pane">
+      <div class="form-group">
+        <label class="section-label">Agent Designation</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="agentName" placeholder="Callsign (e.g. Nera-Shadow)">
+          <button id="saveProfileBtn" class="btn-save" style="padding: 0 16px; height: 40px;">SAVE</button>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="form-group full-width">
+          <label class="section-label" for="missionDirective">Primary Mission Directive</label>
+          <textarea id="missionDirective" placeholder="What is this agent's core goal? (e.g. Promote the brand with subtle humor, fact-check claims...)" style="min-height: 100px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="targetAudience">Target Audience</label>
+          <select id="targetAudience" class="nera-modern">
+            <option value="general">General Public</option>
+            <option value="tech">Tech Enthusiasts</option>
+            <option value="skeptics">Skeptics/Critics</option>
+            <option value="youth">Gen Z / Youth</option>
+            <option value="professional">Professionals</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="slangLevel">Slang/Teencode Level</label>
+          <select id="slangLevel" class="nera-modern">
+            <option value="none">Zero (Formal)</option>
+            <option value="light">Subtle/Natural</option>
+            <option value="heavy">Native/Teencode</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="formality">Formality</label>
+          <select id="formality" class="nera-modern">
+            <option value="casual">Casual/Chill</option>
+            <option value="neutral">Balanced</option>
+            <option value="formal">Strict/Polite</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="lengthLimit">Response Length</label>
+          <select id="lengthLimit" class="nera-modern">
+            <option value="short">Short (1-2 lines)</option>
+            <option value="medium">Medium (3-5 lines)</option>
+            <option value="long">Detailed</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="section-label">Saved Agent Protocols</label>
+          <div id="profileList" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <!-- Profile items will be injected here -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -515,6 +578,12 @@
         </path>
       </svg>
       <span>SETTINGS</span>
+    </button>
+    <button class="tab-btn" data-tab="forge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+      </svg>
+      <span>FORGE</span>
     </button>
   </div>
 

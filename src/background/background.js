@@ -68,6 +68,21 @@ async function handleInfiltration(request, sendResponse) {
     const history = await StorageManager.getThreadHistory(threadId);
     let systemPrompt = getPersonaPrompt({ ...config, persona: activePersona });
 
+    // Inject Agent Forge Profile Directives
+    if (config.agentProfiles && config.activeProfileId) {
+      const activeProfile = config.agentProfiles.find(p => p.id === config.activeProfileId);
+      if (activeProfile) {
+        systemPrompt += `\n\n[AGENT FORGE MISSION DATA]`;
+        systemPrompt += `\n- CALLSIGN: ${activeProfile.name}`;
+        if (activeProfile.mission) systemPrompt += `\n- PRIMARY MISSION: ${activeProfile.mission}`;
+        systemPrompt += `\n- TARGET AUDIENCE: ${activeProfile.target}`;
+        systemPrompt += `\n- SLANG LEVEL: ${activeProfile.slang}`;
+        systemPrompt += `\n- FORMALITY: ${activeProfile.formality}`;
+        systemPrompt += `\n- LENGTH LIMIT: ${activeProfile.length}`;
+        systemPrompt += `\n\nSTRICT INSTRUCTION: Overwrite default persona behavior with these Forge directives where they conflict.`;
+      }
+    }
+
 
     if (history.length > 0) {
       const historyText = history.map(h => `Context: ${h.postContent}\nNera's Response: ${h.comment}`).join('\n\n');
@@ -75,6 +90,19 @@ async function handleInfiltration(request, sendResponse) {
     }
 
     systemPrompt += `\n\nLANGUAGE: Primary language is Vietnamese. Use modern, natural language. Avoid outdated words like "bằng hữu" unless requested.`;
+
+    const mode = request.postData?.mode || 'POST';
+    const author = request.postData?.author || 'Unknown';
+    
+    if (mode === 'COMMENT') {
+      systemPrompt += `\n\n[TACTICAL SITUATION: REPLY TO COMMENT]`;
+      systemPrompt += `\n- You are DIRECTLY replying to a specific comment made by "${author}".`;
+      systemPrompt += `\n- Focus on the content of their specific comment.`;
+      systemPrompt += `\n- Keep it conversational, address their point, and be concise.`;
+    } else {
+      systemPrompt += `\n\n[TACTICAL SITUATION: NEW POST COMMENT]`;
+      systemPrompt += `\n- You are commenting on a main post by "${author}".`;
+    }
 
     const tone = config.tone || "supportive";
     const style = config.style || "casual";
