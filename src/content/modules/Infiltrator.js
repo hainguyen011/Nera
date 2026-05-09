@@ -25,6 +25,9 @@ export class NeraInfiltrator {
 
     this.setupObserver();
     this.scanExisting();
+
+    // Tactical Pulse: Periodic deep scan for late-rendering posts or missed targets
+    setInterval(() => this.scanExisting(), 3000);
   }
 
   setupObserver() {
@@ -45,12 +48,38 @@ export class NeraInfiltrator {
   }
 
   scanExisting() {
-    const posts = document.querySelectorAll('div[data-testid="fbfeed_story"], [role="article"], div[data-ad-preview="message"]');
-    posts.forEach(post => this.injectNeraControl(post));
+    const postSelectors = [
+      'div[data-testid="fbfeed_story"]',
+      '[role="article"]',
+      'div[data-ad-preview="message"]',
+      'div.x1y1aw1k.xwib8y2.x1ye3wu6',
+      'div.x1pbtk8m',
+      'div[data-pagelet*="FeedUnit"]',
+      'div[data-pagelet*="GroupFeed"]',
+      'div[role="dialog"] [role="article"]'
+    ];
+    
+    // 1. Direct Selector Scan
+    const directPosts = document.querySelectorAll(postSelectors.join(','));
+    directPosts.forEach(post => this.injectNeraControl(post));
+
+    // 2. Discovery by Interaction (The "Catch-all" failsafe)
+    // Find interaction bars or comment icons and climb to the post container
+    const triggers = document.querySelectorAll('div[role="toolbar"], div[aria-label*="Hành động"], i[style*="-487px"], div[data-ad-rendering-role="comment_button"]');
+    triggers.forEach(t => {
+      const post = t.closest('div[data-testid*="story"], [role="article"], div.x1y1aw1k, div.x1pbtk8m, div.x193iq5w, div[data-pagelet*="FeedUnit"]');
+      if (post) this.injectNeraControl(post);
+    });
   }
 
   checkNode(node) {
-    const postSelectors = ['div[data-testid="fbfeed_story"]', '[role="article"]', 'div[data-ad-preview="message"]'];
+    const postSelectors = [
+      'div[data-testid="fbfeed_story"]',
+      '[role="article"]',
+      'div[data-ad-preview="message"]',
+      'div.x1y1aw1k.xwib8y2.x1ye3wu6',
+      'div.x1pbtk8m'
+    ];
     if (node.matches && postSelectors.some(s => node.matches(s))) {
       this.injectNeraControl(node);
     } else {
@@ -62,8 +91,8 @@ export class NeraInfiltrator {
   injectNeraControl(post) {
     if (post.dataset.neraInfiltrated) return;
     
-    // Basic safety check: ensure it's not a tiny element
-    if (post.offsetWidth < 100 || post.offsetHeight < 50) return;
+    // Safety check: skip elements that are obviously not posts (like very small buttons)
+    if (post.offsetWidth < 50 || post.offsetHeight < 50) return;
     
     post.dataset.neraInfiltrated = 'true';
 
@@ -124,7 +153,7 @@ export class NeraInfiltrator {
         e.stopPropagation();
         editor.innerText = "";
         mainBtn.dataset.state = "";
-        mainBtn.innerHTML = `<span>Synthesize</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`;
+        mainBtn.innerHTML = `<span>Synthesize</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`;
         this.sendLog("Tactical Reload: Regenerating...", "info");
         // No auto-trigger on manual reset to allow hint typing
       };
@@ -210,7 +239,14 @@ export class NeraInfiltrator {
     }
 
     shadow.appendChild(consoleEl);
-    post.appendChild(container);
+    
+    // Strategic Placement: Insert at the top to ensure visibility on long posts
+    const header = post.querySelector('h2, h3, div[role="heading"], div.x1cy8z3s');
+    if (header) {
+        header.parentNode.insertBefore(container, header.nextSibling);
+    } else {
+        post.prepend(container);
+    }
     
     // Ensure post container doesn't clip our console
     post.style.setProperty('position', 'relative', 'important');
@@ -318,112 +354,111 @@ export class NeraInfiltrator {
     }
   }
 
+  getCurrentMode() {
+    const path = window.location.pathname;
+    const search = window.location.search;
+    if (path.includes('/groups/')) return 'GROUP';
+    if (path.includes('/watch') || path.includes('/reels')) return 'VIDEO';
+    if (path === '/' || path.includes('/feed') || search.includes('sk=h_chr')) return 'FEED';
+    if (path.includes('/posts/') || path.includes('/permalink')) return 'PERMALINK';
+    if (path.match(/\/[a-zA-Z0-9.]+$/) && !path.includes('/')) return 'PROFILE'; // Simple profile check
+    return 'STANDARD';
+  }
+
   async executeGhostTyping(post, text, autoSubmit = false, anchoredBtn = null) {
+    // Stage 0: Recursive Root Normalization (Climb until we see the interaction bar)
+    let root = post;
+    for (let i = 0; i < 8; i++) {
+      if (root.querySelector('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"], i[style*="-487px"]')) break;
+      if (root.parentElement && root.parentElement !== document.body) root = root.parentElement;
+      else break;
+    }
+
+    const mode = this.getCurrentMode();
+    this.sendLog(`Environment: ${mode}. Root identified: ${root.tagName}.${Array.from(root.classList).join('.')}`, "info");
+    
     const inputSelectors = [
       'div[role="textbox"][data-lexical-editor="true"]',
       'div[role="textbox"][aria-label*="Bình luận"]',
       'div[role="textbox"][aria-label*="Comment"]',
+      'div[role="textbox"][aria-label*="như"]',
+      'div.notranslate[contenteditable="true"]',
+      'div._5rpu[contenteditable="true"]',
+      'div[data-editor][contenteditable="true"]',
       'div[contenteditable="true"]'
     ];
 
-    let input = this.findInput(post, inputSelectors);
+    // STAGE 1: Passive Probe (Passive Synchrony)
+    let input = this.findInput(root, inputSelectors);
 
-    if (!input) {
-      this.sendLog("Terminal missing. Initiating Force Entry protocol...", "warning");
+    if (input) {
+      this.sendLog(`Active ${mode} terminal detected. Synchronizing...`, "success");
+    } else {
+      this.sendLog(`Terminal missing in ${mode} mode. Initiating Force Entry...`, "warning");
       let commentBtn = anchoredBtn;
       
       if (!commentBtn) {
-        this.sendLog("Scanning local container for interaction triggers...", "info");
-        // 1. Precise Match (Based on user's HTML snippet)
-        commentBtn = post.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
-                     post.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
-                     post.querySelector('i[style*="background-position: 0px -487px"]')?.closest('div[role="button"]');
+        this.sendLog("Scanning for interaction triggers...", "info");
+        
+        // 1. Structural Match (Facebook Standard)
+        commentBtn = root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
+                     root.querySelector('div[aria-label="Bình luận"][role="button"]') ||
+                     root.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
+                     root.querySelector('div[data-testid*="comment_button"]') ||
+                     root.querySelector('div[aria-label*="Bình luận dưới dạng"]');
 
-        // 2. Proximity Search inside Post (More elements)
+        // 2. Toolbar/Interaction Bar (Positional)
         if (!commentBtn) {
-          const allButtons = Array.from(post.querySelectorAll('div[role="button"]'));
-          this.sendLog(`Scanned ${allButtons.length} buttons in post container.`, "info");
-          commentBtn = allButtons.find(b => {
-            const label = b.getAttribute('aria-label') || "";
-            return label === "Viết bình luận" || label === "Bình luận" || label.includes("Comment");
+          const bar = root.querySelector('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"]');
+          if (bar) {
+            const btns = Array.from(bar.querySelectorAll('div[role="button"], div[aria-label]'));
+            if (btns.length >= 2) commentBtn = btns[1]; 
+          }
+        }
+
+        // 3. Visual Sprite/Icon Lock (High Priority for Ads)
+        if (!commentBtn) {
+          const icon = root.querySelector('i[style*="-487px"]') || 
+                       root.querySelector('i[class*="comment"]');
+          if (icon) commentBtn = icon.closest('div[role="button"]') || icon.closest('div[aria-label]') || icon.parentElement;
+        }
+
+        // 4. Lexical Search (Deep Text Scan)
+        if (!commentBtn) {
+          const allElements = Array.from(root.querySelectorAll('div, span, a'));
+          commentBtn = allElements.find(el => {
+            const text = (el.getAttribute('aria-label') || el.innerText || "").trim();
+            return (text === "Bình luận" || text === "Viết bình luận" || text === "Comment") && el.offsetWidth > 0;
           });
-        }
-
-        // 3. Global Proximity Search (Final Fallback)
-        if (!commentBtn) {
-           this.sendLog("Local scan failed. Engaging Omni-Search (Global)...", "warning");
-           const allGlobalButtons = Array.from(document.querySelectorAll('div[role="button"], div[aria-label*="Bình luận"]'));
-           const postRect = post.getBoundingClientRect();
-           const postBottom = postRect.bottom;
-           
-           this.sendLog(`Evaluating ${allGlobalButtons.length} global candidates near Y:${postBottom.toFixed(0)}`, "info");
-           
-           // Find buttons near the bottom of the post
-           const candidates = allGlobalButtons.filter(b => {
-               const r = b.getBoundingClientRect();
-               const verticalDist = Math.abs(r.top - postBottom);
-               const horizontalDist = Math.abs(r.left - postRect.left);
-               return verticalDist < 300 && horizontalDist < 600;
-           });
-
-           this.sendLog(`Found ${candidates.length} candidates in proximity zone.`, "info");
-
-           commentBtn = candidates.find(b => {
-                const label = b.getAttribute('aria-label') || b.innerText || "";
-                return label.includes("Bình luận") || label.includes("Comment") || label.includes("Viết bình luận");
-           });
-        }
-
-        // 4. Brute Force Sprite Search (The 'Nuclear' Option)
-        if (!commentBtn) {
-            this.sendLog("Heuristic search failed. Engaging Brute Force Sprite Lock...", "warning");
-            const sprites = Array.from(document.querySelectorAll('i[style*="background-position: 0px -487px"]'));
-            const postRect = post.getBoundingClientRect();
-            
-            // Find the sprite closest to this post's interaction bar area
-            let bestSprite = null;
-            let minDist = Infinity;
-            
-            sprites.forEach(s => {
-                const r = s.getBoundingClientRect();
-                // Priority: Sprite MUST be vertically near the post
-                const verticalOverlap = r.top > postRect.top && r.top < (postRect.bottom + 100);
-                if (verticalOverlap) {
-                    const dist = Math.abs(r.top - (postRect.bottom - 50)); // Interaction bar is usually ~50px from bottom
-                    if (dist < minDist) {
-                        minDist = dist;
-                        bestSprite = s;
-                    }
-                }
-            });
-
-            if (bestSprite) {
-                commentBtn = bestSprite.closest('div[role="button"]');
-                if (commentBtn) this.sendLog("Sprite lock established on precision coordinates.", "success");
-            }
         }
       }
 
       if (commentBtn) {
+        // Visual Validation: Ensure the button is actually inside the root's visual range
+        const btnRect = commentBtn.getBoundingClientRect();
+        const rootRect = root.getBoundingClientRect();
+        const isInside = btnRect.top >= rootRect.top - 50 && btnRect.bottom <= rootRect.bottom + 100;
+        
+        if (!isInside) {
+          this.sendLog("Target mismatch: Discovered trigger is outside tactical zone. Aborting to prevent friendly fire.", "error");
+          return false;
+        }
+
         this.sendLog("Target locked. Dispatching opening signal...", "success");
         commentBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Native Click Fallback
         if (typeof commentBtn.click === 'function') commentBtn.click();
-
-        const events = ['mousedown', 'mouseup', 'click'];
-        events.forEach(type => {
+        ['mousedown', 'mouseup', 'click'].forEach(type => {
           commentBtn.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
         });
 
-        this.sendLog("Signal sent. Awaiting terminal initialization (Max 5s)...", "info");
+        this.sendLog("Signal sent. Awaiting terminal initialization...", "info");
         
-        // Polling Mechanism: Scan every 500ms for up to 5 seconds
         for (let attempt = 0; attempt < 10; attempt++) {
             await new Promise(r => setTimeout(r, 500));
-            input = this.findInput(post, inputSelectors);
+            input = this.findInput(root, inputSelectors);
             if (input) {
-                this.sendLog(`Terminal established on attempt ${attempt + 1}.`, "success");
+                this.sendLog(`Terminal synchronized on attempt ${attempt + 1}.`, "success");
                 break;
             }
         }
@@ -439,10 +474,9 @@ export class NeraInfiltrator {
     const config = this.getStealthConfig(stealthLevel);
 
     input.focus();
-    // Lexical-safe Clear Sequence (Legacy Pattern)
     document.execCommand('selectAll', false, null);
     document.execCommand('delete', false, null);
-    await new Promise(r => setTimeout(r, 100)); // Stabilization wait
+    await new Promise(r => setTimeout(r, 100));
 
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
@@ -458,48 +492,88 @@ export class NeraInfiltrator {
 
     if (autoSubmit) {
       await new Promise(r => setTimeout(r, 800));
-      const submitBtn = this.findSubmitButton(post);
+      const submitBtn = this.findSubmitButton(root);
       if (submitBtn) submitBtn.click();
       else {
-          // Fallback: Dispatch Enter key
           this.dispatchKey(input, 'Enter');
+      }
+
+      // FEED Mode: Auto-dismiss popup after successful injection
+      if (mode === 'FEED') {
+          this.sendLog("Deployment confirmed. Initiating automatic extraction...", "info");
+          setTimeout(() => this.closePopup(), 2000);
       }
     }
     return true;
   }
 
+  closePopup() {
+    const closeBtn = document.querySelector('div[role="dialog"] div[aria-label="Đóng"]') || 
+                     document.querySelector('div[role="dialog"] div[aria-label="Close"]') ||
+                     document.querySelector('div[aria-label="Đóng bài viết"]');
+    if (closeBtn) {
+        this.sendLog("Tactical popup dismissed. Workspace cleared.", "success");
+        closeBtn.click();
+    }
+  }
+
   findInput(root, selectors) {
-    // 1. Search within the post container (Include recursive search for generic textboxes)
+    // 1. Search within the post container (Passive Scan)
     for (const s of selectors) {
       const el = root.querySelector(s);
       if (el) return el;
     }
 
-    // Proximity search for ANY div with role="textbox" or contenteditable inside the root
-    const localInput = root.querySelector('div[role="textbox"]') || root.querySelector('div[contenteditable="true"]');
-    if (localInput) return localInput;
+    // 2. Focused Element Check (Active Signal Trace)
+    const active = document.activeElement;
+    if (active && (active.getAttribute?.('role') === 'textbox' || active.hasAttribute?.('contenteditable'))) {
+        const rootRect = root.getBoundingClientRect();
+        const activeRect = active.getBoundingClientRect();
+        const verticalMatch = activeRect.top > rootRect.top - 200 && activeRect.top < rootRect.bottom + 600;
+        const horizontalMatch = Math.abs(activeRect.left - rootRect.left) < 800;
+        if (verticalMatch && horizontalMatch) return active;
+    }
 
-    // 2. Global Search: Facebook often portals the editor outside the post article
+    // 3. Heuristic Proximity Search (Geometric Triangulation)
     const allEditors = Array.from(document.querySelectorAll(selectors.join(',')));
-    
-    // Add generic textboxes to global search if no specific ones found
     if (allEditors.length === 0) {
-        document.querySelectorAll('div[role="textbox"]').forEach(el => allEditors.push(el));
+        document.querySelectorAll('div[role="textbox"]').forEach(el => {
+            if (!allEditors.includes(el)) allEditors.push(el);
+        });
     }
 
     if (allEditors.length === 0) return document.querySelector('div[data-lexical-editor="true"]');
 
-    // Return the one closest to the current post visually
     const postRect = root.getBoundingClientRect();
-    const postCenter = postRect.top + postRect.height / 2;
+    const postBottom = postRect.bottom;
 
-    return allEditors.sort((a, b) => {
+    // Filter candidates to ensure they are visually related to THIS post
+    const candidates = allEditors.filter(el => {
+        const r = el.getBoundingClientRect();
+        // 1. Vertical Safety: Editor must not be above the post's top (prevents matching post above)
+        const isNotAbove = r.top > postRect.top - 50;
+        // 2. Horizontal Safety: Editor must have some horizontal overlap with the post
+        const horizontalOverlap = !(r.right < postRect.left || r.left > postRect.right);
+        // 3. Proximity: Must be within a reasonable range
+        const isNear = Math.abs(r.top - postBottom) < 800;
+        
+        return isNotAbove && (horizontalOverlap || isNear);
+    });
+
+    if (candidates.length === 0) return null;
+
+    const bestEditor = candidates.sort((a, b) => {
         const aRect = a.getBoundingClientRect();
         const bRect = b.getBoundingClientRect();
-        const aCenter = aRect.top + aRect.height/2;
-        const bCenter = bRect.top + bRect.height/2;
-        return Math.abs(aCenter - postCenter) - Math.abs(bCenter - postCenter);
+        
+        // Weight vertical proximity to post bottom more heavily
+        const aDist = Math.abs(aRect.top - postBottom) + (Math.abs(aRect.left - postRect.left) * 2);
+        const bDist = Math.abs(bRect.top - postBottom) + (Math.abs(bRect.left - postRect.left) * 2);
+        
+        return aDist - bDist;
     })[0];
+
+    return bestEditor;
   }
 
   findSubmitButton(post) {

@@ -14,3 +14,12 @@ File này lưu trữ những bài học, sở thích, và quy tắc ngầm đư�
 
 ### [LEARN] - 5/8/2026, 11:45:11 PM
 IMPORTANT: As of May 2026, the default model for Gemini in the Nera project must always be 'models/gemini-2.5-flash'. The previous model 'gemini-1.5-flash' is deprecated and no longer distributed. Always use 2.5-flash for all AIHub operations unless explicitly overridden by user config.
+
+
+### [LEARN] - 5/9/2026, 11:15:51 AM
+[DESIGN_PATTERN] Sequential Expansion: For complex injected UI in content scripts, always expand Width first (0.3s), then Height (0.3s-0.4s with 0.3s delay). This 'L-shaped' motion prevents content jumping and provides a premium 'tactical' feel. Collapsing should reverse the order (Height first, then Width).
+
+
+### [LEARN] - 5/9/2026, 11:15:57 AM
+[LEARNING FROM Refine Tactical Interface UI]
+Successfully moved to a 'Ghost Bar' architecture. The UI is now non-intrusive by default and uses sequential CSS transitions for high-fidelity state changes. Technical debt check: Ensure Shadow DOM styles remain isolated as Facebook DOM continues to evolve.
