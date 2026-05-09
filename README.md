@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/321acb48-f33e-4fdb-938c-b6e3cab55f88" />
+<img width="1774" height="887" alt="ChatGPT Image May 9, 2026, 01_56_44 PM" src="https://github.com/user-attachments/assets/b7580cab-e6eb-4f59-92a5-0ffda104e2ee" />
 
 
 # Nera - AI Infiltration Agent
