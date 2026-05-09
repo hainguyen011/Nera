@@ -1,0 +1,110 @@
+/**
+ * Nera Modern Select Component Styles
+ * Consistent with the "Blue Electron" / "Black Hat" theme.
+ */
+
+.nera-select-container {
+    position: relative;
+    width: 100%;
+    user-select: none;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Hidden native select */
+.nera-select-native {
+    display: none;
+}
+
+/* Custom Trigger */
+.nera-select-trigger {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid #2e2e2e;
+    color: #ededed;
+    padding: 10px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nera-select-trigger:hover {
+    border-color: #404040;
+}
+
+.nera-select-container.open .nera-select-trigger {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+}
+
+.nera-select-trigger::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #a1a1a1;
+    border-bottom: 2px solid #a1a1a1;
+    transform: rotate(45deg);
+    margin-right: 4px;
+    margin-top: -4px;
+    transition: transform 0.3s ease;
+}
+
+.nera-select-container.open .nera-select-trigger::after {
+    transform: rotate(-135deg);
+    margin-top: 4px;
+}
+
+/* Dropdown Options */
+.nera-select-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid #2e2e2e;
+    border-radius: 6px;
+    overflow: hidden;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.nera-select-container.open .nera-select-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.nera-select-option {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #a1a1a1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nera-select-option:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #ffffff;
+}
+
+.nera-select-option.selected {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+    font-weight: 500;
+}
+
+.nera-select-option.selected::after {
+    content: '✓';
+    font-size: 11px;
+}

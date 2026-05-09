@@ -1,8 +1,8 @@
 /**
  * Nera Background - Command Center (ES Module)
  */
-import { AIHub } from './src/core/AIHub.js';
-import { StorageManager } from './src/core/StorageManager.js';
+import { AIHub } from '../core/AIHub.js';
+import { StorageManager } from '../core/StorageManager.js';
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Nera AI Agent (Modular) has been successfully recruited.");

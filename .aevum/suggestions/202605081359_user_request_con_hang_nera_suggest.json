@@ -1,0 +1,26 @@
+{
+  "ref": "user_request_con_hang_nera",
+  "type": "PLANS",
+  "domain": "dominfiltration",
+  "feature": "aicommentagent",
+  "options": [
+    {
+      "title": "Stealth Interaction Upgrade",
+      "name": "Ghost Typing Protocol",
+      "description": "Cải tiến thuật toán gõ phím bằng phân phối Gaussian cho độ trễ, giả lập lỗi chính tả và sửa lỗi (backspace) để đánh lừa các hệ thống behavioral analysis của Facebook/X.",
+      "priority": "high"
+    },
+    {
+      "title": "Anti-Detection Layer",
+      "name": "Shadow UI Cloaking",
+      "description": "Sử dụng Shadow DOM để cô lập hoàn toàn UI của Nera khỏi script của trang web mục tiêu, ngăn chặn việc telemetry của Big Tech phát hiện ra sự hiện diện của Extension.",
+      "priority": "medium"
+    },
+    {
+      "title": "Persona Adaptation",
+      "name": "Multi-Identity Persona Switcher",
+      "description": "Cho phép Nera thay đổi 'Vibe' (Sarcastic, Professional, Toxic, Supportive) dựa trên yêu cầu của Anh hoặc tự động thích ứng với cộng đồng đang thâm nhập.",
+      "priority": "medium"
+    }
+  ]
+}

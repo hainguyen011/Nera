@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nera Tactical Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --card-bg: #141418;
+      --input-bg: #1c1c22;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-glow: rgba(59, 130, 246, 0.35);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #27272a;
+      --border-hover: #3f3f46;
+      --radius: 8px;
+      --radius-sm: 6px;
+      --font: 'Intel One Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .header {
+      padding: 24px 20px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    /* Main Container */
+    .app-container {
+      flex: 1;
+      padding: 0 20px 100px;
+      overflow-y: auto;
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* UI Components */
+    /* Bento Settings */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 0;
+      transition: all 0.3s ease;
+    }
+
+    .form-group:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.8;
+      border-left: none; /* Removed the previous border for bento style */
+      padding-left: 0;
+    }
+
+    input,
+    textarea,
+    select {
+      background: rgba(0, 0, 0, 0.2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      border-radius: 10px !important;
+      padding: 10px 12px !important;
+      color: var(--text);
+      font-size: 13px;
+      width: 100%;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-glow);
+    }
+
+    .btn-save {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-save:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Modules */
+    #radarContainer {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .radar-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #logContainer {
+      background: #08080a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-family: var(--font);
+      font-size: 11px;
+      min-height: 250px;
+      overflow-y: auto;
+    }
+
+    /* Floating Dock */
+    .tabs-nav {
+      position: fixed;
+      bottom: 24px;
+      left: 20px;
+      right: 20px;
+      background: rgba(20, 20, 24, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px;
+      display: flex;
+      gap: 4px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px;
+      font-size: 9px;
+      font-weight: 600;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+    }
+
+    .tab-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 0 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-text {
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .bolt-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* NeraSelect - Tactical Fix */
+    .nera-select-container {
+      position: relative;
+      width: 100%;
+      user-select: none;
+    }
+
+    .nera-select-trigger {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .nera-select-trigger::after {
+      content: '';
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid var(--text-muted);
+    }
+
+    .nera-select-container.open .nera-select-trigger::after {
+      transform: rotate(180deg);
+      border-top-color: var(--primary);
+    }
+
+    .nera-select-options {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      z-index: 9999;
+      max-height: 250px;
+      overflow-y: auto;
+      display: none !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(24px);
+      padding: 6px;
+    }
+
+    .nera-select-container.open .nera-select-options {
+      display: block !important;
+    }
+
+    .nera-select-option {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      margin-bottom: 2px;
+    }
+
+    .nera-select-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .nera-select-option.selected {
+      color: var(--primary);
+      background: rgba(59, 130, 246, 0.15);
+      font-weight: 600;
+    }
+
+    select.nera-select-native,
+    .nera-select-native {
+      display: none !important;
+      visibility: hidden !important;
+      position: absolute !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <img src="assets/icon.png" alt="Nera Logo" style="width: 20px; height: 20px;">
+    <h1>NERA TACTICAL COMMAND</h1>
+  </div>
+
+  <div class="app-container">
+    <!-- TAB 1: COMMAND CENTER -->
+    <div id="command" class="tab-pane active">
+      <div class="form-group">
+        <label class="section-label">Neural Sentiment Radar</label>
+        <div id="radarContainer"
+          style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="radar-stat">
+            <div style="display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px;">
+              <span>POSITIVE</span><span id="stat-pos">0%</span>
+            </div>
+            <div style="height: 2px; background: #222; border-radius: 1px;">
+              <div id="bar-pos" style="height: 100%; width: 0%; background: #10b981;"></div>
+            </div>
+          </div>
+          <div class="radar-stat">
+            <div style="display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px;">
+              <span>NEGATIVE</span><span id="stat-neg">0%</span>
+            </div>
+            <div style="height: 2px; background: #222; border-radius: 1px;">
+              <div id="bar-neg" style="height: 100%; width: 0%; background: #ef4444;"></div>
+            </div>
+          </div>
+          <div class="radar-stat">
+            <div style="display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px;">
+              <span>SARCASTIC</span><span id="stat-sar">0%</span>
+            </div>
+            <div style="height: 2px; background: #222; border-radius: 1px;">
+              <div id="bar-sar" style="height: 100%; width: 0%; background: #f59e0b;"></div>
+            </div>
+          </div>
+          <div class="radar-stat">
+            <div style="display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px;">
+              <span>SERIOUS</span><span id="stat-ser">0%</span>
+            </div>
+            <div style="height: 2px; background: #222; border-radius: 1px;">
+              <div id="bar-ser" style="height: 100%; width: 0%; background: #3b82f6;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+        <label class="section-label">Infiltration Log (Terminal)</label>
+        <div id="logContainer"
+          style=" border: 1px solid var(--border); border-radius: 8px; padding: 16px; flex: 1; min-height: 300px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.6; color: #888;">
+          <div style="color: var(--primary);">[SYSTEM] Nera Terminal initialized...</div>
+          <div>[READY] Awaiting infiltration command.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: SETTINGS -->
+    <div id="settings" class="tab-pane">
+      <div class="settings-grid">
+        <div class="form-group">
+          <label class="section-label" for="provider">Provider</label>
+          <select id="provider" class="nera-modern">
+            <option value="groq">Groq (Llama 3)</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="openai">OpenAI GPT</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="stealthLevel">Stealth Protocol</label>
+          <select id="stealthLevel" class="nera-modern">
+            <option value="fast">Aggressive</option>
+            <option value="standard">Standard</option>
+            <option value="human">Human</option>
+            <option value="paranoid">Paranoid</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="section-label" for="apiKey" id="apiKeyLabel">Authentication Key</label>
+          <input type="password" id="apiKey" placeholder="Enter tactical key...">
+        </div>
+
+        <div id="modelGroup" class="form-group full-width" style="display: none;">
+          <label class="section-label" for="model">Neural Model (Dynamic)</label>
+          <select id="model" class="nera-modern">
+            <option value="">-- Awaiting Auth --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="persona">Tactical Profile</label>
+          <select id="persona" class="nera-modern">
+            <option value="Hawl">Hawl (Elite)</option>
+            <option value="Friendly">Friendly</option>
+            <option value="Sarcastic">Sarcastic</option>
+            <option value="Professional">Professional</option>
+            <option value="Funny">Chaos/Funny</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="tone">Comment Tone</label>
+          <select id="tone" class="nera-modern">
+            <option value="natural">Natural (Default)</option>
+            <option value="witty">Witty/Humorous</option>
+            <option value="professional">Professional</option>
+            <option value="supportive">Supportive</option>
+            <option value="sarcastic">Sarcastic</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" for="style">Comment Style</label>
+          <select id="style" class="nera-modern">
+            <option value="casual">Casual (Default)</option>
+            <option value="short">Short/Punchy</option>
+            <option value="detailed">Detailed/Long</option>
+            <option value="teen-code">Teen Code (VN)</option>
+            <option value="formal">Formal</option>
+          </select>
+        </div>
+
+        <div id="customGroup" class="form-group full-width" style="display: none;">
+          <label class="section-label" for="customPrompt">Payload Instructions</label>
+          <textarea id="customPrompt" placeholder="Inject custom tactical instructions..."></textarea>
+        </div>
+      </div>
+
+      <button id="saveBtn" class="btn-save" style="width: 100%; border-radius: 8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+        Save & Synchronize
+      </button>
+    </div>
+  </div>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" data-tab="command">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+      </svg>
+      <span>TERMINAL</span>
+    </button>
+    <button class="tab-btn" data-tab="settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path
+          d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+        </path>
+      </svg>
+      <span>SETTINGS</span>
+    </button>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">NERA INFILTRATOR v1.3.0</div>
+    <a href="#" class="bolt-link">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+      </svg>
+      BLUE ELECTRON ENGINE
+    </a>
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+
+</html>

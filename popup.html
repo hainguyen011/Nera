@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nera Control Center</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --primary: #00ff41;
+      --text: #e0e0e0;
+      --card-bg: #1a1a1a;
+      --input-bg: #2a2a2a;
+    }
+    body {
+      width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 16px;
+      border: 1px solid var(--primary);
+    }
+    h1 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status {
+      font-size: 10px;
+      color: var(--primary);
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid #333;
+      padding: 8px;
+      color: #fff;
+      border-radius: 4px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+    }
+    button {
+      width: 100%;
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 10px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    button:hover {
+      box-shadow: 0 0 15px var(--primary);
+      transform: translateY(-1px);
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 10px;
+      text-align: center;
+      color: #666;
+    }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚡ NERA CONTROL</h1>
+  <div class="status">SYSTEM STATUS: OPERATIONAL</div>
+
+  <div class="form-group">
+    <label for="provider">AI Provider</label>
+    <select id="provider">
+      <option value="groq">Groq (Llama 3 - Ultra Fast)</option>
+      <option value="gemini">Google Gemini (Deep Context)</option>
+      <option value="openai">OpenAI (Balanced)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="apiKey" id="apiKeyLabel">API Key</label>
+    <input type="password" id="apiKey" placeholder="Nhập khóa bí mật...">
+  </div>
+
+  <div class="form-group">
+    <label for="persona">Active Persona</label>
+    <select id="persona">
+      <option value="Hawl">Hawl (Elite/Sharp)</option>
+      <option value="Friendly">Friendly (Warm/Kind)</option>
+      <option value="Sarcastic">Sarcastic (Witty/Bite)</option>
+      <option value="Custom">-- Custom Ammo --</option>
+    </select>
+  </div>
+
+  <div id="customGroup" class="form-group" style="display: none;">
+    <label for="customPrompt">Custom Ammo (Instruction)</label>
+    <textarea id="customPrompt" placeholder="Ví dụ: Hãy phản biện một cách lịch sự nhưng đanh thép..."></textarea>
+  </div>
+
+  <button id="saveBtn">Save Configuration</button>
+
+  <div class="footer">
+    Nera Infiltration Agent v1.1.0 | <a href="#">Terminal</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

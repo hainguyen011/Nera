@@ -14,9 +14,24 @@
           "path": ".aevum/domains/dominfiltration/features/aicommentagent",
           "plans": [
             {
+              "name": "ai_brain_integration_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-08T14:00:02.493Z"
+            },
+            {
+              "name": "architecture_refactor_v1_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-09T03:09:17.604Z"
+            },
+            {
               "name": "bootstrap_nera_extension_structure_plan.md",
               "status": "todo",
               "updatedAt": "2026-05-08T12:55:51.191Z"
+            },
+            {
+              "name": "custom_ammo_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-08T14:06:22.956Z"
             }
           ]
         }
@@ -40,10 +55,10 @@
     "hac",
     {
       "id": "VOD-HAC-9X0F2E",
-      "name": "Hắc",
+      "name": "Hawl",
       "capability": "Offensive Security Auditing",
       "level": 5,
-      "knowledgePath": ".aevum/global/personas/h_c/knowledge"
+      "knowledgePath": ".aevum/global/personas/vod_hac_9x0f2e/knowledge"
     },
     {
       "id": "ENG-AN-7B9F1D",
