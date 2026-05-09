@@ -1,10 +1,11 @@
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/321acb48-f33e-4fdb-938c-b6e3cab55f88" />
+
+
 # Nera - AI Infiltration Agent
 
 > **"Every system has a flaw. Every conversation is a target. Nera is the ghost in the machine."**
 
 Nera is a high-performance Chrome Extension designed for tactical social media infiltration. It doesn't just comment; it analyzes, synthesizes, and deploys high-fidelity AI payloads directly into the heart of the DOM.
-
-![Nera Tactical Console](assets/nera_banner.png)
 
 ## Core Capabilities
 
@@ -81,11 +82,7 @@ Adjust your infiltration signature via the Stealth settings:
 
 ## Warning
 
-Nera is designed for high-efficiency engagement and research purposes. Use it responsibly. The "Paranoid" stealth mode is recommended for high-value targets to evade automated detection. However, automated engagement may violate the Terms of Service of certain social media platforms. Use of this tool is at your own risk. The developer is not responsible for any account restrictions or bans resulting from the use of this software.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Nera is designed for high-efficiency engagement. Use it responsibly. The "Paranoid" stealth mode is recommended for high-value targets.
 
 ---
 
