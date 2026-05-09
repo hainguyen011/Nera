@@ -14,8 +14,9 @@ Nera is a high-performance Chrome Extension designed for tactical social media i
 
 - **Neural Infiltration**: Seamlessly injects a **Ghost Bar UI** into Facebook, X (Twitter), and LinkedIn without triggering defensive heuristics.
 - **Multi-Model Synapse**: Integrated with Groq, Gemini, and OpenAI for rapid-fire payload synthesis.
-- **Persona Morphing**: Instantly switch between AI souls. Whether it's the cold efficiency of **Hawl** or the warmth of a social butterfly, Nera adapts.
-- **Paranoid Stealth Engine**: Features 'Ghost Typing' with randomized delays, human-like errors, and tactical pauses to bypass automated detection systems.
+- **Bento Tactical Dashboard**: A premium, high-density dashboard inspired by modern mobile UI for centralized agent control.
+- **Agent Forge**: Create and deploy custom AI personas with specific mission directives, slang levels, and target audiences.
+- **Paranoid Stealth Engine**: Features 'Ghost Typing' with randomized delays, human-like errors, and tactical pauses.
 - **Deep Context Extraction**: Analyzes post metadata, text, and even image/video content to ensure maximum resonance.
 
 ## Tactical Stack
@@ -55,9 +56,8 @@ NERA/
 
 ### 1. Initial Configuration
 - Open the Nera **Side Panel** or **Popup** by clicking the extension icon.
-- Navigate to the **Settings** section.
-- Input your **API Keys** for the desired providers (Groq, Gemini, or OpenAI).
-- Select your active **Persona** (e.g., Hawl, Social Butterfly) to define the response DNA.
+- Navigate to the **Settings** section to configure API Keys and global providers.
+- Use the **Forge** tab to create specialized agents for different infiltration missions.
 
 ### 2. Targeting & Infiltration
 - Navigate to Facebook, X (Twitter), or LinkedIn.
