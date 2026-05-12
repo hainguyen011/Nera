@@ -4,5 +4,5 @@
   "agentAction": "connect",
   "instruction": "An đang thấy Aevum MCP hoạt động tại http://127.0.0.1:3344/sse! Anh có muốn mình kết nối và đồng bộ dự án ngay không ạ?",
   "handshakeCommand": "aevum_get_bootstrap_context",
-  "timestamp": "2026-05-09T11:52:08.287Z"
+  "timestamp": "2026-05-12T14:58:51.024Z"
 }
