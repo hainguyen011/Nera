@@ -3,11 +3,13 @@
   "name": "Nera - AI Infiltration Agent",
   "version": "1.3.0",
   "description": "Auto-analysis and AI-driven commenting via DOM infiltration.",
+  "default_locale": "en",
   "permissions": [
     "storage",
     "activeTab",
     "scripting",
-    "sidePanel"
+    "sidePanel",
+    "contextMenus"
   ],
   "host_permissions": [
     "https://*.facebook.com/*",

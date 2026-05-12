@@ -16,3 +16,6 @@ Báo cáo này theo dõi quá trình trưởng thành và các cột mốc kỹ 
 - **Sự kiện**: Thăng cấp lên Level 6. Sức mạnh xử lý bối cảnh tăng cường.
 - **Trạng thái**: Đã ghi nhận vào Matrix.
 
+<!-- aevum_github_issue: new -->
+<!-- aevum_github_branch: research/evol-vod-hac-9x0f2e -->
+<!-- aevum_status: draft -->

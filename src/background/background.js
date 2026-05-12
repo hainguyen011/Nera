@@ -3,12 +3,34 @@
  */
 import { AIHub } from '../core/AIHub.js';
 import { StorageManager } from '../core/StorageManager.js';
+import { Humanizer } from '../core/Humanizer.js';
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Nera AI Agent (Modular) has been successfully recruited.");
   
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
     .catch((error) => console.error(error));
+
+  // Create Context Menu for selection
+  chrome.contextMenus.create({
+    id: "nera-analyze-selection",
+    title: chrome.i18n.getMessage("ctxAnalyzeSelection") || "NERA: Analyze Selection",
+    contexts: ["selection"]
+  });
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "nera-analyze-selection") {
+    const selectedText = info.selectionText;
+    // Notify side panel
+    chrome.runtime.sendMessage({
+      type: "ANALYZE_SELECTION",
+      content: selectedText,
+      tabId: tab.id
+    }).catch(() => {
+      // Side panel might be closed, that's okay
+    });
+  }
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -69,8 +91,9 @@ async function handleInfiltration(request, sendResponse) {
     let systemPrompt = getPersonaPrompt({ ...config, persona: activePersona });
 
     // Inject Agent Forge Profile Directives
+    let activeProfile = null;
     if (config.agentProfiles && config.activeProfileId) {
-      const activeProfile = config.agentProfiles.find(p => p.id === config.activeProfileId);
+      activeProfile = config.agentProfiles.find(p => p.id === config.activeProfileId);
       if (activeProfile) {
         systemPrompt += `\n\n[AGENT FORGE MISSION DATA]`;
         systemPrompt += `\n- CALLSIGN: ${activeProfile.name}`;
@@ -79,6 +102,24 @@ async function handleInfiltration(request, sendResponse) {
         systemPrompt += `\n- SLANG LEVEL: ${activeProfile.slang}`;
         systemPrompt += `\n- FORMALITY: ${activeProfile.formality}`;
         systemPrompt += `\n- LENGTH LIMIT: ${activeProfile.length}`;
+        
+        // NEW FORGE ENHANCEMENTS
+        if (activeProfile.vocabulary) systemPrompt += `\n- VOCABULARY/KEYWORDS: Use these frequently: ${activeProfile.vocabulary}`;
+        if (activeProfile.bannedWords) systemPrompt += `\n- BANNED KEYWORDS: NEVER use these: ${activeProfile.bannedWords}`;
+        if (activeProfile.ctaStrategy && activeProfile.ctaStrategy !== 'none') {
+          systemPrompt += `\n- CTA STRATEGY: End your comment with a ${activeProfile.ctaStrategy} to drive engagement.`;
+        }
+        if (activeProfile.emojiUsage) systemPrompt += `\n- EMOJI DENSITY: ${activeProfile.emojiUsage}`;
+        
+        if (activeProfile.traits) {
+          systemPrompt += `\n- PERSONALITY MATRIX: Humor(${activeProfile.traits.humor}%); Sarcasm(${activeProfile.traits.sarcasm}%); Empathy(${activeProfile.traits.empathy}%)`;
+        }
+
+        systemPrompt += `\n\n[HUMANIZATION DIRECTIVE]`;
+        systemPrompt += `\n- Be conversational. Mention a small detail from the post to sound authentic.`;
+        systemPrompt += `\n- Avoid generic "Great post!" style.`;
+        systemPrompt += `\n- If appropriate, share a short fake personal anecdote or relate to the author's situation.`;
+
         systemPrompt += `\n\nSTRICT INSTRUCTION: Overwrite default persona behavior with these Forge directives where they conflict.`;
       }
     }
@@ -89,7 +130,20 @@ async function handleInfiltration(request, sendResponse) {
       systemPrompt += `\n\nRECENT INTEL (Use for context, but PRIORITIZE current Tone/Style/Instructions): \n${historyText}`;
     }
 
-    systemPrompt += `\n\nLANGUAGE: Primary language is Vietnamese. Use modern, natural language. Avoid outdated words like "bằng hữu" unless requested.`;
+    // AUTOMATIC LANGUAGE PRIORITIZATION
+    const browserLang = chrome.i18n.getUILanguage();
+    const targetLang = (activeProfile && activeProfile.targetLanguage && activeProfile.targetLanguage !== 'auto') 
+      ? activeProfile.targetLanguage 
+      : browserLang;
+    
+    systemPrompt += `\n\n[LANGUAGE CONFIGURATION]`;
+    systemPrompt += `\n- PRIMARY LANGUAGE: ${targetLang}`;
+    systemPrompt += `\n- BROWSER LOCALE: ${browserLang}`;
+    systemPrompt += `\n- INSTRUCTION: Respond naturally in the PRIMARY LANGUAGE. If the post content is in a different language that you understand, you may adapt your tone but maintain the PRIMARY LANGUAGE for the response unless it makes more sense to be bilingual.`;
+    
+    if (targetLang.startsWith('vi')) {
+      systemPrompt += `\n- VIETNAMESE SPECIFIC: Use modern, natural language. Avoid outdated words like "bằng hữu" unless requested.`;
+    }
 
     const mode = request.postData?.mode || 'POST';
     const author = request.postData?.author || 'Unknown';
@@ -118,6 +172,19 @@ async function handleInfiltration(request, sendResponse) {
 
     const result = await AIHub.callProvider(tacticalContent, config, systemPrompt, tone, style);
     
+    // HUMANIZER POST-PROCESSING
+    let finalComment = result.comment;
+    if (activeProfile && activeProfile.humanize) {
+      broadcastLog(`i18n:logHumanizing:${activeProfile.slang}`, 'info');
+      finalComment = Humanizer.injectNaturalSlang(finalComment, activeProfile.slang);
+      finalComment = Humanizer.applyIntelligentTypos(finalComment, activeProfile.typoRate || 0.02);
+      finalComment = Humanizer.humanizeEmojis(finalComment, activeProfile.emojiUsage);
+      
+      const delayMs = Humanizer.calculateHumanDelay(finalComment);
+      broadcastLog(`i18n:logSimulatingBehavior:${Math.round(delayMs/1000)}`, 'info');
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+
     if (result.sentiment) {
       chrome.runtime.sendMessage({
         type: "SENTIMENT_UPDATE",
@@ -128,13 +195,13 @@ async function handleInfiltration(request, sendResponse) {
     // Lưu vào lịch sử
     await StorageManager.saveToThreadHistory(threadId, {
       postContent: content.substring(0, 100),
-      comment: result.comment
+      comment: finalComment
     });
 
-    broadcastLog(`AI generated response: "${result.comment.substring(0, 30)}..."`, 'success');
-    sendResponse({ success: true, comment: result.comment });
+    broadcastLog({ key: "logAiResponse", params: [finalComment.substring(0, 30)] }, 'success');
+    sendResponse({ success: true, comment: finalComment });
   } catch (error) {
-    broadcastLog(`Infiltration failed: ${error.message}`, 'error');
+    broadcastLog({ key: "logInfiltrationFailed", params: [error.message] }, 'error');
     sendResponse({ success: false, error: error.message });
   }
 }

@@ -24,3 +24,7 @@ Cho phép người dùng (Anh) tùy chỉnh "đạn" (system prompts/instruction
 - [x] **Config Logic**: Cập nhật `popup.js` để handle dữ liệu mới.
 - [x] **Prompt Engine**: Refactor `background.js` để tích hợp đạn custom vào Neural Core.
 - [ ] **Multi-Provider Arsenal**: Hỗ trợ Groq, Gemini và OpenAI trong `popup.html` và `background.js`.
+
+
+<!-- aevum_github_issue: 4 -->
+<!-- aevum_github_branch: feat/custom_ammo_plan -->

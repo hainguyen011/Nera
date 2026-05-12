@@ -243,7 +243,7 @@ export const NeraStyles = {
         margin-bottom: 12px;
       }
       .payload-editor:empty:before {
-        content: "What's the tactical plan today?";
+        content: attr(data-placeholder);
         color: rgba(255, 255, 255, 0.2);
         pointer-events: none;
       }
@@ -465,6 +465,33 @@ export const NeraStyles = {
         background: #2374e1;
         color: white;
         box-shadow: none;
+      }
+
+      .agent-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        white-space: nowrap;
+      }
+      .agent-badge:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+      .agent-badge.active {
+        background: rgba(35, 116, 225, 0.15);
+        color: #2374e1;
+        border-color: rgba(35, 116, 225, 0.3);
+      }
+      :host(.mode-comment) .agent-badge.active {
+        background: rgba(0, 200, 83, 0.15);
+        color: #00e676;
+        border-color: rgba(0, 200, 83, 0.3);
       }
       
       @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }

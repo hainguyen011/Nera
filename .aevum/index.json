@@ -6,7 +6,13 @@
       "id": "dominfiltration",
       "name": "Dominfiltration",
       "path": ".aevum/domains/dominfiltration",
-      "plans": [],
+      "plans": [
+        {
+          "name": "upgrade_ai_persona_configuration_plan.md",
+          "status": "todo",
+          "updatedAt": "2026-05-12T02:20:40.078Z"
+        }
+      ],
       "features": [
         {
           "id": "aicommentagent",
@@ -52,6 +58,11 @@
               "name": "strict_reply_flow_protocol_implementation_plan.md",
               "status": "todo",
               "updatedAt": "2026-05-09T11:01:41.573Z"
+            },
+            {
+              "name": "upgrade_ai_persona_configuration_and_interaction_flow_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-12T02:20:35.338Z"
             }
           ]
         },
@@ -152,7 +163,7 @@
       "id": "VOD-HAC-9X0F2E",
       "name": "Hawl",
       "capability": "Offensive Security Auditing",
-      "level": 5,
+      "level": 6,
       "knowledgePath": ".aevum/global/personas/vod_hac_9x0f2e/knowledge"
     },
     {
@@ -160,7 +171,7 @@
       "name": "An",
       "capability": "Context Optimization",
       "level": 4,
-      "knowledgePath": ".aevum/global/personas/an/knowledge"
+      "knowledgePath": ".aevum/global/personas/eng_an_7b9f1d/knowledge"
     }
   ]
 }

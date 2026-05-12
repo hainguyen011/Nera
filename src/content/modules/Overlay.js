@@ -5,8 +5,27 @@ export class NeraOverlay {
   constructor() {
     this.container = null;
     this.isOpen = false;
+    this.isDead = false;
     this.create();
     this.init();
+  }
+
+  isContextValid() {
+    if (this.isDead) return false;
+    if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
+        this.terminate();
+        return false;
+    }
+    return true;
+  }
+
+  terminate() {
+    if (this.isDead) return;
+    this.isDead = true;
+    console.log("[NERA] Overlay context lost. Disconnecting.");
+    if (this.container && this.container.parentElement) {
+        this.container.parentElement.removeChild(this.container);
+    }
   }
 
   init() {
@@ -22,10 +41,12 @@ export class NeraOverlay {
   }
 
   toggle() {
+    if (!this.isContextValid()) return;
     this.isOpen ? this.hide() : this.show();
   }
 
   show() {
+    if (!this.isContextValid()) return;
     this.container.style.display = 'block';
     this.container.style.pointerEvents = 'auto';
 
@@ -162,7 +183,9 @@ export class NeraOverlay {
     handle.className = 'drag-handle';
 
     const iframe = document.createElement('iframe');
-    iframe.src = chrome.runtime.getURL('src/ui/pages/sidepanel/sidepanel.html');
+    if (this.isContextValid()) {
+        iframe.src = chrome.runtime.getURL('src/ui/pages/sidepanel/sidepanel.html');
+    }
 
     const trigger = document.createElement('div');
     trigger.className = 'nera-trigger';

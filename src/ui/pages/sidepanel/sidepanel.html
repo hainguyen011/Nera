@@ -16,7 +16,7 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5">
       <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
     </svg>
-    <h1>Nera Tactical Command</h1>
+    <h1 data-i18n="tacticalCommand">Nera Tactical Command</h1>
     <div class="status-dot"></div>
   </div>
 
@@ -24,11 +24,11 @@
     <!-- TAB 1: COMMAND CENTER -->
     <div id="command" class="tab-pane active">
       <div class="form-group">
-        <label class="section-label">Neural Sentiment Radar</label>
+        <label class="section-label" data-i18n="sentimentRadar">Neural Sentiment Radar</label>
         <div id="radarContainer" class="tactical-card radar-grid">
           <div class="radar-stat">
             <div class="stat-header">
-              <span class="stat-name">POSITIVE</span>
+              <span class="stat-name" data-i18n="positive">POSITIVE</span>
               <span class="stat-value" id="stat-pos">0%</span>
             </div>
             <div class="progress-track">
@@ -37,7 +37,7 @@
           </div>
           <div class="radar-stat">
             <div class="stat-header">
-              <span class="stat-name">NEGATIVE</span>
+              <span class="stat-name" data-i18n="negative">NEGATIVE</span>
               <span class="stat-value" id="stat-neg">0%</span>
             </div>
             <div class="progress-track">
@@ -46,7 +46,7 @@
           </div>
           <div class="radar-stat">
             <div class="stat-header">
-              <span class="stat-name">SARCASTIC</span>
+              <span class="stat-name" data-i18n="sarcastic">SARCASTIC</span>
               <span class="stat-value" id="stat-sar">0%</span>
             </div>
             <div class="progress-track">
@@ -55,7 +55,7 @@
           </div>
           <div class="radar-stat">
             <div class="stat-header">
-              <span class="stat-name">SERIOUS</span>
+              <span class="stat-name" data-i18n="serious">SERIOUS</span>
               <span class="stat-value" id="stat-ser">0%</span>
             </div>
             <div class="progress-track">
@@ -66,11 +66,11 @@
       </div>
 
       <div class="form-group">
-        <label class="section-label">Infiltration Log</label>
+        <label class="section-label" data-i18n="infiltrationLog">Infiltration Log</label>
         <div class="terminal-card">
           <div id="logContainer">
-            <div style="color: #3b82f6;">[SYSTEM] Nera Terminal initialized...</div>
-            <div>[READY] Awaiting infiltration command.</div>
+            <div style="color: #3b82f6;" data-i18n="terminalInit">[SYSTEM] Nera Terminal initialized...</div>
+            <div data-i18n="awaitingCommand">[READY] Awaiting infiltration command.</div>
           </div>
         </div>
       </div>
@@ -80,65 +80,74 @@
     <div id="settings" class="tab-pane">
       <div class="settings-grid">
         <div class="form-group">
-          <label class="section-label">AI Provider</label>
+          <label class="section-label" data-i18n="aiProvider">AI Provider</label>
           <select id="provider">
-            <option value="groq">Groq (Llama 3)</option>
-            <option value="gemini">Google Gemini</option>
-            <option value="openai">OpenAI GPT</option>
+            <option value="groq" data-i18n="groq">Groq (Llama 3)</option>
+            <option value="gemini" data-i18n="gemini">Google Gemini</option>
+            <option value="openai" data-i18n="openai">OpenAI GPT</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="section-label">Stealth Protocol</label>
+          <label class="section-label" data-i18n="stealthProtocol">Stealth Protocol</label>
           <select id="stealthLevel">
-            <option value="fast">Aggressive</option>
-            <option value="standard" selected>Standard</option>
-            <option value="human">Human</option>
-            <option value="paranoid">Paranoid</option>
+            <option value="fast" data-i18n="stealthFast">Aggressive</option>
+            <option value="standard" data-i18n="stealthStandard" selected>Standard</option>
+            <option value="human" data-i18n="stealthHuman">Human</option>
+            <option value="paranoid" data-i18n="stealthParanoid">Paranoid</option>
           </select>
         </div>
 
         <div class="form-group full-width">
-          <label class="section-label" id="apiKeyLabel">Authentication Key</label>
-          <input type="password" id="apiKey" placeholder="Inject tactical key...">
+          <label class="section-label" id="apiKeyLabel" data-i18n="authKey">Authentication Key</label>
+          <input type="password" id="apiKey" data-i18n-placeholder="placeholderKey" placeholder="Inject tactical key...">
         </div>
 
         <div id="modelGroup" class="form-group full-width" style="display: none;">
-          <label class="section-label">Neural Model</label>
+          <label class="section-label" data-i18n="neuralModel">Neural Model</label>
           <select id="model">
-            <option value="">-- Awaiting Auth --</option>
+            <option value="" data-i18n="awaitingAuth">-- Awaiting Auth --</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="section-label">AI Persona</label>
+          <label class="section-label" data-i18n="aiPersona">AI Persona</label>
           <select id="persona">
-            <option value="Hawl">Elite (Hawl)</option>
-            <option value="Friendly">Friendly</option>
-            <option value="Sarcastic">Sarcastic</option>
-            <option value="Professional">Professional</option>
-            <option value="Funny">Chaos/Funny</option>
-            <option value="Investigative">Investigative</option>
-            <option value="Stealth">Stealth</option>
-            <option value="Hype">Hype</option>
-            <option value="Analytical">Analytical</option>
-            <option value="Custom">Custom Prompt</option>
+            <option value="Hawl" data-i18n="personaHawl">Elite (Hawl)</option>
+            <option value="Friendly" data-i18n="personaFriendly">Friendly</option>
+            <option value="Sarcastic" data-i18n="personaSarcastic">Sarcastic</option>
+            <option value="Professional" data-i18n="personaProfessional">Professional</option>
+            <option value="Funny" data-i18n="personaFunny">Chaos/Funny</option>
+            <option value="Investigative" data-i18n="personaInvestigative">Investigative</option>
+            <option value="Stealth" data-i18n="personaStealth">Stealth</option>
+            <option value="Hype" data-i18n="personaHype">Hype</option>
+            <option value="Analytical" data-i18n="personaAnalytical">Analytical</option>
+            <option value="Custom" data-i18n="personaCustom">Custom Prompt</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="section-label">Tone Nuance</label>
+          <label class="section-label" data-i18n="toneNuance">Tone Nuance</label>
           <select id="tone">
-            <option value="neutral">Neutral</option>
-            <option value="witty">Witty</option>
-            <option value="aggressive">Aggressive</option>
-            <option value="polite">Polite</option>
+            <option value="neutral" data-i18n="toneNeutral">Neutral</option>
+            <option value="witty" data-i18n="toneWitty">Witty</option>
+            <option value="aggressive" data-i18n="toneAggressive">Aggressive</option>
+            <option value="polite" data-i18n="tonePolite">Polite</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" data-i18n="uiDisplayLanguage">UI Display Language</label>
+          <select id="uiLanguage">
+            <option value="auto" data-i18n="autoBrowser">Auto (Browser)</option>
+            <option value="vi" data-i18n="vietnamese">Vietnamese</option>
+            <option value="en" data-i18n="english">English</option>
           </select>
         </div>
 
         <div id="customGroup" class="form-group full-width" style="display: none;">
-          <label class="section-label">Payload Instructions</label>
-          <textarea id="customPrompt" placeholder="Inject custom tactical instructions..."></textarea>
+          <label class="section-label" data-i18n="payloadInstructions">Payload Instructions</label>
+          <textarea id="customPrompt" data-i18n-placeholder="placeholderCustom" placeholder="Inject custom tactical instructions..."></textarea>
         </div>
       </div>
 
@@ -148,7 +157,7 @@
           <polyline points="17 21 17 13 7 13 7 21"></polyline>
           <polyline points="7 3 7 8 15 8"></polyline>
         </svg>
-        Save & Synchronize
+        <span data-i18n="saveSync">Save & Synchronize</span>
       </button>
     </div>
 
@@ -156,51 +165,133 @@
     <div id="forge" class="tab-pane">
       <div class="settings-grid">
         <div class="form-group full-width">
-          <label class="section-label">Agent Designation</label>
-          <input type="text" id="agentName" placeholder="E.g., Nera-Seeder-01">
+          <label class="section-label" data-i18n="agentDesignation">Agent Designation</label>
+          <input type="text" id="agentName" data-i18n-placeholder="placeholderName" placeholder="E.g., Nera-Seeder-01">
         </div>
 
         <div class="form-group full-width">
-          <label class="section-label">Primary Mission Directive</label>
-          <textarea id="missionDirective" rows="4" placeholder="Define the core mission and personality..."></textarea>
+          <label class="section-label" data-i18n="missionDirective">Primary Mission Directive</label>
+          <textarea id="missionDirective" rows="4" data-i18n-placeholder="placeholderMission" placeholder="Define the core mission and personality..."></textarea>
         </div>
 
         <div class="form-group">
-          <label class="section-label">Target Audience</label>
+          <label class="section-label" data-i18n="targetAudience">Target Audience</label>
           <select id="targetAudience">
-            <option value="general">General</option>
-            <option value="genz">Gen Z / Slang</option>
-            <option value="professional">Professional</option>
-            <option value="skeptical">Skeptical / Critics</option>
+            <option value="general" data-i18n="audienceGeneral">General</option>
+            <option value="genz" data-i18n="audienceGenZ">Gen Z / Slang</option>
+            <option value="professional" data-i18n="audienceProfessional">Professional</option>
+            <option value="skeptical" data-i18n="audienceSkeptical">Skeptical / Critics</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="section-label">Slang Level</label>
+          <label class="section-label" data-i18n="slangLevel">Slang Level</label>
           <select id="slangLevel">
-            <option value="none">Zero</option>
-            <option value="low">Subtle</option>
-            <option value="medium">Fluent</option>
-            <option value="high">Native/Chaos</option>
+            <option value="none" data-i18n="slangNone">Zero</option>
+            <option value="low" data-i18n="slangLow">Subtle</option>
+            <option value="medium" data-i18n="slangMedium">Fluent</option>
+            <option value="high" data-i18n="slangHigh">Native/Chaos</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="section-label">Formality</label>
+          <label class="section-label" data-i18n="formality">Formality</label>
           <select id="formality">
-            <option value="natural">Natural</option>
-            <option value="casual">Casual</option>
-            <option value="formal">Formal</option>
+            <option value="natural" data-i18n="formalityNatural">Natural</option>
+            <option value="casual" data-i18n="formalityCasual">Casual</option>
+            <option value="formal" data-i18n="formalityFormal">Formal</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="section-label">Length Limit</label>
+          <label class="section-label" data-i18n="lengthLimit">Length Limit</label>
           <select id="lengthLimit">
-            <option value="short">Concise</option>
-            <option value="medium" selected>Standard</option>
-            <option value="long">Elaborate</option>
+            <option value="short" data-i18n="lengthShort">Concise</option>
+            <option value="medium" data-i18n="lengthMedium" selected>Standard</option>
+            <option value="long" data-i18n="lengthLong">Elaborate</option>
           </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="section-label" data-i18n="vocabulary">Vocabulary / Key Phrases</label>
+          <textarea id="agentVocabulary" rows="2" data-i18n-placeholder="placeholderVocab" placeholder="Comma-separated words/phrases this agent loves to use..."></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="section-label" data-i18n="bannedWords">Banned Keywords</label>
+          <input type="text" id="bannedWords" data-i18n-placeholder="placeholderBanned" placeholder="Never use these words (comma separated)...">
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" data-i18n="ctaStrategy">CTA Strategy</label>
+          <select id="ctaStrategy">
+            <option value="none" data-i18n="ctaNone">No specific CTA</option>
+            <option value="question" data-i18n="ctaQuestion">Ask a question</option>
+            <option value="opinion" data-i18n="ctaOpinion">Request opinion</option>
+            <option value="hype" data-i18n="ctaHype">Hype/Support</option>
+            <option value="debate" data-i18n="ctaDebate">Start debate</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" data-i18n="targetLanguage">Target Language</label>
+          <div class="nera-select" id="targetLanguageSelect">
+            <select id="targetLanguage">
+              <option value="auto" data-i18n="autoBrowser">Auto (Browser)</option>
+              <option value="vi" data-i18n="vietnamese">Vietnamese</option>
+              <option value="en" data-i18n="english">English</option>
+              <option value="ja" data-i18n="japanese">Japanese</option>
+              <option value="ko" data-i18n="korean">Korean</option>
+              <option value="zh" data-i18n="chinese">Chinese</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="section-label" data-i18n="emojiUsage">Emoji Usage</label>
+          <select id="emojiUsage">
+            <option value="none">None</option>
+            <option value="minimal">Minimal</option>
+            <option value="natural" selected>Natural</option>
+            <option value="heavy">Heavy (Chaos)</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width personality-matrix">
+          <label class="section-label" data-i18n="personalityMatrix">Personality Matrix</label>
+          <div class="matrix-grid">
+            <div class="matrix-item">
+              <span data-i18n="humor">Humor</span>
+              <input type="range" id="traitHumor" min="0" max="100" value="50">
+            </div>
+            <div class="matrix-item">
+              <span data-i18n="sarcasm">Sarcasm</span>
+              <input type="range" id="traitSarcasm" min="0" max="100" value="20">
+            </div>
+            <div class="matrix-item">
+              <span data-i18n="empathy">Empathy</span>
+              <input type="range" id="traitEmpathy" min="0" max="100" value="70">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: rgba(35, 116, 225, 0.05); padding: 12px; border-radius: 8px; border: 1px solid var(--primary-glow);">
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 13px; font-weight: 300; color: var(--primary); letter-spacing: 0.02em;" data-i18n="humanizeMode">HUMANIZE MODE</span>
+                <span style="font-size: 10px; color: var(--text-muted); font-weight: 300;" data-i18n="humanizeDesc">Enable typos & behavior delay</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="humanizeToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div id="humanizeOptions" class="form-group full-width" style="display: none; margin-top: 12px; border-left: 2px solid var(--primary); padding-left: 16px;">
+            <label class="section-label" data-i18n="typoRate">Typo Rate (Imperfection)</label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" id="typoRate" min="0" max="20" value="2" style="flex: 1;">
+                <span id="typoRateValue" style="font-size: 10px; font-family: var(--font-mono); min-width: 24px;">2%</span>
+            </div>
         </div>
       </div>
 
@@ -208,11 +299,11 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
         </svg>
-        Forge & Deploy Agent
+        <span data-i18n="saveAgent">Forge & Deploy Agent</span>
       </button>
 
       <div style="margin-top: 32px;">
-        <label class="section-label">Active Squad</label>
+        <label class="section-label" data-i18n="activeAgents">Active Squad</label>
         <div id="profileList" style="display: flex; flex-direction: column; gap: 8px;">
           <!-- Profiles injected here -->
         </div>
@@ -222,24 +313,14 @@
 
   <!-- Floating Dock -->
   <div class="tabs-nav">
+    <button class="tab-btn" data-tab="forge">
+      <span data-i18n="forgeTab">FORGE</span>
+    </button>
     <button class="tab-btn active" data-tab="command">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-      </svg>
-      <span>TERMINAL</span>
+      <span data-i18n="terminalTab">TERMINAL</span>
     </button>
     <button class="tab-btn" data-tab="settings">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-      </svg>
-      <span>SETTINGS</span>
-    </button>
-    <button class="tab-btn" data-tab="forge">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-      </svg>
-      <span>FORGE</span>
+      <span data-i18n="settingsTab">SETTINGS</span>
     </button>
   </div>
 

@@ -8,7 +8,28 @@ export class NeraInfiltrator {
     this.NeraDataMiner = NeraDataMiner;
     this.observer = null;
     this.globalPersona = 'Hawl';
+    this.scanInterval = null;
+    this.isDead = false;
+    this.agentProfiles = [];
+    this.activeControls = new Set();
     this.init();
+  }
+
+  isContextValid() {
+    if (this.isDead) return false;
+    if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
+        this.terminate();
+        return false;
+    }
+    return true;
+  }
+
+  terminate() {
+    if (this.isDead) return;
+    this.isDead = true;
+    console.log("[NERA] Extension context lost. Terminating field agent.");
+    if (this.observer) this.observer.disconnect();
+    if (this.scanInterval) clearInterval(this.scanInterval);
   }
 
   async init() {
@@ -20,10 +41,21 @@ export class NeraInfiltrator {
         const result = await chrome.storage.local.get('persona');
         if (result.persona) this.globalPersona = result.persona;
 
-        // Listen for persona changes
+        // Listen for persona and profile changes
         chrome.storage.onChanged.addListener((changes) => {
-          if (changes.persona) this.globalPersona = changes.persona.newValue;
+          if (changes.persona) {
+            this.globalPersona = changes.persona.newValue;
+            this.broadcastPersonaChange(changes.persona.newValue);
+          }
+          if (changes.agentProfiles) {
+            this.agentProfiles = changes.agentProfiles.newValue || [];
+            this.broadcastProfilesChange();
+          }
         });
+
+        // Initial profiles load
+        const profilesResult = await chrome.storage.local.get('agentProfiles');
+        if (profilesResult.agentProfiles) this.agentProfiles = profilesResult.agentProfiles;
       }
     } catch (e) {
       console.warn("[NERA] Storage context lost.", e);
@@ -33,7 +65,23 @@ export class NeraInfiltrator {
     this.scanExisting();
 
     // Tactical Pulse: Periodic deep scan for late-rendering posts or missed targets
-    setInterval(() => this.scanExisting(), 3000);
+    this.scanInterval = setInterval(() => {
+        if (this.isContextValid()) {
+            this.scanExisting();
+        }
+    }, 3000);
+  }
+
+  broadcastPersonaChange(newPersona) {
+    this.activeControls.forEach(ctrl => {
+        if (ctrl.updatePersona) ctrl.updatePersona(newPersona);
+    });
+  }
+
+  broadcastProfilesChange() {
+    this.activeControls.forEach(ctrl => {
+        if (ctrl.renderBadges) ctrl.renderBadges();
+    });
   }
 
   setupObserver() {
@@ -54,6 +102,7 @@ export class NeraInfiltrator {
   }
 
   scanExisting() {
+    if (!this.isContextValid()) return;
     const postSelectors = [
       'div[data-testid="fbfeed_story"]',
       '[role="article"]',
@@ -82,6 +131,7 @@ export class NeraInfiltrator {
   }
 
   checkNode(node) {
+    if (!this.isContextValid()) return;
     try {
       const postSelectors = [
         'div[data-testid="fbfeed_story"]',
@@ -122,6 +172,7 @@ export class NeraInfiltrator {
   }
 
   injectNeraControl(post) {
+    if (!this.isContextValid()) return;
     if (post.dataset.neraInfiltrated) return;
     
     // Safety check: skip elements that are obviously not posts (like very small buttons)
@@ -175,7 +226,7 @@ export class NeraInfiltrator {
           container.style.setProperty('z-index', '2147483647', 'important');
       }
 
-      this.sendLog(isExpanded ? "Console Expanded: High-Fidelity Mode" : "Console Minified: Stealth Mode", "info");
+      this.sendLog(isExpanded ? "i18n:logConsoleExpanded" : "i18n:logConsoleMinified", "info");
     };
 
     const trigger = consoleEl.querySelector('.nera-toggle-trigger');
@@ -191,7 +242,16 @@ export class NeraInfiltrator {
     const footer = consoleEl.querySelector('.console-footer');
     
     const updateBadges = () => {
-      if (personaBadge) personaBadge.innerText = selectedPersona;
+      let displayName = selectedPersona;
+      const profile = this.agentProfiles.find(p => p.id === selectedPersona);
+      if (profile) {
+          displayName = profile.name;
+      } else {
+          // Check if it's a built-in persona that needs translation
+          displayName = this.NeraTemplates.safeI18n(`persona${selectedPersona}`, selectedPersona);
+      }
+      
+      if (personaBadge) personaBadge.innerText = displayName;
       if (intentBadge) intentBadge.innerText = selectedIntent;
     };
 
@@ -214,24 +274,102 @@ export class NeraInfiltrator {
         editor.innerText = "";
         mainBtn.dataset.state = "";
         mainBtn.innerHTML = `<span>Synthesize</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`;
-        this.sendLog("Tactical Reload: Regenerating...", "info");
-        // No auto-trigger on manual reset to allow hint typing
+        this.sendLog("i18n:logTacticalReload", "info");
       };
     }
 
+    // Add to active controls for updates
+    const controlRef = { 
+        consoleEl, 
+        updatePersona: (id) => {
+            selectedPersona = id;
+            updateBadges();
+            renderAgentBadges();
+        },
+        renderBadges: () => {
+            renderAgentBadges();
+        }
+    };
+    this.activeControls.add(controlRef);
+
     // Persona Selection
     const personaMinis = consoleEl.querySelectorAll('.persona-mini');
+    const agentBadgesContainer = consoleEl.querySelector('#nera-agent-badges');
+
+    const updateActivePersonaUI = (id) => {
+        // Update minis
+        personaMinis.forEach(m => {
+            m.classList.toggle('active', m.dataset.persona === id);
+        });
+        // Update badges
+        consoleEl.querySelectorAll('.agent-badge').forEach(b => {
+            b.classList.toggle('active', b.dataset.persona === id || b.dataset.profileId === id);
+        });
+        selectedPersona = id;
+        updateBadges();
+        
+        // Sync to storage
+        if (this.isContextValid()) {
+            try {
+                chrome.storage.local.get(['agentProfiles'], (result) => {
+                    if (chrome.runtime.lastError) return;
+                    const update = { persona: id };
+                    if (result.agentProfiles) {
+                        const profile = result.agentProfiles.find(p => p.id === id);
+                        if (profile) update.activeProfileId = id;
+                    }
+                    chrome.storage.local.set(update);
+                });
+            } catch (e) {}
+        }
+    };
+
+    const renderAgentBadges = async () => {
+      if (!agentBadgesContainer) return;
+      
+      const profiles = this.agentProfiles || [];
+      const currentPersona = selectedPersona;
+
+      // Clear
+      agentBadgesContainer.innerHTML = '';
+
+      // 1. Add main built-in personas as quick badges
+      const builtIn = ['Hawl', 'Professional', 'Sarcastic', 'Friendly'];
+      builtIn.forEach(p => {
+        const b = document.createElement('div');
+        b.className = `agent-badge ${currentPersona === p ? 'active' : ''}`;
+        b.dataset.persona = p;
+        b.innerText = this.NeraTemplates.safeI18n(`persona${p}`, p);
+        b.onclick = (e) => {
+          e.stopPropagation();
+          updateActivePersonaUI(p);
+          this.sendLog(`i18n:logSoulShifted:${b.innerText}`, "info");
+        };
+        agentBadgesContainer.appendChild(b);
+      });
+
+      // 2. Add Custom Forge Profiles
+      profiles.forEach(profile => {
+        const b = document.createElement('div');
+        b.className = `agent-badge ${currentPersona === profile.id ? 'active' : ''}`;
+        b.dataset.profileId = profile.id;
+        b.innerText = profile.name;
+        b.onclick = (e) => {
+          e.stopPropagation();
+          updateActivePersonaUI(profile.id);
+          this.sendLog(`i18n:logSoulShifted:${profile.name}`, "info");
+        };
+        agentBadgesContainer.appendChild(b);
+      });
+    };
+
+    renderAgentBadges();
+
     personaMinis.forEach(mini => {
       mini.onclick = (e) => {
         e.stopPropagation();
-        personaMinis.forEach(i => i.classList.remove('active'));
-        mini.classList.add('active');
-        selectedPersona = mini.dataset.persona;
-        updateBadges();
-        try {
-          chrome.storage.local.set({ persona: selectedPersona });
-        } catch (e) { /* Storage might be throttled or disconnected */ }
-        this.sendLog(`Soul shifted: ${selectedPersona}`, "info");
+        updateActivePersonaUI(mini.dataset.persona);
+        this.sendLog(`i18n:logSoulShifted:${mini.dataset.persona}`, "info");
       };
     });
 
@@ -243,7 +381,7 @@ export class NeraInfiltrator {
         el.classList.add('active');
         selectedIntent = el.dataset.intent;
         updateBadges();
-        this.sendLog(`Aim locked: ${selectedIntent}`, "info");
+        this.sendLog(`i18n:logAimLocked:${selectedIntent}`, "info");
 
         // AUTOMATIC FLOW: Clicking an intent automatically triggers synthesis
         const userHint = editor.innerText.trim();
@@ -279,7 +417,7 @@ export class NeraInfiltrator {
                 attachIntentLogic(newIntent);
                 mini.parentNode.insertBefore(newIntent, mini);
               });
-              this.sendLog("AI suggested new tactical paths.", "success");
+              this.sendLog("i18n:logAiSuggested", "success");
             }
           });
         };
@@ -292,6 +430,7 @@ export class NeraInfiltrator {
       mainBtn.onclick = (e) => {
         e.stopPropagation();
         chrome.storage.local.get('autoSubmit', (res) => {
+          if (chrome.runtime.lastError) return;
           const autoSubmit = res.autoSubmit !== false; // Default to true
           if (mainBtn.dataset.state === 'ready') {
             this.executeDeployment(post, editor.innerText, mainBtn, anchoredBtn, autoSubmit);
@@ -325,7 +464,7 @@ export class NeraInfiltrator {
     this.fixAncestors(post);
     if (mode === 'COMMENT') this.fixAncestors(container); // Extra safety for comments
 
-    this.sendLog("Tactical Console ready for input.", "success");
+    this.sendLog("i18n:logTerminalReady", "success");
   }
 
   /**
@@ -449,7 +588,7 @@ export class NeraInfiltrator {
       } else {
         btn.innerHTML = `<span>Retry Synthesis</span>`;
         if (response && response.error) {
-          this.sendLog(`Synthesis failed: ${response.error}`, "error");
+          this.sendLog({ key: "logSynthesisFailed", params: [response.error] }, "error");
         }
       }
     });
@@ -505,15 +644,17 @@ export class NeraInfiltrator {
     }
 
     if (!input) {
-      this.sendLog("Infiltration failed: Terminal unreachable.", "error");
+      this.sendLog("i18n:logInfiltrationFailed:Terminal unreachable.", "error");
       return false;
     }
 
     // STAGE 3: Ghost Typing Execution
     let stealthLevel = 'standard';
     try {
-      const res = await chrome.storage.local.get('stealthLevel');
-      if (res.stealthLevel) stealthLevel = res.stealthLevel;
+      if (this.isContextValid()) {
+          const res = await chrome.storage.local.get('stealthLevel');
+          if (res.stealthLevel) stealthLevel = res.stealthLevel;
+      }
     } catch (e) {}
 
     const config = this.getStealthConfig(stealthLevel);
@@ -537,7 +678,7 @@ export class NeraInfiltrator {
 
     // STAGE 4: Tactical Launch
     if (autoSubmit) {
-      this.sendLog("Payload delivered. Executing Launch...", "success");
+      this.sendLog("i18n:logPayloadDelivered", "success");
       await new Promise(r => setTimeout(r, 800));
       
       let submitBtn = input.closest('form')?.querySelector('div[role="button"][aria-label*="Đăng"], div[role="button"][aria-label*="Post"]') ||
@@ -563,7 +704,7 @@ export class NeraInfiltrator {
   }
 
   async executeReplyFlow(post, selectors, anchoredBtn) {
-    this.sendLog("[REPLY] Initiating Strict Protocol: Identifying target reply trigger...", "info");
+    this.sendLog("i18n:logInitiatingReply", "info");
     
     // Always attempt to find the reply button first
     let replyBtn = anchoredBtn || 
@@ -577,7 +718,7 @@ export class NeraInfiltrator {
       // Record existing editors to detect the new one
       const existingEditors = new Set(Array.from(document.querySelectorAll(selectors.join(','))));
       
-      this.sendLog("[REPLY] Step 1: Triggering Reply interaction...", "info");
+      this.sendLog("i18n:logTriggeringReply", "info");
       replyBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
       
       // Clear focus to detect focus-shift
@@ -589,7 +730,7 @@ export class NeraInfiltrator {
       });
       if (typeof replyBtn.click === 'function') replyBtn.click();
       
-      this.sendLog("[REPLY] Step 2: Waiting for sub-terminal to mount...", "info");
+      this.sendLog("i18n:logWaitingTerminal", "info");
       
       // Wait for behavioral changes (New element or Focus shift)
       let input = null;
@@ -600,7 +741,7 @@ export class NeraInfiltrator {
         const active = document.activeElement;
         if (active && (active.getAttribute('role') === 'textbox' || active.hasAttribute('contenteditable'))) {
             input = active;
-            this.sendLog("[REPLY] Step 3: Terminal identified via Focus-Shift.", "success");
+            this.sendLog("i18n:logTerminalFocus", "success");
             break;
         }
 
@@ -609,7 +750,7 @@ export class NeraInfiltrator {
         const newEditor = currentEditors.find(e => !existingEditors.has(e));
         if (newEditor) {
             input = newEditor;
-            this.sendLog("[REPLY] Step 3: Terminal identified via DOM Mutation.", "success");
+            this.sendLog("i18n:logTerminalMutation", "success");
             break;
         }
 
@@ -617,13 +758,13 @@ export class NeraInfiltrator {
         const nearby = this.findInputNear(post, selectors);
         if (nearby && !existingEditors.has(nearby)) {
             input = nearby;
-            this.sendLog("[REPLY] Step 3: Terminal identified via Geometric Proximity.", "success");
+            this.sendLog("i18n:logTerminalProximity", "success");
             break;
         }
       }
 
       if (input) {
-          this.sendLog("[REPLY] Step 4: Synchronizing target for Ghost Typing...", "info");
+          this.sendLog("i18n:logSyncGhostTyping", "info");
           input.focus();
           await new Promise(r => setTimeout(r, 200));
           // Clear drafts/mentions
@@ -673,7 +814,7 @@ export class NeraInfiltrator {
   }
 
   async executePostFlow(post, selectors, anchoredBtn) {
-    this.sendLog("[POST] Engagement Protocol: Locating main terminal...", "info");
+    this.sendLog("i18n:logLocatingMainTerminal", "info");
     
     // Find root for post context
     let root = post;
@@ -686,7 +827,7 @@ export class NeraInfiltrator {
     let input = this.findInput(root, selectors);
     
     if (!input) {
-      this.sendLog("[POST] Terminal hidden. Dispatching interaction signal...", "warning");
+      this.sendLog("i18n:logTerminalHidden", "warning");
       let commentBtn = anchoredBtn || 
                        root.querySelector('div[aria-label="Viết bình luận"][role="button"]') ||
                        root.querySelector('div[aria-label="Bình luận"][role="button"]') ||
@@ -748,7 +889,7 @@ export class NeraInfiltrator {
                      document.querySelector('div[role="dialog"] div[aria-label="Close"]') ||
                      document.querySelector('div[aria-label="Đóng bài viết"]');
     if (closeBtn) {
-        this.sendLog("Tactical popup dismissed. Workspace cleared.", "success");
+        this.sendLog("i18n:logPopupDismissed", "success");
         closeBtn.click();
     }
   }

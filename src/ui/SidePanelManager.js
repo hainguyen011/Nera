@@ -7,8 +7,10 @@ import { NeraSelect } from './components/NeraSelect.js';
 export const SidePanelManager = {
   elements: {},
   customSelects: [],
+  translations: null,
 
   init() {
+    this.translateUI();
     this.elements = {
       apiKeyInput: document.getElementById('apiKey'),
       apiKeyLabel: document.getElementById('apiKeyLabel'),
@@ -20,6 +22,7 @@ export const SidePanelManager = {
       customGroup: document.getElementById('customGroup'),
       customPromptInput: document.getElementById('customPrompt'),
       toneSelect: document.getElementById('tone'),
+      uiLanguageSelect: document.getElementById('uiLanguage'),
       saveBtn: document.getElementById('saveConfig'),
       logContainer: document.getElementById('logContainer'),
       tabBtns: document.querySelectorAll('.tab-btn'),
@@ -32,6 +35,19 @@ export const SidePanelManager = {
       slangLevelSelect: document.getElementById('slangLevel'),
       formalitySelect: document.getElementById('formality'),
       lengthLimitSelect: document.getElementById('lengthLimit'),
+      agentVocabularyInput: document.getElementById('agentVocabulary'),
+      bannedWordsInput: document.getElementById('bannedWords'),
+      ctaStrategySelect: document.getElementById('ctaStrategy'),
+      emojiUsageSelect: document.getElementById('emojiUsage'),
+      emojiUsageSelect: document.getElementById('emojiUsage'),
+      targetLanguageSelect: document.getElementById('targetLanguage'),
+      traitHumorInput: document.getElementById('traitHumor'),
+      traitSarcasmInput: document.getElementById('traitSarcasm'),
+      traitEmpathyInput: document.getElementById('traitEmpathy'),
+      humanizeToggle: document.getElementById('humanizeToggle'),
+      humanizeOptions: document.getElementById('humanizeOptions'),
+      typoRateInput: document.getElementById('typoRate'),
+      typoRateValue: document.getElementById('typoRateValue'),
       saveProfileBtn: document.getElementById('saveProfileBtn'),
       profileList: document.getElementById('profileList')
     };
@@ -67,8 +83,15 @@ export const SidePanelManager = {
   },
 
   async loadConfig() {
-    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style']);
+    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style', 'uiLanguage']);
     
+    if (config.uiLanguage) {
+      this.elements.uiLanguageSelect.value = config.uiLanguage;
+      await this.loadTranslations(config.uiLanguage);
+    }
+    
+    this.translateUI();
+
     if (config.apiKey && this.elements.apiKeyInput) this.elements.apiKeyInput.value = config.apiKey;
     if (config.provider && this.elements.providerSelect) {
       this.elements.providerSelect.value = config.provider;
@@ -124,10 +147,36 @@ export const SidePanelManager = {
     if (this.elements.saveBtn) {
       this.elements.saveBtn.addEventListener('click', () => this.saveConfig());
     }
+
+    if (this.elements.uiLanguageSelect) {
+      this.elements.uiLanguageSelect.addEventListener('change', async () => {
+        const lang = this.elements.uiLanguageSelect.value;
+        await this.loadTranslations(lang);
+        this.translateUI();
+        
+        // Update custom selects as they might have been translated
+        this.customSelects.forEach(cs => {
+          cs.updateTriggerText();
+          cs.updateOptionsList();
+        });
+      });
+    }
     
     // Forge Listeners
     if (this.elements.saveProfileBtn) {
       this.elements.saveProfileBtn.addEventListener('click', () => this.saveProfile());
+    }
+
+    if (this.elements.humanizeToggle) {
+        this.elements.humanizeToggle.addEventListener('change', (e) => {
+            this.elements.humanizeOptions.style.display = e.target.checked ? 'block' : 'none';
+        });
+    }
+
+    if (this.elements.typoRateInput) {
+        this.elements.typoRateInput.addEventListener('input', (e) => {
+            this.elements.typoRateValue.innerText = `${e.target.value}%`;
+        });
     }
   },
 
@@ -176,9 +225,9 @@ export const SidePanelManager = {
             modelCustomSelect.refresh();
         }
 
-        this.addLog(`Loaded ${models.length} models successfully.`, 'success');
+        this.addLog(`i18n:logTerminalReady`, 'success');
     } catch (err) {
-        this.addLog(`Failed to load models: ${err.message}`, 'error');
+        this.addLog({ key: "logInfiltrationFailed", params: [err.message] }, 'error');
     }
   },
 
@@ -189,6 +238,12 @@ export const SidePanelManager = {
       }
       if (message.type === "SENTIMENT_UPDATE") {
         this.updateRadar(message.data);
+      }
+      if (message.type === "ANALYZE_SELECTION") {
+        this.addLog(`[MANUAL SCAN] i18n:analyzingTarget`, 'info');
+        this.addLog(`"${message.content.substring(0, 60)}..."`, 'ai');
+        // Store for tactical context
+        this.currentManualSelection = message.content;
       }
     });
   },
@@ -252,27 +307,67 @@ export const SidePanelManager = {
       stealthLevel: this.elements.stealthLevelSelect ? this.elements.stealthLevelSelect.value : 'standard',
       persona: this.elements.personaSelect ? this.elements.personaSelect.value : 'Hawl',
       tone: this.elements.toneSelect ? this.elements.toneSelect.value : 'neutral',
+      uiLanguage: this.elements.uiLanguageSelect ? this.elements.uiLanguageSelect.value : 'auto',
       customPrompt: this.elements.customPromptInput ? this.elements.customPromptInput.value.trim() : ''
     };
 
     if (!config.apiKey) {
-      alert("Hệ thống yêu cầu API Key để hoạt động.");
+      alert(this.getMessage("apiKeyRequired"));
       return;
     }
 
-    await StorageManager.setConfig(config);
+    // Handle Language Change
+    if (config.uiLanguage) {
+      await this.loadTranslations(config.uiLanguage);
+      this.translateUI();
+    }
 
-    this.elements.saveBtn.innerText = 'CONFIGURATION SYNCED';
+    await StorageManager.set(config);
+
+    this.elements.saveBtn.innerText = this.getMessage("configSynced");
     this.elements.saveBtn.style.background = '#ffffff';
     this.elements.saveBtn.style.color = '#000000';
     
     setTimeout(() => {
-      this.elements.saveBtn.innerText = 'Save & Synchronize';
-      this.elements.saveBtn.style.background = '#ededed';
+      this.elements.saveBtn.innerText = this.getMessage("saveSync");
+      this.elements.saveBtn.style.background = 'rgba(255, 255, 255, 0.05)';
+      this.elements.saveBtn.style.color = 'var(--text)';
     }, 2000);
   },
 
-  addLog(text, status = 'info') {
+  addLog(content, status = 'info') {
+    let text = content;
+    
+    // Handle i18n object { key: '...', params: [...] }
+    if (typeof content === 'object' && content.key) {
+      text = this.getMessage(content.key);
+      if (content.params && content.params.length > 0) {
+        content.params.forEach((p, i) => {
+          text = text.replace(`$${i + 1}`, p);
+        });
+      }
+    } else if (typeof content === 'string') {
+      // Check for i18n: key, possibly with a prefix like [FIELD]
+      const i18nMatch = content.match(/(.*)(i18n:[^ ]+)(.*)/);
+      if (i18nMatch) {
+        const prefix = i18nMatch[1];
+        const i18nPart = i18nMatch[2];
+        const suffix = i18nMatch[3];
+
+        const parts = i18nPart.split(':');
+        const key = parts[1];
+        const params = parts.slice(2);
+        
+        let translated = this.getMessage(key);
+        if (params.length > 0) {
+          params.forEach((p, i) => {
+            translated = translated.replace(`$${i + 1}`, p);
+          });
+        }
+        text = `${prefix}${translated}${suffix}`;
+      }
+    }
+
     const logEntry = document.createElement('div');
     const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
     
@@ -287,12 +382,60 @@ export const SidePanelManager = {
     this.elements.logContainer.scrollTop = this.elements.logContainer.scrollHeight;
   },
 
+  translateUI() {
+    const i18nElements = document.querySelectorAll('[data-i18n]');
+    i18nElements.forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      let message = this.getMessage(key);
+      if (message) {
+        el.innerText = message;
+      }
+    });
+
+    const i18nPlaceholders = document.querySelectorAll('[data-i18n-placeholder]');
+    i18nPlaceholders.forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      let message = this.getMessage(key);
+      if (message) {
+        el.placeholder = message;
+      }
+    });
+
+    // Refresh custom selects to update their displayed labels
+    if (this.customSelects && this.customSelects.length > 0) {
+        this.customSelects.forEach(cs => cs.refresh());
+    }
+  },
+
+  getMessage(key) {
+    if (this.translations && this.translations[key]) {
+      return this.translations[key].message;
+    }
+    return chrome.i18n.getMessage(key);
+  },
+
+  async loadTranslations(lang) {
+    if (!lang || lang === 'auto') {
+      this.translations = null;
+      return;
+    }
+
+    try {
+      const response = await fetch(chrome.runtime.getURL(`_locales/${lang}/messages.json`));
+      this.translations = await response.json();
+    } catch (err) {
+      console.error('Failed to load translations:', err);
+      this.translations = null;
+    }
+  },
+
+
   async saveProfile() {
     if (!this.elements.agentNameInput) return;
     
     const name = this.elements.agentNameInput.value.trim();
     if (!name) {
-        this.addLog("Agent name required for deployment.", "error");
+        this.addLog(this.getMessage("nameRequired"), "error");
         return;
     }
 
@@ -303,7 +446,19 @@ export const SidePanelManager = {
         target: this.elements.targetAudienceSelect ? this.elements.targetAudienceSelect.value : 'general',
         slang: this.elements.slangLevelSelect ? this.elements.slangLevelSelect.value : 'none',
         formality: this.elements.formalitySelect ? this.elements.formalitySelect.value : 'natural',
-        length: this.elements.lengthLimitSelect ? this.elements.lengthLimitSelect.value : 'medium'
+        length: this.elements.lengthLimitSelect ? this.elements.lengthLimitSelect.value : 'medium',
+        vocabulary: this.elements.agentVocabularyInput ? this.elements.agentVocabularyInput.value.trim() : '',
+        bannedWords: this.elements.bannedWordsInput ? this.elements.bannedWordsInput.value.trim() : '',
+        ctaStrategy: this.elements.ctaStrategySelect ? this.elements.ctaStrategySelect.value : 'none',
+        emojiUsage: this.elements.emojiUsageSelect ? this.elements.emojiUsageSelect.value : 'natural',
+        targetLanguage: this.elements.targetLanguageSelect ? this.elements.targetLanguageSelect.value : 'auto',
+        traits: {
+            humor: this.elements.traitHumorInput ? this.elements.traitHumorInput.value : 50,
+            sarcasm: this.elements.traitSarcasmInput ? this.elements.traitSarcasmInput.value : 20,
+            empathy: this.elements.traitEmpathyInput ? this.elements.traitEmpathyInput.value : 70
+        },
+        humanize: this.elements.humanizeToggle ? this.elements.humanizeToggle.checked : false,
+        typoRate: this.elements.typoRateInput ? parseInt(this.elements.typoRateInput.value) : 2
     };
 
     const config = await StorageManager.getConfig();
@@ -380,10 +535,34 @@ export const SidePanelManager = {
     this.elements.slangLevelSelect.value = profile.slang;
     this.elements.formalitySelect.value = profile.formality;
     this.elements.lengthLimitSelect.value = profile.length;
+    
+    // Set New Fields
+    if (this.elements.agentVocabularyInput) this.elements.agentVocabularyInput.value = profile.vocabulary || '';
+    if (this.elements.bannedWordsInput) this.elements.bannedWordsInput.value = profile.bannedWords || '';
+    if (this.elements.ctaStrategySelect) this.elements.ctaStrategySelect.value = profile.ctaStrategy || 'none';
+    if (this.elements.emojiUsageSelect) this.elements.emojiUsageSelect.value = profile.emojiUsage || 'natural';
+    if (this.elements.targetLanguageSelect) this.elements.targetLanguageSelect.value = profile.targetLanguage || 'auto';
+    
+    if (profile.traits) {
+        if (this.elements.traitHumorInput) this.elements.traitHumorInput.value = profile.traits.humor || 50;
+        if (this.elements.traitSarcasmInput) this.elements.traitSarcasmInput.value = profile.traits.sarcasm || 20;
+        if (this.elements.traitEmpathyInput) this.elements.traitEmpathyInput.value = profile.traits.empathy || 70;
+    }
+
+    if (this.elements.humanizeToggle) {
+        this.elements.humanizeToggle.checked = profile.humanize || false;
+        this.elements.humanizeOptions.style.display = profile.humanize ? 'block' : 'none';
+    }
+    
+    if (this.elements.typoRateInput) {
+        const rate = profile.typoRate || 2;
+        this.elements.typoRateInput.value = rate;
+        if (this.elements.typoRateValue) this.elements.typoRateValue.innerText = `${rate}%`;
+    }
 
     // Update custom selects
     this.customSelects.forEach(cs => {
-        if (['targetAudience', 'slangLevel', 'formality', 'lengthLimit'].includes(cs.nativeSelect.id)) {
+        if (['targetAudience', 'slangLevel', 'formality', 'lengthLimit', 'ctaStrategy', 'emojiUsage', 'targetLanguage'].includes(cs.nativeSelect.id)) {
             cs.refresh();
         }
     });
