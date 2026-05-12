@@ -26,3 +26,5 @@ Nâng cấp Nera từ một script cơ bản thành một **Infiltration Agent**
 - [ ] **Ghost Protocol**: Nâng cấp `simulateTyping` với Gaussian jitter và Error-Correction logic.
 - [ ] **Shadow UI Implementation**: Bọc các control của Nera vào Shadow DOM.
 - [ ] **Config UI**: Tạo `popup.html/js` để quản lý API Key và Persona Settings.
+
+<!-- aevum_github_branch: feat/ai-brain-integration-plan -->
