@@ -3,6 +3,26 @@
   "project": "Nera",
   "domains": [
     {
+      "id": "chat-interception",
+      "name": "Chat Interception",
+      "path": ".aevum/domains/chat-interception",
+      "plans": [],
+      "features": [
+        {
+          "id": "pinned-badge-detection",
+          "name": "Pinned Badge Detection",
+          "path": ".aevum/domains/chat-interception/features/pinned-badge-detection",
+          "plans": [
+            {
+              "name": "badge_recognition_and_context_sync_plan.md",
+              "status": "todo",
+              "updatedAt": "2026-05-13T01:02:57.008Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "dominfiltration",
       "name": "Dominfiltration",
       "path": ".aevum/domains/dominfiltration",

@@ -64,7 +64,8 @@ export class NeraInfiltrator {
       'div[data-pagelet*="GroupFeed"]',
       'div[data-pagelet*="Biz"]',
       'div[role="dialog"] [role="article"]',
-      'div.x1n2onr6.x1ja2u2z[role="dialog"]'
+      'div.x1n2onr6.x1ja2u2z[role="dialog"]',
+      'div[role="button"][aria-label*="Mở đoạn chat với"]' // Pinned Chat Badge (Messenger)
     ];
     
     // 1. Direct Selector Scan
@@ -93,7 +94,8 @@ export class NeraInfiltrator {
         'div[data-pagelet*="GroupFeed"]',
         'div[data-pagelet*="Biz"]',
         'div[role="dialog"] [role="article"]',
-        'div.x1n2onr6.x1ja2u2z[role="dialog"]'
+        'div.x1n2onr6.x1ja2u2z[role="dialog"]',
+        'div[role="button"][aria-label*="Mở đoạn chat với"]' // Pinned Chat Badge (Messenger)
       ];
       
       if (node.matches && postSelectors.some(s => node.matches(s))) {
@@ -112,7 +114,10 @@ export class NeraInfiltrator {
     // 1. Basic visibility check
     if (node.offsetWidth === 0 && node.offsetHeight === 0) return false;
 
-    // 2. Ultra-Lenient Content Heuristic
+    // 2. Chat Badge check
+    if (node.matches('div[role="button"][aria-label*="Mở đoạn chat với"]')) return true;
+
+    // 3. Ultra-Lenient Content Heuristic
     // If it has a reasonable amount of text, or media, or a message block, it's ready.
     const hasText = (node.innerText && node.innerText.trim().length > 15);
     const hasMedia = node.querySelector('img, video, iframe');
@@ -135,15 +140,18 @@ export class NeraInfiltrator {
     
     post.dataset.neraInfiltrated = 'true';
 
-    // Mode Detection: Is this a Post or a Comment?
+    // Mode Detection: Is this a Post, Comment, or Badge?
     // Refined heuristic: Comments are articles inside lists OR have specific reply buttons
     // AND they are NOT top-level post containers
-    const isComment = (post.closest('ul') || 
+    const isBadge = post.matches('div[role="button"][aria-label*="Mở đoạn chat với"]');
+    const isComment = !isBadge && (post.closest('ul') || 
                        post.querySelector('[aria-label*="Trả lời"], [aria-label*="Reply"], [aria-label*="Thích"], [aria-label*="Like"]') ||
                        post.querySelector('div[data-comment-id]')) && 
                       !post.querySelector('div[data-ad-comet-preview="message"]');
     
-    const mode = isComment ? 'COMMENT' : 'POST';
+    let mode = 'POST';
+    if (isBadge) mode = 'GROUP_CHAT_BADGE';
+    else if (isComment) mode = 'COMMENT';
 
     const container = document.createElement('div');
     container.className = `nera-control mode-${mode.toLowerCase()}`;
@@ -311,7 +319,15 @@ export class NeraInfiltrator {
                        post.querySelector('div.x1cy8z3s') ||
                        post.querySelector('div.x193iq5w');
     
-    if (headerArea && post.closest('[role="dialog"]')) {
+    if (mode === 'GROUP_CHAT_BADGE') {
+        post.style.setProperty('position', 'relative', 'important');
+        post.style.setProperty('overflow', 'visible', 'important');
+        // Anchor to the top right of the badge
+        container.style.position = 'absolute';
+        container.style.top = '-10px';
+        container.style.right = '-10px';
+        post.appendChild(container);
+    } else if (headerArea && post.closest('[role="dialog"]')) {
         headerArea.style.setProperty('position', 'relative', 'important');
         headerArea.prepend(container);
     } else {
@@ -322,8 +338,41 @@ export class NeraInfiltrator {
     
     // Overflow Bypass Protocol: Aggressively clear path to top
     post.dataset.neraInfiltrated = "true";
-    this.fixAncestors(post);
-    if (mode === 'COMMENT') this.fixAncestors(container); // Extra safety for comments
+    if (mode !== 'GROUP_CHAT_BADGE') {
+        this.fixAncestors(post);
+        if (mode === 'COMMENT') this.fixAncestors(container); // Extra safety for comments
+    }
+
+    // Auto Reply Logic for Pinned Chat Badges
+    if (mode === 'GROUP_CHAT_BADGE') {
+        try {
+            chrome.storage.local.get('autoReply', (res) => {
+                if (res.autoReply) {
+                    this.sendLog(`Auto Reply Mode ON: Initiating autonomous protocol for chat target.`, "warning");
+                    setTimeout(() => {
+                        const defaultIntent = consoleEl.querySelector('.intent-mini[data-intent="agree"]') || consoleEl.querySelector('.intent-mini');
+                        if (defaultIntent) {
+                            defaultIntent.click(); // Triggers synthesis
+                            
+                            // Monitor for synthesis completion and launch payload
+                            const checkReady = setInterval(() => {
+                                if (mainBtn.dataset.state === 'ready') {
+                                    clearInterval(checkReady);
+                                    this.sendLog(`Autonomous Synthesis complete. Deploying...`, "info");
+                                    mainBtn.click(); // Triggers executeDeployment
+                                } else if (mainBtn.innerText.includes('Retry')) {
+                                    clearInterval(checkReady);
+                                    this.sendLog(`Autonomous Synthesis failed. Waiting for manual override.`, "error");
+                                }
+                            }, 1000);
+                        }
+                    }, 1500);
+                }
+            });
+        } catch (e) {
+            // Storage context might be missing in some edge cases
+        }
+    }
 
     this.sendLog("Tactical Console ready for input.", "success");
   }
@@ -493,12 +542,18 @@ export class NeraInfiltrator {
       'div[role="textbox"][aria-label*="Bình luận"]',
       'div[role="textbox"][aria-placeholder*="Trả lời"]',
       'div[role="textbox"][aria-label*="như"]',
+      'div[role="textbox"][aria-label*="Tin nhắn"]', // Messenger chat input (vi)
+      'div[role="textbox"][aria-label*="Message"]', // Messenger chat input (en)
       'div.notranslate[contenteditable="true"]'
     ];
 
     let input = null;
 
-    if (isInCommentMode) {
+    const isChatMode = host?.classList.contains('mode-group_chat_badge') || false;
+
+    if (isChatMode) {
+      input = await this.executeChatFlow(post, inputSelectors);
+    } else if (isInCommentMode) {
       input = await this.executeReplyFlow(post, inputSelectors, anchoredBtn);
     } else {
       input = await this.executePostFlow(post, inputSelectors, anchoredBtn);
@@ -634,6 +689,42 @@ export class NeraInfiltrator {
     }
     
     return this.findInputNear(post, selectors);
+  }
+
+  async executeChatFlow(post, selectors) {
+    this.sendLog("[CHAT] Engagement Protocol: Locating chat terminal...", "info");
+    
+    // Đảm bảo chat window được mở. Click vào badge nếu chưa thấy input.
+    let input = null;
+    for (const s of selectors) {
+        if (document.querySelector(s)) {
+            input = document.querySelector(s);
+            break;
+        }
+    }
+
+    if (!input) {
+        this.sendLog("[CHAT] Opening chat window...", "info");
+        post.click();
+        await new Promise(r => setTimeout(r, 1000));
+    }
+
+    // Tìm kiếm input trong dialogs hoặc global
+    for (let attempt = 0; attempt < 10; attempt++) {
+        for (const s of selectors) {
+            // Ưu tiên tìm trong dialog (cửa sổ chat popup)
+            const dialogs = document.querySelectorAll('div[role="dialog"], div[role="complementary"]');
+            for (const dialog of dialogs) {
+                const el = dialog.querySelector(s);
+                if (el) return el;
+            }
+            // Fallback global
+            const globalEl = document.querySelector(s);
+            if (globalEl) return globalEl;
+        }
+        await new Promise(r => setTimeout(r, 500));
+    }
+    return null;
   }
 
   /**

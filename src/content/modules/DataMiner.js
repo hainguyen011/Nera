@@ -4,6 +4,10 @@
  */
 export const NeraDataMiner = {
     extract(post, mode = 'POST') {
+        if (mode === 'GROUP_CHAT_BADGE') {
+            return this._extractGroupChat(post);
+        }
+
         const type = this.identifyType(post);
         const modality = this.identifyModality(post);
         
@@ -16,6 +20,29 @@ export const NeraDataMiner = {
             metrics: this.getMetrics(post),
             groupName: this.getGroupName(post),
             mediaDescription: this.getMediaAlt(post, modality),
+            timestamp: new Date().toLocaleTimeString(),
+            pageTitle: document.title
+        };
+    },
+
+    _extractGroupChat(post) {
+        // Lấy tên nhóm/người từ aria-label của badge
+        const ariaLabel = post.getAttribute('aria-label') || '';
+        const match = ariaLabel.match(/Mở đoạn chat với (.*)/i);
+        const groupName = match ? match[1].trim() : "Unknown Chat";
+        
+        // Context cơ bản, messages sẽ được trích xuất kỹ hơn nếu chat box đang mở
+        let contentContext = `Group Chat / Direct Message with ${groupName}`;
+        
+        return {
+            mode: 'GROUP_CHAT_BADGE',
+            type: 'CHAT',
+            modality: 'TEXT',
+            author: groupName,
+            content: contentContext,
+            metrics: { reactions: "0", comments: "0" },
+            groupName: groupName,
+            mediaDescription: null,
             timestamp: new Date().toLocaleTimeString(),
             pageTitle: document.title
         };

@@ -21,6 +21,7 @@ export const SidePanelManager = {
       customPromptInput: document.getElementById('customPrompt'),
       toneSelect: document.getElementById('tone'),
       saveBtn: document.getElementById('saveConfig'),
+      autoReplyCheckbox: document.getElementById('autoReply'),
       logContainer: document.getElementById('logContainer'),
       tabBtns: document.querySelectorAll('.tab-btn'),
       tabPanes: document.querySelectorAll('.tab-pane'),
@@ -67,7 +68,7 @@ export const SidePanelManager = {
   },
 
   async loadConfig() {
-    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style']);
+    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style', 'autoReply']);
     
     if (config.apiKey && this.elements.apiKeyInput) this.elements.apiKeyInput.value = config.apiKey;
     if (config.provider && this.elements.providerSelect) {
@@ -88,6 +89,10 @@ export const SidePanelManager = {
       this.elements.toneSelect.value = config.tone;
     }
 
+    if (this.elements.autoReplyCheckbox) {
+      this.elements.autoReplyCheckbox.checked = !!config.autoReply;
+      this.updateAutoReplyUI();
+    }
 
     // Fetch models if we have an API key
     if (config.apiKey && config.provider) {
@@ -104,6 +109,12 @@ export const SidePanelManager = {
   },
 
   attachListeners() {
+    if (this.elements.autoReplyCheckbox) {
+      this.elements.autoReplyCheckbox.addEventListener('change', () => {
+        this.updateAutoReplyUI();
+      });
+    }
+
     this.elements.personaSelect.addEventListener('change', () => {
       this.toggleCustomGroup(this.elements.personaSelect.value);
     });
@@ -228,6 +239,22 @@ export const SidePanelManager = {
     }
   },
 
+  updateAutoReplyUI() {
+    if (!this.elements.autoReplyCheckbox) return;
+    const isChecked = this.elements.autoReplyCheckbox.checked;
+    const span = this.elements.autoReplyCheckbox.nextElementSibling;
+    const thumb = document.getElementById('autoReplyThumb');
+    if (span && thumb) {
+        if (isChecked) {
+            span.style.backgroundColor = 'var(--primary)';
+            thumb.style.transform = 'translateX(20px)';
+        } else {
+            span.style.backgroundColor = 'var(--border)';
+            thumb.style.transform = 'translateX(0)';
+        }
+    }
+  },
+
   updateApiKeyLabel(value) {
     const labels = {
       'groq': 'Groq API Key (gsk_...)',
@@ -252,7 +279,8 @@ export const SidePanelManager = {
       stealthLevel: this.elements.stealthLevelSelect ? this.elements.stealthLevelSelect.value : 'standard',
       persona: this.elements.personaSelect ? this.elements.personaSelect.value : 'Hawl',
       tone: this.elements.toneSelect ? this.elements.toneSelect.value : 'neutral',
-      customPrompt: this.elements.customPromptInput ? this.elements.customPromptInput.value.trim() : ''
+      customPrompt: this.elements.customPromptInput ? this.elements.customPromptInput.value.trim() : '',
+      autoReply: this.elements.autoReplyCheckbox ? this.elements.autoReplyCheckbox.checked : false
     };
 
     if (!config.apiKey) {
