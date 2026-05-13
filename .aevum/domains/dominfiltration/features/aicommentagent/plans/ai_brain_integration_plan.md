@@ -28,3 +28,5 @@ Nâng cấp Nera từ một script cơ bản thành một **Infiltration Agent**
 - [ ] **Config UI**: Tạo `popup.html/js` để quản lý API Key và Persona Settings.
 
 <!-- aevum_github_branch: feat/ai-brain-integration-plan -->
+<!-- aevum_status: synced -->
+<!-- aevum_github_issue: 20 -->
