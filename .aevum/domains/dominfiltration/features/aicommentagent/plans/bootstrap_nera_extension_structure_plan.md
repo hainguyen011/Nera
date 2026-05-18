@@ -37,3 +37,5 @@ Xây dựng bộ khung nền tảng cho Chrome Extension Nera, tập trung vào 
 - Load extension vào Chrome (`chrome://extensions`).
 - Kiểm tra khả năng nhận diện post container trên một số trang social media.
 - Test luồng gửi data từ Content Script về Background.
+
+<!-- aevum_github_branch: feat/bootstrap-nera-extension-structure-plan -->
