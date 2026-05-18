@@ -1,4 +1,4 @@
-# Dictionary: Nera Ubiquitous Language
+# Dictionary: Aevum Ubiquitous Language
 
 | Term | Definition |
 | :--- | :--- |

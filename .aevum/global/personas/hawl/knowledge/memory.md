@@ -33,3 +33,13 @@ Expanding modular UI components in a Shadow DOM requires precise CSS and event b
 ### [LEARN] - 5/9/2026, 2:39:56 PM
 [LEARNING FROM Hydration Guard Protocol Implementation]
 Implemented a readiness check (isNodeReady) to handle dynamic DOM hydration. Improved Post vs Comment heuristics for FB Comet. Added storage error handling.
+
+
+### [LEARN] - 5/9/2026, 7:53:10 PM
+PROCEDURE: Facebook Stacking Bypass
+1. Identify target node (Post/Comment).
+2. Apply elevateStacking(node, true): Climb 12 levels up, set z-index to 2147483647 and isolation to auto. Store originals in datasets.
+3. Apply fixAncestors(node): Climb 8 levels, set overflow to visible, contain to none.
+4. On minify/close, call elevateStacking(node, false) to restore original FB styles.
+5. Positioning: Use right-aligned insets (e.g., right: 8px) for triggers to avoid parent clipping.
+
