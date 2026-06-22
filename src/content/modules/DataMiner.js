@@ -154,6 +154,47 @@ export const NeraDataMiner = {
         return groupLink?.innerText || null;
     },
 
+    /**
+     * Trích xuất lịch sử hội thoại từ Messenger E2EE
+     * Dùng kết hợp với NeraMessengerInfiltrator
+     * @param {number} limit - Giới hạn số tin nhắn cần lấy
+     * @returns {Array<{sender: string, text: string, isMe: boolean, timestamp: string}>}
+     */
+    extractMessengerChat(limit = 15) {
+        const messages = [];
+        const articles = document.querySelectorAll('div[role="article"]');
+
+        articles.forEach((article) => {
+            try {
+                const label = article.getAttribute('aria-label') || '';
+                // Format: "Lúc HH:MM [ngày], Bạn: <text>" hoặc "Lúc HH:MM, <Name>: <text>"
+                const match = label.match(/Lúc ([^,]+),\s*(.+?):\s*(.+)/s);
+                if (!match) return;
+
+                const [, timestamp, senderRaw, textFromLabel] = match;
+                const isMe = senderRaw.trim() === 'Bạn';
+                const sender = isMe ? 'me' : senderRaw.trim();
+
+                // Ưu tiên text từ DOM (đầy đủ hơn aria-label bị cắt)
+                const textEl = article.querySelector('div[dir="auto"]');
+                const text = textEl ? textEl.innerText.trim() : textFromLabel.trim();
+
+                // Bỏ qua tin nhắn hệ thống (mã hóa đầu cuối, v.v.)
+                const isSystemMsg = article.closest('[data-scope="messages_table"]') === null
+                    && !article.querySelector('div[dir="auto"]');
+                if (isSystemMsg) return;
+
+                if (text) {
+                    messages.push({ sender, text, isMe, timestamp: timestamp.trim() });
+                }
+            } catch (_) {
+                // Bỏ qua các node lỗi
+            }
+        });
+
+        return messages.slice(-limit);
+    },
+
     getMediaAlt(post, modality) {
         if (modality === 'IMAGE') {
             const img = post.querySelector('img');

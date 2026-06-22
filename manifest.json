@@ -6,9 +6,9 @@
   "permissions": [
     "storage",
     "activeTab",
-    "scripting",
-    "sidePanel"
+    "scripting"
   ],
+
   "host_permissions": [
     "https://*.facebook.com/*",
     "https://*.twitter.com/*",
@@ -34,11 +34,8 @@
       "run_at": "document_idle"
     }
   ],
-  "side_panel": {
-    "default_path": "src/ui/pages/sidepanel/sidepanel.html"
-  },
   "action": {
-    "default_title": "Open Nera Control",
+    "default_title": "Nera AI Agent",
     "default_icon": "assets/icon.png"
   },
   "icons": {

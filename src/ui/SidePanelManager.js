@@ -22,6 +22,7 @@ export const SidePanelManager = {
       toneSelect: document.getElementById('tone'),
       saveBtn: document.getElementById('saveConfig'),
       autoReplyCheckbox: document.getElementById('autoReply'),
+      messengerAutoReplyCheckbox: document.getElementById('messengerAutoReply'),
       logContainer: document.getElementById('logContainer'),
       tabBtns: document.querySelectorAll('.tab-btn'),
       tabPanes: document.querySelectorAll('.tab-pane'),
@@ -68,7 +69,7 @@ export const SidePanelManager = {
   },
 
   async loadConfig() {
-    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style', 'autoReply']);
+    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style', 'autoReply', 'messengerAutoReply']);
     
     if (config.apiKey && this.elements.apiKeyInput) this.elements.apiKeyInput.value = config.apiKey;
     if (config.provider && this.elements.providerSelect) {
@@ -94,6 +95,11 @@ export const SidePanelManager = {
       this.updateAutoReplyUI();
     }
 
+    if (this.elements.messengerAutoReplyCheckbox) {
+      this.elements.messengerAutoReplyCheckbox.checked = !!config.messengerAutoReply;
+      this.updateMessengerAutoReplyUI();
+    }
+
     // Fetch models if we have an API key
     if (config.apiKey && config.provider) {
         await this.fetchModels(config.provider, config.apiKey, config.model);
@@ -112,6 +118,15 @@ export const SidePanelManager = {
     if (this.elements.autoReplyCheckbox) {
       this.elements.autoReplyCheckbox.addEventListener('change', () => {
         this.updateAutoReplyUI();
+      });
+    }
+
+    if (this.elements.messengerAutoReplyCheckbox) {
+      this.elements.messengerAutoReplyCheckbox.addEventListener('change', () => {
+        this.updateMessengerAutoReplyUI();
+        // Auto-save ngay khi toggle — không cần click Save
+        const enabled = this.elements.messengerAutoReplyCheckbox.checked;
+        chrome.storage.local.set({ messengerAutoReply: enabled });
       });
     }
 
@@ -255,6 +270,22 @@ export const SidePanelManager = {
     }
   },
 
+  updateMessengerAutoReplyUI() {
+    if (!this.elements.messengerAutoReplyCheckbox) return;
+    const isChecked = this.elements.messengerAutoReplyCheckbox.checked;
+    const span = this.elements.messengerAutoReplyCheckbox.nextElementSibling;
+    const thumb = document.getElementById('messengerAutoReplyThumb');
+    if (span && thumb) {
+        if (isChecked) {
+            span.style.backgroundColor = '#8b5cf6'; // Màu tím cho Messenger
+            thumb.style.transform = 'translateX(20px)';
+        } else {
+            span.style.backgroundColor = 'var(--border)';
+            thumb.style.transform = 'translateX(0)';
+        }
+    }
+  },
+
   updateApiKeyLabel(value) {
     const labels = {
       'groq': 'Groq API Key (gsk_...)',
@@ -280,7 +311,8 @@ export const SidePanelManager = {
       persona: this.elements.personaSelect ? this.elements.personaSelect.value : 'Hawl',
       tone: this.elements.toneSelect ? this.elements.toneSelect.value : 'neutral',
       customPrompt: this.elements.customPromptInput ? this.elements.customPromptInput.value.trim() : '',
-      autoReply: this.elements.autoReplyCheckbox ? this.elements.autoReplyCheckbox.checked : false
+      autoReply: this.elements.autoReplyCheckbox ? this.elements.autoReplyCheckbox.checked : false,
+      messengerAutoReply: this.elements.messengerAutoReplyCheckbox ? this.elements.messengerAutoReplyCheckbox.checked : false
     };
 
     if (!config.apiKey) {

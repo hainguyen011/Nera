@@ -1,0 +1,23 @@
+{
+  "sessionId": "squad_notifications",
+  "createdAt": "2026-06-11T18:26:02.233Z",
+  "updatedAt": "2026-06-11T18:26:02.234Z",
+  "version": 2,
+  "predictedState": {
+    "queues": {
+      "VOD-HAC-9X0F2E": [
+        {
+          "id": "notif_1781202362234_ddbbl",
+          "fromAgentId": "ENG-AN-7B9F1D",
+          "toAgentId": "VOD-HAC-9X0F2E",
+          "type": "message",
+          "content": "[SQUAD] Agent ENG-AN-7B9F1D (An) is now ONLINE and ready to collaborate.",
+          "timestamp": "2026-06-11T18:26:02.234Z",
+          "status": "pending",
+          "priority": "medium"
+        }
+      ]
+    }
+  },
+  "discussion": []
+}

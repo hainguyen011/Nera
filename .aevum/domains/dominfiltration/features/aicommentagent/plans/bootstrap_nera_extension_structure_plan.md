@@ -1,3 +1,9 @@
+---
+plan: BOOTSTRAP NERA EXTENSION STRUCTURE PLAN
+branch: feat/bootstrap-nera-extension-structure-plan
+last_sync: 12:07:21 22/6/2026
+---
+
 # Plan: Bootstrap_Nera_Extension_Structure
 
 ## Goal

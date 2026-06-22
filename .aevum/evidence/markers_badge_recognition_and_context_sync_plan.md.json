@@ -1,0 +1,28 @@
+[
+  {
+    "line": "-1",
+    "agent": "User",
+    "instruction": "Mở rộng",
+    "status": "resolved",
+    "result": "**Đề xuất từ User:**\n\nDựa trên phân tích mã nguồn tại dòng -1, hệ thống gợi ý tối ưu hóa hiệu năng bằng cách sử dụng cơ chế Lazy Loading cho module này. Việc này sẽ giảm 20% thời gian bootstrap hệ thống.",
+    "timestamp": "2026-05-14T02:47:06.741Z"
+  },
+  {
+    "line": 25,
+    "agent": "User",
+    "instruction": "Nâng cấp",
+    "status": "resolved",
+    "result": "**[Hệ thống Aevum] Cảnh báo:** Thiếu API Key cho Agent **Hawl (undefined)**.\n\nVui lòng cấu hình API Key trong file `.aevum/aevum.env` (ví dụ: `HAWL__UNDEFINED__GROQ_KEY=your_api_key`)",
+    "selectedText": "Bản kế hoạch này triển khai tính năng Infiltration cho các Group Chat thông qua bong bóng chat (Pinned Badge). Khi người dùng ghim một đoạn chat, hệ thống Nera sẽ gắn thêm nút Tactical UI vào gần Badge hoặc bên trong giao diện khi Badge được mở rộng. Từ đó, Nera quét ngữ cảnh nhóm và dùng AI phản hồi.",
+    "timestamp": "2026-06-11T17:02:23.456Z"
+  },
+  {
+    "line": "12",
+    "agent": "Hawl (undefined)",
+    "instruction": "Nâng cấp",
+    "status": "resolved",
+    "result": "",
+    "selectedText": "Bản kế hoạch này triển khai tính năng Infiltration cho các Group Chat thông qua bong bóng chat (Pinned Badge). Khi người dùng ghim một đoạn chat, hệ thống Nera sẽ gắn thêm nút Tactical UI vào gần Badge hoặc bên trong giao diện khi Badge được mở rộng. Từ đó, Nera quét ngữ cảnh nhóm và dùng AI phản hồi.",
+    "timestamp": "2026-06-11T17:06:45.742Z"
+  }
+]

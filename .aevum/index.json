@@ -1,5 +1,5 @@
 {
-  "version": "1.7.0",
+  "version": "2.1.0",
   "project": "Nera",
   "domains": [
     {
@@ -16,7 +16,60 @@
             {
               "name": "badge_recognition_and_context_sync_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-13T01:02:57.008Z"
+              "progress": 0,
+              "updatedAt": "2026-06-22T06:10:33.986Z",
+              "assignedTo": [
+                {
+                  "agent": "Hawl",
+                  "role": "developer",
+                  "intent": "Assigned via Plan Viewer",
+                  "since": "2026-06-11T16:15:04.028Z"
+                }
+              ],
+              "history": [
+                {
+                  "timestamp": "2026-06-11T16:15:04.028Z",
+                  "status": "assigned",
+                  "agent": "Hawl",
+                  "summary": "Assigned to Hawl (developer): Assigned via Plan Viewer"
+                },
+                {
+                  "timestamp": "2026-06-11T16:15:43.713Z",
+                  "status": "assigned",
+                  "agent": "An",
+                  "summary": "Assigned to An (developer): Assigned via Plan Viewer"
+                },
+                {
+                  "timestamp": "2026-06-11T16:36:53.987Z",
+                  "status": "assigned",
+                  "agent": "undefined",
+                  "summary": "Assigned to undefined (developer): Assigned via Plan Viewer"
+                },
+                {
+                  "timestamp": "2026-06-11T16:42:06.364Z",
+                  "status": "assigned",
+                  "agent": "undefined",
+                  "summary": "Unassigned: undefined"
+                },
+                {
+                  "timestamp": "2026-06-11T16:42:19.260Z",
+                  "status": "assigned",
+                  "agent": "An",
+                  "summary": "Unassigned: An"
+                },
+                {
+                  "timestamp": "2026-06-11T17:01:48.217Z",
+                  "status": "assigned",
+                  "agent": "An",
+                  "summary": "Assigned to An (developer): Assigned via Plan Viewer"
+                },
+                {
+                  "timestamp": "2026-06-11T17:01:59.503Z",
+                  "status": "assigned",
+                  "agent": "An",
+                  "summary": "Unassigned: An"
+                }
+              ]
             }
           ]
         }
@@ -35,43 +88,51 @@
           "plans": [
             {
               "name": "ai_brain_integration_plan.md",
-              "status": "todo",
-              "updatedAt": "2026-05-08T14:00:02.493Z"
+              "status": "in-progress",
+              "progress": 0,
+              "updatedAt": "2026-05-13T00:55:41.001Z"
             },
             {
               "name": "architecture_refactor_v1_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T03:09:17.604Z"
+              "progress": 0,
+              "updatedAt": "2026-06-22T06:05:57.663Z"
             },
             {
               "name": "bootstrap_nera_extension_structure_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-08T12:55:51.191Z"
+              "progress": 0,
+              "updatedAt": "2026-06-22T05:09:21.248Z"
             },
             {
               "name": "custom_ammo_plan.md",
-              "status": "todo",
-              "updatedAt": "2026-05-08T14:06:22.956Z"
+              "status": "in-progress",
+              "progress": 75,
+              "updatedAt": "2026-06-22T06:09:42.028Z"
             },
             {
               "name": "expand_tactical_console_ui_with_sentiment_radar_and_stealth_controls_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T05:55:14.277Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T15:49:47.565Z"
             },
             {
               "name": "refine_comment_interaction_and_auto_reply_flow_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T09:41:02.657Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T15:49:47.963Z"
             },
             {
               "name": "strengthen_post_detection_and_infiltration_heuristics_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:21:38.257Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T15:49:49.113Z"
             },
             {
               "name": "strict_reply_flow_protocol_implementation_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T11:01:41.573Z"
+              "progress": 0,
+              "updatedAt": "2026-06-22T06:07:47.242Z"
             }
           ]
         },
@@ -83,7 +144,8 @@
             {
               "name": "expand_tactical_console_ui_with_sentiment_radar_and_stealth_controls_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T07:41:07.314Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T15:49:50.252Z"
             }
           ]
         },
@@ -95,17 +157,41 @@
             {
               "name": "handle_dom_recycling_and_lazy_load_persistence_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:24:00.601Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T15:49:50.748Z"
             },
             {
               "name": "hydration_guard_protocol_implementation_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T07:41:06.332Z"
+              "progress": 0,
+              "updatedAt": "2026-06-22T06:10:29.086Z"
             },
             {
               "name": "universal_tactical_recognition_overhaul_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:38:45.449Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T13:55:50.977Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "messenger-automation",
+      "name": "Messenger Automation",
+      "path": ".aevum/domains/messenger-automation",
+      "plans": [],
+      "features": [
+        {
+          "id": "auto-reply-messenger-page",
+          "name": "Auto Reply Messenger Page",
+          "path": ".aevum/domains/messenger-automation/features/auto-reply-messenger-page",
+          "plans": [
+            {
+              "name": "messenger_page_auto_reply_research_and_implementation_plan_plan.md",
+              "status": "todo",
+              "progress": 0,
+              "updatedAt": "2026-05-13T06:26:20.408Z"
             }
           ]
         }
@@ -131,22 +217,26 @@
             {
               "name": "elevate_stacking_priority_for_tactical_console_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:02:15.906Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T13:55:50.977Z"
             },
             {
               "name": "fix_console_visibility_and_injection_specificity_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:28:52.411Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T13:55:50.977Z"
             },
             {
               "name": "refine_tactical_interface_ui_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T07:41:06.994Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T13:55:50.977Z"
             },
             {
               "name": "tactical_header_anchoring_and_collision_avoidance_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:44:48.218Z"
+              "progress": 0,
+              "updatedAt": "2026-05-12T13:55:50.977Z"
             }
           ]
         }
@@ -163,24 +253,34 @@
     "developer_profile": "global/developer_profile.md",
     "companion_persona": "global/companion_persona.json",
     "evolution_report": "global/evolution_report.md",
-    "knowledge_rules": "Every active persona has a dedicated knowledge folder in `.aevum/global/personas/<id>/knowledge/`. Log project-specific patterns and agent-exclusive wisdom there."
+    "knowledge_rules": "Every active persona has a dedicated knowledge folder in `.aevum/global/personas/<id>/knowledge/`. Log project-specific patterns and agent-exclusive wisdom there.",
+    "agent_rules_compressed": "global/agent_rules_compressed.md",
+    "debtHistory": [
+      28,
+      32,
+      30,
+      35,
+      33,
+      37,
+      40
+    ]
   },
   "agents": [
     "an",
     "hac",
     {
-      "id": "VOD-HAC-9X0F2E",
-      "name": "Hawl",
-      "capability": "Offensive Security Auditing",
-      "level": 5,
-      "knowledgePath": ".aevum/global/personas/vod_hac_9x0f2e/knowledge"
-    },
-    {
       "id": "ENG-AN-7B9F1D",
       "name": "An",
       "capability": "Context Optimization",
       "level": 4,
-      "knowledgePath": ".aevum/global/personas/an/knowledge"
+      "knowledgePath": ".aevum/global/personas/eng_an_7b9f1d/knowledge"
+    },
+    {
+      "id": "VOD-HAC-9X0F2E",
+      "name": "Hawl",
+      "capability": "Offensive Security Auditing",
+      "level": 6,
+      "knowledgePath": ".aevum/global/personas/vod_hac_9x0f2e/knowledge"
     }
   ]
 }

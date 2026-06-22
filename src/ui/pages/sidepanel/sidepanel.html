@@ -98,12 +98,30 @@
           </select>
         </div>
 
+        <!-- Switch: Auto Reply (News Feed / Badge) -->
         <div class="form-group" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
-          <label class="section-label" style="margin-bottom: 0;">Auto Reply Mode</label>
+          <div>
+            <label class="section-label" style="margin-bottom: 2px;">Auto Reply Mode</label>
+            <div style="font-size: 10px; color: var(--text-muted, #666); margin-top: 2px;">News Feed / Chat Badge</div>
+          </div>
           <label style="position: relative; display: inline-block; width: 40px; height: 20px;">
             <input type="checkbox" id="autoReply" style="opacity: 0; width: 0; height: 0; position: absolute;">
             <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border, #27272a); transition: .4s; border-radius: 20px;">
               <span id="autoReplyThumb" style="position: absolute; content: ''; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%;"></span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Switch: Messenger E2EE Auto Reply -->
+        <div class="form-group" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+          <div>
+            <label class="section-label" style="margin-bottom: 2px;">Messenger Auto Reply</label>
+            <div style="font-size: 10px; color: var(--text-muted, #666); margin-top: 2px;">E2EE Direct Message</div>
+          </div>
+          <label style="position: relative; display: inline-block; width: 40px; height: 20px;">
+            <input type="checkbox" id="messengerAutoReply" style="opacity: 0; width: 0; height: 0; position: absolute;">
+            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border, #27272a); transition: .4s; border-radius: 20px;">
+              <span id="messengerAutoReplyThumb" style="position: absolute; content: ''; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%;"></span>
             </span>
           </label>
         </div>
