@@ -1,4 +1,5 @@
 ---
+last_sync: 12:09:30 22/6/2026
 plan_name: custom_ammo_plan.md
 domain: dominfiltration
 feature: aicommentagent
@@ -26,3 +27,4 @@ Cho phép người dùng (Anh) tùy chỉnh "đạn" (system prompts/instruction
 - [ ] **Multi-Provider Arsenal**: Hỗ trợ Groq, Gemini và OpenAI trong `popup.html` và `background.js`.
 
 <!-- aevum_github_branch: feat/custom-ammo-plan -->
+<!-- aevum_status: synced -->
