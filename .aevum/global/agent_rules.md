@@ -30,16 +30,21 @@ Aevum operates through **Model Context Protocol (MCP)** as the single source of 
     - Khi nhận lệnh **BOOTSTRAP** từ hệ thống, thực hiện lại toàn bộ quy trình Handshake này ngay lập tức.
 
 3. **Plan Sync & Lifecycle** *(Updated — MCP-First)*:
+    - **Ý tưởng & Thiết kế (Idea-to-Plan Gate - BẮT BUỘC)**: Khi User chia sẻ ý tưởng, giải pháp hoặc yêu cầu tính năng mới: Agent **TUYỆT ĐỐI KHÔNG** được tự ý viết code hoặc sửa đổi codebase ngay lập tức. Agent phải thảo luận để làm rõ yêu cầu, sau đó sử dụng tool `aevum_create_plan` để phác thảo các bước thiết kế và thực thi trước. Chỉ khi tệp Plan được tạo và User đồng ý triển khai, Agent mới bắt đầu thực hiện các tác vụ sửa đổi code.
     - Khi hoàn thành một plan, **BẮT BUỘC** gọi `aevum_submit_report` with `type: "PLAN_DONE"` — hệ thống sẽ tự động cập nhật `index.json`, trao EXP và cập nhật UI.
     - Không được viết trực tiếp vào `.aevum/` để báo cáo. `aevum_submit_report` là cơ chế duy nhất được chấp nhận.
 
 4. **Proactive Structural Management (Ma trận Quyết định)** *(Updated — MCP Structural Tools)*:
     - **[QUAN TRỌNG] GIAO TIẾP TỰ NHIÊN**: Trừ khi User yêu cầu rõ ràng việc lên kế hoạch hoặc thực thi task phức tạp, hãy trả lời tự nhiên, ngắn gọn. **KHÔNG TỰ Ý** tạo Plan/Feature/Domain khi chỉ trò chuyện.
-    - Khi cần tạo cấu trúc mới, **BẮT BUỘC** sử dụng MCP tools:
+    - Khi cần tạo cấu trúc mới hoặc yêu cầu hệ thống gợi ý, **BẮT BUỘC** sử dụng MCP tools:
         - **Domain mới**: Gọi `aevum_create_domain` — không tạo thư mục thủ công.
         - **Feature mới**: Gọi `aevum_create_feature` — không tạo thư mục thủ công.
         - **Plan mới**: Gọi `aevum_create_plan` — không tạo file `.md` thủ công.
         - **Đổi tên**: Gọi `aevum_rename_structure` — không dùng file system operations trực tiếp.
+        - **Yêu cầu gợi ý**: Khi User yêu cầu hệ thống đề xuất/gợi ý Domain, Feature hoặc Plan, hãy gọi các MCP tools tương ứng:
+            - `aevum_suggest_domains` để gợi ý các Domain mới.
+            - `aevum_suggest_features` để gợi ý các Feature mới cho một Domain.
+            - `aevum_suggest_plans` để gợi ý các Plan tiếp theo cho Domain/Feature.
     - Sử dụng MCP tools đảm bảo `index.json` luôn được cập nhật tự động và UI đồng bộ ngay lập tức.
 
 5. **Vibe Code Harmony**: Đảm bảo code và tài liệu kế hoạch luôn đồng bộ.

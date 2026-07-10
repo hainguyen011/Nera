@@ -102,6 +102,26 @@
       "id": "aevum_get_ui_context",
       "name": "Get UI Context",
       "description": "Fetch real-time VS Code editor and UI state"
+    },
+    {
+      "id": "aevum_submit_suggestion",
+      "name": "Submit Suggestion",
+      "description": "Communicate structural improvement ideas (Plans/Domains/Features) to the extension"
+    },
+    {
+      "id": "aevum_suggest_plans",
+      "name": "Suggest Plans",
+      "description": "Request the system to suggest next Plans based on history"
+    },
+    {
+      "id": "aevum_suggest_domains",
+      "name": "Suggest Domains",
+      "description": "Request the system to suggest new Domains for the project"
+    },
+    {
+      "id": "aevum_suggest_features",
+      "name": "Suggest Features",
+      "description": "Request the system to suggest new Features for a specific Domain"
     }
   ]
 }

@@ -8,7 +8,7 @@
     "timestamp": "2026-05-14T02:47:06.741Z"
   },
   {
-    "line": 25,
+    "line": 26,
     "agent": "User",
     "instruction": "Nâng cấp",
     "status": "resolved",
@@ -17,7 +17,7 @@
     "timestamp": "2026-06-11T17:02:23.456Z"
   },
   {
-    "line": "12",
+    "line": 26,
     "agent": "Hawl (undefined)",
     "instruction": "Nâng cấp",
     "status": "resolved",

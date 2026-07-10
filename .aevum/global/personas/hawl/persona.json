@@ -30,8 +30,8 @@
   "level": 6,
   "exp": 30,
   "energy": {
-    "provider": "Groq",
-    "model": "openai/gpt-oss-120b",
+    "provider": "Google",
+    "model": "gemini-3.1-flash-tts-preview",
     "apiKeyId": "AN_GROQ_KEY"
   },
   "capabilities": [

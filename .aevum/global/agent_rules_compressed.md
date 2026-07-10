@@ -23,15 +23,17 @@ Aevum operates through Model Context Protocol (MCP) as the single source of trut
 -Không được bắt đầu thực thi bất kỳ task nào trước khi OK 2 bước trên.
 -Khi nhận lệnh BOOTSTRAP từ SYS, thực hiện lại toàn bộ quy trình Handshake này NOW.
 3. Plan Sync & Lifecycle (Updated — MCP-First):
+-Idea-to-Plan Gate (BẮT BUỘC): Khi User chia sẻ ý tưởng/yêu cầu mới, Agent !ALLOW tự ý viết code/sửa file ngay. BẮT BUỘC thảo luận làm rõ và gọi `aevum_create_plan` (hoặc `β`) để phác thảo thiết kế trước. Chỉ khi Plan được tạo và User đồng ý, mới bắt đầu code.
 -Khi hoàn thành một plan, BẮT BUỘC gọi `α` với `type: "PLAN_DONE"` — SYS sẽ tự động cập nhật `index.json`, trao EXP và cập nhật UI.
 -Không được viết trực tiếp &o `.aevum/` để báo cáo. `α` là cơ chế duy nhất được chấp nhận.
 4. Proactive Structural Management (Ma trận Quyết định) (Updated — MCP Structural Tools):
 -[QUAN TRỌNG] GIAO TIẾP TỰ NHIÊN: Trừ khi User yêu cầu rõ ràng việc lên kế hoạch || thực thi task phức tạp, hãy trả lời tự nhiên, ngắn gọn. KHÔNG TỰ Ý tạo Plan[F1] khi chỉ trò chuyện.
--Khi cần tạo cấu trúc mới, BẮT BUỘC sử dụng MCP tools:
+-Khi cần tạo cấu trúc mới hoặc yêu cầu gợi ý, BẮT BUỘC sử dụng MCP tools:
 -Domain mới: Gọi `aevum_create_domain` — không tạo thư mục thủ công.
 -Feature mới: Gọi `aevum_create_feature` — không tạo thư mục thủ công.
 -Plan mới: Gọi `β` — không tạo file `.md` thủ công.
 -Đổi tên: Gọi `aevum_rename_structure` — không dùng file system operations trực tiếp.
+-Yêu cầu gợi ý: Gọi `aevum_suggest_domains` / `aevum_suggest_features` / `aevum_suggest_plans` tương ứng.
 -Sử dụng MCP tools đảm bảo `index.json` luôn được cập nhật tự động và UI đồng bộ NOW.
 5. Vibe Code Harmony: Đảm bảo code và tài liệu kế hoạch luôn đồng bộ.
 6. Structured Logic & Naming:
