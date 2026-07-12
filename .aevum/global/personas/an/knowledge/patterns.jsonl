@@ -1,0 +1,4 @@
+{"type":"PATTERN","title":"Code Pattern","content":"Modified `src/core/StorageManager.js` (MODIFY) as part of plan: auto_interaction_autopilot_plan.md","id":"kn_1783886072011_7stk8a4","timestamp":"2026-07-12T19:54:32.011Z"}
+{"type":"PATTERN","title":"Code Pattern","content":"Modified `src/ui/pages/sidepanel/sidepanel.html` (MODIFY) as part of plan: auto_interaction_autopilot_plan.md","id":"kn_1783886072013_d6ew9w4","timestamp":"2026-07-12T19:54:32.013Z"}
+{"type":"PATTERN","title":"Code Pattern","content":"Modified `src/ui/SidePanelManager.js` (MODIFY) as part of plan: auto_interaction_autopilot_plan.md","id":"kn_1783886072020_1f7exal","timestamp":"2026-07-12T19:54:32.020Z"}
+{"type":"PATTERN","title":"Code Pattern","content":"Modified `src/content/modules/Infiltrator.js` (MODIFY) as part of plan: auto_interaction_autopilot_plan.md","id":"kn_1783886072026_mdd86o3","timestamp":"2026-07-12T19:54:32.026Z"}

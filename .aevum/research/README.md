@@ -14,3 +14,4 @@
 
 <!-- Agent tự động thêm link báo cáo mới vào dưới cùng danh sách này -->
 | [evol_vod-hac-9x0f2e.md](./evol_vod-hac-9x0f2e.md) | Nhật ký tiến hóa của Hawl | 2026-05-09 |
+| [evol_eng-an-7b9f1d.md](./evol_eng-an-7b9f1d.md) | Nhật ký tiến hóa của An | 2026-07-12 | 🔄 UPDATING |

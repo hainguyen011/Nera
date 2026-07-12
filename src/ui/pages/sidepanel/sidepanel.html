@@ -24,6 +24,15 @@
     <!-- TAB 1: COMMAND CENTER -->
     <div id="command" class="tab-pane active">
       <div class="form-group">
+        <button id="toggleAutopilot" class="btn-save" style="width: 100%; border-radius: 8px; background: #2563eb; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; border: none; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="autopilotIcon">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span id="autopilotText">Start Autopilot</span>
+        </button>
+      </div>
+
+      <div class="form-group">
         <label class="section-label">Neural Sentiment Radar</label>
         <div id="radarContainer" class="tactical-card radar-grid">
           <div class="radar-stat">

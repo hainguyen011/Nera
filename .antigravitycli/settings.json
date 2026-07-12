@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "aevum": {
+      "command": "node",
+      "args": [
+        "d:\\Anton\\Nera\\dist\\mcp\\sse_proxy.js",
+        "http://127.0.0.1:3344/sse"
+      ],
+      "env": {}
+    }
+  }
+}

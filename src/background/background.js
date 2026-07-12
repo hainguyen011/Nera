@@ -30,24 +30,38 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function handleSuggestIntents(content, sendResponse) {
   try {
     const config = await StorageManager.getConfig();
-    const systemPrompt = `You are a tactical social media advisor. Based on the post content, suggest exactly 3 short tactical intents for a comment (max 2 words each, in Vietnamese). 
-    Return ONLY a JSON array of strings. Example: ["Cà khịa", "Đồng cảm", "Phản biện"]`;
+    const systemPrompt = `You are a tactical social media advisor. Based on the post content, suggest exactly 3 short tactical intents for a comment (max 2 words each, in Vietnamese). Also select one of these 3 as the recommended best fit for the post.
+    Return ONLY a JSON object. Example:
+    {
+      "intents": ["Cà khịa", "Đồng cảm", "Phản biện"],
+      "recommended": "Đồng cảm"
+    }`;
     
-    const result = await AIHub.callProvider(
+    const result = await AIHub.callRaw(
       `Post Content: ${content}`, 
-      config, 
       systemPrompt, 
-      "neutral", 
-      "concise"
+      config, 
+      true
     );
 
-    // AIHub might return raw text, try to extract JSON array
-    const match = result.comment.match(/\[.*\]/);
+    // AIHub.callRaw returns raw string, try to extract JSON object
+    const match = result.match(/\{[\s\S]*\}/);
     if (match) {
-      const intents = JSON.parse(match[0]);
-      sendResponse({ success: true, intents });
+      const data = JSON.parse(match[0]);
+      sendResponse({ 
+        success: true, 
+        intents: data.intents || [], 
+        recommended: data.recommended || (data.intents ? data.intents[0] : "") 
+      });
     } else {
-      sendResponse({ success: false, error: "Failed to parse intents" });
+      // Fallback if it returned array format
+      const arrayMatch = result.match(/\[.*\]/);
+      if (arrayMatch) {
+        const intents = JSON.parse(arrayMatch[0]);
+        sendResponse({ success: true, intents, recommended: intents[0] });
+      } else {
+        sendResponse({ success: false, error: "Failed to parse intents" });
+      }
     }
   } catch (error) {
     sendResponse({ success: false, error: error.message });
@@ -110,7 +124,11 @@ async function handleInfiltration(request, sendResponse) {
     // Inject tactical intent and user hints if provided
     let tacticalContent = content;
     if (request.intent) {
-      tacticalContent = `[TACTICAL INTENT: ${request.intent}]\n\n${tacticalContent}`;
+      if (request.intent === "auto") {
+        tacticalContent = `[TACTICAL INTENT: AUTO-DETECT]\nInstruction: Analyze the post content and decide on the best engagement strategy (e.g. agreeing, humor, sympathy, professional response, ask a question, challenge a premise, etc.) that fits best. Choose the tone/style/sentiment dynamically to match this strategy.\n\n${tacticalContent}`;
+      } else {
+        tacticalContent = `[TACTICAL INTENT: ${request.intent}]\n\n${tacticalContent}`;
+      }
     }
     if (request.userHint) {
       tacticalContent = `[USER DIRECTION: ${request.userHint}]\n\n${tacticalContent}`;

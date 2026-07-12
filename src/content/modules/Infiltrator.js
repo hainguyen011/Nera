@@ -8,6 +8,9 @@ export class NeraInfiltrator {
     this.NeraDataMiner = NeraDataMiner;
     this.observer = null;
     this.globalPersona = 'Hawl';
+    this.globalStealthLevel = 'standard';
+    this.autopilotActive = false;
+    this.autopilotProcessing = false;
     this.init();
   }
 
@@ -16,13 +19,25 @@ export class NeraInfiltrator {
     
     try {
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
-        // Initial persona load
-        const result = await chrome.storage.local.get('persona');
+        // Initial config load
+        const result = await chrome.storage.local.get(['persona', 'stealthLevel', 'autopilotActive']);
         if (result.persona) this.globalPersona = result.persona;
+        if (result.stealthLevel) this.globalStealthLevel = result.stealthLevel;
+        this.autopilotActive = !!result.autopilotActive;
 
-        // Listen for persona changes
+        // Listen for config changes
         chrome.storage.onChanged.addListener((changes) => {
           if (changes.persona) this.globalPersona = changes.persona.newValue;
+          if (changes.stealthLevel) this.globalStealthLevel = changes.stealthLevel.newValue;
+          if (changes.autopilotActive) {
+            this.autopilotActive = !!changes.autopilotActive.newValue;
+            if (this.autopilotActive) {
+              document.querySelectorAll('[data-nera-autopilot-processed="true"]').forEach(el => {
+                delete el.dataset.neraAutopilotProcessed;
+              });
+              this.startAutopilotLoop();
+            }
+          }
         });
       }
     } catch (e) {
@@ -34,6 +49,10 @@ export class NeraInfiltrator {
 
     // Tactical Pulse: Periodic deep scan for late-rendering posts or missed targets
     setInterval(() => this.scanExisting(), 3000);
+
+    if (this.autopilotActive) {
+      this.startAutopilotLoop();
+    }
   }
 
   setupObserver() {
@@ -58,24 +77,34 @@ export class NeraInfiltrator {
       'div[data-testid="fbfeed_story"]',
       '[role="article"]',
       'div[data-ad-preview="message"]',
-      'div.x1y1aw1k.xwib8y2.x1ye3wu6',
-      'div.x1pbtk8m',
       'div[data-pagelet*="FeedUnit"]',
       'div[data-pagelet*="GroupFeed"]',
       'div[data-pagelet*="Biz"]',
       'div[role="dialog"] [role="article"]',
-      'div.x1n2onr6.x1ja2u2z[role="dialog"]'
+      'div[role="dialog"]'
     ];
     
     // 1. Direct Selector Scan
     const directPosts = document.querySelectorAll(postSelectors.join(','));
     directPosts.forEach(post => this.injectNeraControl(post));
-
-    // 2. Discovery by Interaction (The "Catch-all" failsafe)
+ 
+    // 2. Discovery by Interaction (Class-independent failsafe)
     const triggers = document.querySelectorAll('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"], i[style*="-487px"], div[data-ad-rendering-role="comment_button"]');
     triggers.forEach(t => {
       try {
-        const post = t.closest('div[data-testid*="story"], [role="article"], div.x1y1aw1k, div.x1pbtk8m, div.x193iq5w, div[data-pagelet*="FeedUnit"], div[role="dialog"] div.x1n2onr6');
+        let parent = t.parentElement;
+        let post = null;
+        for (let i = 0; i < 12 && parent && parent !== document.body; i++) {
+          const hasHeader = parent.querySelector('h2, h3, h4, [data-ad-rendering-role="profile_name"]');
+          const isArticle = parent.getAttribute('role') === 'article' || parent.tagName === 'ARTICLE';
+          const hasPagelet = parent.hasAttribute('data-pagelet');
+          
+          if (hasHeader || isArticle || hasPagelet) {
+            post = parent;
+            break; // Stop immediately at the closest post container
+          }
+          parent = parent.parentElement;
+        }
         if (post) this.injectNeraControl(post);
       } catch (e) { /* Skip invalid nodes */ }
     });
@@ -87,13 +116,11 @@ export class NeraInfiltrator {
         'div[data-testid="fbfeed_story"]',
         '[role="article"]',
         'div[data-ad-preview="message"]',
-        'div.x1y1aw1k.xwib8y2.x1ye3wu6',
-        'div.x1pbtk8m',
         'div[data-pagelet*="FeedUnit"]',
         'div[data-pagelet*="GroupFeed"]',
         'div[data-pagelet*="Biz"]',
         'div[role="dialog"] [role="article"]',
-        'div.x1n2onr6.x1ja2u2z[role="dialog"]'
+        'div[role="dialog"]'
       ];
       
       if (node.matches && postSelectors.some(s => node.matches(s))) {
@@ -102,6 +129,27 @@ export class NeraInfiltrator {
         const posts = node.querySelectorAll(postSelectors.join(','));
         posts.forEach(post => this.injectNeraControl(post));
       }
+
+      // Interaction-based failsafe for dynamically added nodes
+      const nodeTriggers = node.querySelectorAll ? node.querySelectorAll('div[role="toolbar"], div[aria-label*="Hành động"], div[aria-label*="Actions"], i[style*="-487px"], div[data-ad-rendering-role="comment_button"]') : [];
+      nodeTriggers.forEach(t => {
+        try {
+          let parent = t.parentElement;
+          let post = null;
+          for (let i = 0; i < 12 && parent && parent !== document.body; i++) {
+            const hasHeader = parent.querySelector('h2, h3, h4, [data-ad-rendering-role="profile_name"]');
+            const isArticle = parent.getAttribute('role') === 'article' || parent.tagName === 'ARTICLE';
+            const hasPagelet = parent.hasAttribute('data-pagelet');
+            
+            if (hasHeader || isArticle || hasPagelet) {
+              post = parent;
+              break; // Stop immediately at the closest post container
+            }
+            parent = parent.parentElement;
+          }
+          if (post) this.injectNeraControl(post);
+        } catch (e) { }
+      });
     } catch (e) { /* Silent fail */ }
   }
 
@@ -129,21 +177,38 @@ export class NeraInfiltrator {
 
     // Hydration Guard: Wait for content to load before claiming this node
     if (!this.isNodeReady(post)) {
-        // If not ready, we don't mark as infiltrated, allowing scanExisting to pick it up later
         return;
     }
-    
-    post.dataset.neraInfiltrated = 'true';
 
     // Mode Detection: Is this a Post or a Comment?
-    // Refined heuristic: Comments are articles inside lists OR have specific reply buttons
-    // AND they are NOT top-level post containers
-    const isComment = (post.closest('ul') || 
-                       post.querySelector('[aria-label*="Trả lời"], [aria-label*="Reply"], [aria-label*="Thích"], [aria-label*="Like"]') ||
-                       post.querySelector('div[data-comment-id]')) && 
-                      !post.querySelector('div[data-ad-comet-preview="message"]');
+    const ariaLabel = post.getAttribute('aria-label') || "";
+    const isComment = !!(
+      ariaLabel.toLowerCase().includes('bình luận') || 
+      ariaLabel.toLowerCase().includes('comment') || 
+      post.closest('[data-commentid]') || 
+      post.closest('[data-comment-id]') ||
+      post.hasAttribute('data-commentid') ||
+      post.hasAttribute('data-comment-id')
+    );
     
     const mode = isComment ? 'COMMENT' : 'POST';
+
+    // Check if any ancestor of the SAME mode is already infiltrated
+    let ancestor = post.parentElement;
+    while (ancestor && ancestor !== document.body) {
+      if (ancestor.dataset && ancestor.dataset.neraInfiltrated === 'true' && ancestor.dataset.neraMode === mode) {
+        return;
+      }
+      ancestor = ancestor.parentElement;
+    }
+
+    // Check if any descendant of the SAME mode is already infiltrated
+    if (post.querySelector(`.nera-control.mode-${mode.toLowerCase()}`)) {
+      return;
+    }
+
+    post.dataset.neraInfiltrated = 'true';
+    post.dataset.neraMode = mode;
 
     const container = document.createElement('div');
     container.className = `nera-control mode-${mode.toLowerCase()}`;
@@ -173,6 +238,14 @@ export class NeraInfiltrator {
       } else {
           this.elevateStacking(post, false); // Revert to safe base priority
           container.style.setProperty('z-index', '2147483647', 'important');
+          
+          // Restore standard badges display for manual mode
+          const standardIntents = ['agree', 'expand', 'question', 'humor', 'thanks', 'challenge', 'disagree', 'tease', 'empathize', 'ask', 'confirm', 'cta', 'suggest'];
+          shadow.querySelectorAll('.intent-mini').forEach(el => {
+            if (standardIntents.includes(el.dataset.intent)) {
+              el.style.display = '';
+            }
+          });
       }
 
       this.sendLog(isExpanded ? "Console Expanded: High-Fidelity Mode" : "Console Minified: Stealth Mode", "info");
@@ -252,36 +325,65 @@ export class NeraInfiltrator {
       };
     };
 
+    // Expose runAISuggest function to consoleEl for Autopilot to use synchronously
+    consoleEl.runAISuggest = async () => {
+      const mini = consoleEl.querySelector('.intent-mini[data-intent="suggest"]');
+      if (!mini) return [];
+
+      const originalText = mini.innerText;
+      mini.innerText = "Scanning...";
+      mini.style.opacity = "0.7";
+      mini.style.pointerEvents = "none";
+
+      // Clean old custom intents
+      const standardIntents = ['agree', 'expand', 'question', 'humor', 'thanks', 'challenge', 'disagree', 'tease', 'empathize', 'ask', 'confirm', 'cta', 'suggest'];
+      consoleEl.querySelectorAll('.intent-mini').forEach(el => {
+        if (!standardIntents.includes(el.dataset.intent)) {
+          el.remove();
+        }
+      });
+
+      return new Promise((resolve) => {
+        this.safeSendMessage({
+          type: "SUGGEST_INTENTS",
+          content: post.innerText.substring(0, 1000)
+        }, (response) => {
+          mini.innerText = originalText;
+          mini.style.opacity = "1";
+          mini.style.pointerEvents = "auto";
+
+          if (response && response.success && response.intents) {
+            const customIntents = [];
+            response.intents.forEach(text => {
+              const newIntent = document.createElement('div');
+              newIntent.className = 'intent-mini';
+              newIntent.dataset.intent = text.toLowerCase();
+              newIntent.innerText = text;
+              attachIntentLogic(newIntent);
+              mini.parentNode.insertBefore(newIntent, mini);
+              customIntents.push(newIntent);
+
+              // Highlight recommended option
+              if (response.recommended && text.toLowerCase() === response.recommended.toLowerCase()) {
+                newIntent.style.border = "1px solid #00e676";
+                newIntent.style.boxShadow = "0 0 8px rgba(0, 230, 118, 0.4)";
+              }
+            });
+            this.sendLog("AI suggested new tactical paths.", "success");
+            resolve(customIntents);
+          } else {
+            resolve([]);
+          }
+        });
+      });
+    };
+
     const intentMinis = consoleEl.querySelectorAll('.intent-mini');
     intentMinis.forEach(mini => {
       if (mini.dataset.intent === 'suggest') {
-        mini.onclick = async (e) => {
+        mini.onclick = (e) => {
           e.stopPropagation();
-          const originalText = mini.innerText;
-          mini.innerText = "Scanning...";
-          mini.style.opacity = "0.7";
-          mini.style.pointerEvents = "none";
-
-          this.safeSendMessage({
-            type: "SUGGEST_INTENTS",
-            content: post.innerText.substring(0, 1000)
-          }, (response) => {
-            mini.innerText = originalText;
-            mini.style.opacity = "1";
-            mini.style.pointerEvents = "auto";
-
-            if (response && response.success && response.intents) {
-              response.intents.forEach(text => {
-                const newIntent = document.createElement('div');
-                newIntent.className = 'intent-mini';
-                newIntent.dataset.intent = text.toLowerCase();
-                newIntent.innerText = text;
-                attachIntentLogic(newIntent);
-                mini.parentNode.insertBefore(newIntent, mini);
-              });
-              this.sendLog("AI suggested new tactical paths.", "success");
-            }
-          });
+          consoleEl.runAISuggest();
         };
       } else {
         attachIntentLogic(mini);
@@ -886,6 +988,252 @@ export class NeraInfiltrator {
         // Context invalidated or other runtime error
       }
     }
+  }
+
+  async startAutopilotLoop() {
+    if (this.autopilotProcessing) return;
+    this.autopilotProcessing = true;
+    this.sendLog("Autopilot engine initialized. Preparing scanning loop...", "success");
+
+    let scrollAttempts = 0;
+
+    while (this.autopilotActive) {
+      try {
+        // Wait 1.5 seconds between loop iterations to prevent high CPU or UI locks
+        await new Promise(r => setTimeout(r, 1500));
+
+        if (!this.autopilotActive) break;
+
+        const target = this.findNextAutopilotTarget();
+        if (target) {
+          scrollAttempts = 0;
+          this.sendLog("Target identified. Engaging autopilot protocol...", "info");
+          
+          // 1. Mark target
+          target.dataset.neraAutopilotProcessed = 'true';
+
+          // 2. Scroll to target naturally
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          await new Promise(r => setTimeout(r, 2000)); // wait for scroll to finish
+          
+          if (!this.autopilotActive) break;
+
+          // 3. Inject Nera Control if not present
+          if (!target.dataset.neraInfiltrated) {
+            this.injectNeraControl(target);
+            await new Promise(r => setTimeout(r, 1000));
+          }
+
+          if (!this.autopilotActive) break;
+
+          // 4. Retrieve console elements
+          const container = target.querySelector('.nera-control');
+          if (!container || !container.shadowRoot) {
+            this.sendLog("Bypass warning: Control container missing.", "warning");
+            continue;
+          }
+
+          const shadow = container.shadowRoot;
+          const consoleEl = shadow.querySelector('.tactical-console');
+          const trigger = shadow.querySelector('.nera-toggle-trigger');
+          const closeBtn = shadow.querySelector('.nera-close-btn');
+          const mainBtn = shadow.querySelector('#nera-main-action');
+          const editor = shadow.querySelector('.payload-editor');
+          const footer = shadow.querySelector('.console-footer');
+          const suggestBtn = shadow.querySelector('.intent-mini[data-intent="suggest"]');
+
+          if (!consoleEl || !trigger) {
+            this.sendLog("Bypass warning: Console elements missing.", "warning");
+            continue;
+          }
+
+          // 4a. Visually Expand the Board
+          this.sendLog("Opening Nera Console...", "info");
+          if (!consoleEl.classList.contains('expanded')) {
+            trigger.click();
+            await new Promise(r => setTimeout(r, 1200)); // Wait for expansion animation
+          }
+
+          if (!this.autopilotActive) break;
+
+          // Hide standard intent badges visually in Autopilot mode (since AI is auto-generating)
+          const standardIntents = ['agree', 'expand', 'question', 'humor', 'thanks', 'challenge', 'disagree', 'tease', 'empathize', 'ask', 'confirm', 'cta', 'suggest'];
+          shadow.querySelectorAll('.intent-mini').forEach(el => {
+            if (standardIntents.includes(el.dataset.intent)) {
+              el.style.display = 'none';
+            }
+          });
+
+          // 4b. AI dynamically decides and synthesizes optimal response
+          this.sendLog("Autopilot: Analyzing post content & synthesizing optimal response...", "info");
+          
+          if (editor) {
+            editor.innerText = "Auto...";
+          }
+          
+          const anchoredBtn = target.querySelector('div[data-ad-rendering-role="comment_button"]')?.closest('div[role="button"]') ||
+            target.querySelector('i[style*="background-position: 0px -487px"]')?.closest('div[role="button"]') ||
+            target.querySelector('div[aria-label="Viết bình luận"]') ||
+            target.querySelector('div[aria-label*="Bình luận"]') ||
+            target.querySelector('div[aria-label*="Comment"]');
+            
+          this.synthesizePayload(target, "auto", this.globalPersona, mainBtn, null, editor, footer, anchoredBtn, "");
+
+          // 5. Wait for Synthesis to become 'ready'
+          let synthSuccess = false;
+          for (let waitSec = 0; waitSec < 20; waitSec++) {
+            await new Promise(r => setTimeout(r, 1000));
+            if (!this.autopilotActive) break;
+            if (mainBtn.dataset.state === 'ready') {
+              synthSuccess = true;
+              break;
+            }
+          }
+
+          if (!this.autopilotActive) break;
+
+          if (!synthSuccess) {
+            this.sendLog("Synthesis timed out or failed. Skipping target.", "error");
+            if (closeBtn) closeBtn.click(); // Close console
+            continue;
+          }
+
+          // 6. Deploy comment (Ghost Typing + Auto submit)
+          this.sendLog("Synthesis complete. Initiating Ghost Typing deployment...", "info");
+          await new Promise(r => setTimeout(r, 1000)); // Natural pause before typing
+
+          if (!this.autopilotActive) break;
+
+          const deploySuccess = await this.executeGhostTyping(target, editor.innerText, true, anchoredBtn, mainBtn);
+
+          if (deploySuccess) {
+            this.sendLog("Deployment successful. Comment posted.", "success");
+          } else {
+            this.sendLog("Deployment failed. Skipping target.", "error");
+          }
+
+          // 7. Close the board after deployment
+          if (closeBtn) {
+            closeBtn.click();
+            await new Promise(r => setTimeout(r, 800)); // Wait for close animation
+          }
+
+          // 8. Stealth Delay before next post
+          if (this.autopilotActive) {
+            const stealthPreset = this.getStealthConfig(this.globalStealthLevel);
+            const baseDelay = stealthPreset.minDelay * 200 + Math.random() * (stealthPreset.maxDelay - stealthPreset.minDelay) * 200;
+            this.sendLog(`Stealth mode cooldown: resting for ${Math.round(baseDelay / 1000)} seconds...`, "info");
+            await new Promise(r => setTimeout(r, baseDelay));
+          }
+
+        } else {
+          // No targets found. Scroll down to load more content.
+          scrollAttempts++;
+          if (scrollAttempts > 5) {
+            this.sendLog("No new targets found after multiple scroll attempts. Autopilot pausing...", "warning");
+            await new Promise(r => setTimeout(r, 10000)); // Pause longer
+            scrollAttempts = 0;
+            continue;
+          }
+
+          this.sendLog("Scanning feed: No targets in view. Scrolling for new content...", "info");
+          window.scrollBy({ top: 600, behavior: 'smooth' });
+          await new Promise(r => setTimeout(r, 3000)); // Wait for content load
+        }
+      } catch (err) {
+        console.error("[NERA Autopilot Error]:", err);
+        this.sendLog(`Autopilot error: ${err.message}`, "error");
+      }
+    }
+
+    this.autopilotProcessing = false;
+    this.sendLog("Autopilot engine offline.", "warning");
+  }
+
+  getCurrentUserName() {
+    // Try to find in top-right profile button
+    const profileTrigger = document.querySelector('div[aria-label*="Trang cá nhân của"], div[aria-label*="Your profile"], a[href*="/me/"]');
+    if (profileTrigger) {
+      const label = profileTrigger.getAttribute('aria-label') || "";
+      // Extract name from "Trang cá nhân của Nguyễn Văn A" or "Your profile, John Doe"
+      const match = label.match(/Trang cá nhân của (.+)/i) || label.match(/Your profile, (.+)/i) || label.match(/(.+)'s profile/i);
+      if (match && match[1]) return match[1].trim();
+    }
+    
+    // Try to find in comment input placeholder/label (e.g. "Viết bình luận dưới tên Hải...")
+    const commentInputs = document.querySelectorAll('div[aria-label*="dưới tên"], div[aria-label*="as "]');
+    for (const input of commentInputs) {
+      const label = input.getAttribute('aria-label') || "";
+      const match = label.match(/dưới tên (.+)/i) || label.match(/as (.+)/i);
+      if (match && match[1]) return match[1].trim();
+    }
+    
+    return null;
+  }
+
+  hasUserCommented(post, currentUserName) {
+    if (!currentUserName) return false;
+    
+    // Find all comments inside the post container
+    const comments = post.querySelectorAll('[data-commentid], [data-comment-id], [role="article"]');
+    for (const comment of comments) {
+      const label = comment.getAttribute('aria-label') || "";
+      if (label.toLowerCase().includes('bình luận') || label.toLowerCase().includes('comment')) {
+        // If comment label contains our profile name, we already commented
+        if (label.toLowerCase().includes(currentUserName.toLowerCase())) {
+          return true;
+        }
+      }
+      
+      // Fallback: check text of links inside the comment for author name matching
+      const authorLinks = comment.querySelectorAll('a[role="link"], span[role="link"]');
+      for (const link of authorLinks) {
+        if (link.innerText && link.innerText.trim().toLowerCase() === currentUserName.toLowerCase()) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+
+  findNextAutopilotTarget() {
+    // Find all infiltrated post containers
+    const candidates = Array.from(document.querySelectorAll('[data-nera-infiltrated="true"]'));
+    const currentUserName = this.getCurrentUserName();
+    
+    for (const el of candidates) {
+      // Skip if already processed by autopilot
+      if (el.dataset.neraAutopilotProcessed === 'true') continue;
+
+      // Skip elements that are obviously not posts (like very small buttons)
+      if (el.offsetWidth < 50 || el.offsetHeight < 50) continue;
+
+      // Autopilot only comments on main posts, skip comments
+      if (el.dataset.neraMode === 'COMMENT') continue;
+
+      // Skip if the user has already commented on this post (prevent duplicate comments)
+      if (currentUserName && this.hasUserCommented(el, currentUserName)) {
+        this.sendLog("Skipping post: User has already commented on this thread.", "warning");
+        el.dataset.neraAutopilotProcessed = 'true'; // Mark as processed to save resources
+        continue;
+      }
+
+      // Skip if it is inside another element already processed or being processed
+      let parent = el.parentElement;
+      let isNestedProcessed = false;
+      while (parent && parent !== document.body) {
+        if (parent.dataset && parent.dataset.neraAutopilotProcessed === 'true') {
+          isNestedProcessed = true;
+          break;
+        }
+        parent = parent.parentElement;
+      }
+      if (isNestedProcessed) continue;
+
+      return el;
+    }
+    return null;
   }
 
   sendLog(message, status) {

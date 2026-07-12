@@ -1,0 +1,938 @@
+[
+  {
+    "id": "tx_node_1783886075186_hx3sr",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T19:54:35.186Z",
+    "payload": {
+      "id": "aevum://lesson/1783886075185_k9z",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Sử dụng thuộc tính dataset.neraAutopilotProcessed để theo dõi trạng thái các node đã xử lý, giúp ngăn chặn việc gửi bình luận lặp lại. Đồng thời, cơ chế tự động cuộn trang (scrollBy) hoạt động tốt để tải dữ liệu động trên Facebook.",
+        "author": "An",
+        "date": "2026-07-12T19:54:35.186Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886075195_2mqa9",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T19:54:35.195Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886075204_ofka8",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T19:54:35.204Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886075185_k9z",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886545164_gmy6v",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:02:25.164Z",
+    "payload": {
+      "id": "aevum://lesson/1783886545163_bsm",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Sử dụng phím tắt Shift + Z tránh xung đột với phím tắt Alt + Z của các chức năng hệ điều hành hoặc trình duyệt khác, cải thiện trải nghiệm người dùng.",
+        "author": "An",
+        "date": "2026-07-12T20:02:25.164Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886545174_7m0sc",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:02:25.174Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886545185_9h4vg",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:02:25.185Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886545163_bsm",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886610413_9orj5",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:03:30.413Z",
+    "payload": {
+      "id": "aevum://lesson/1783886610407_0di",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Sử dụng position: absolute; right: 75px; đưa phần tử vào bên trong thẻ cha thay vì treo ngoài biên, giúp tránh bị cắt bởi overflow: hidden.",
+        "author": "An",
+        "date": "2026-07-12T20:03:30.412Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886610420_hvi22",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:03:30.420Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886610427_hfi83",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:03:30.427Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886610407_0di",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886678837_9kpn1",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:04:38.837Z",
+    "payload": {
+      "id": "aevum://lesson/1783886678837_v29",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Đối với các bài viết có màu nền trên Facebook (không có thuộc tính data-ad-comet-preview='message'), có thể sử dụng cloneNode kết hợp loại bỏ các tag heading (h2, h3) và button/input để lấy chính xác text nội dung chính của bài viết.",
+        "author": "An",
+        "date": "2026-07-12T20:04:38.837Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886678846_gud2i",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:04:38.846Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886678853_qsid5",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:04:38.854Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886678837_v29",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886787981_wrrp1",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:06:27.981Z",
+    "payload": {
+      "id": "aevum://lesson/1783886787980_pkc",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Sử dụng bộ chọn div.x1n2onr6.x1ja2u2z (không ràng buộc role='dialog') để nhận diện tổng quát các thẻ bài viết trên feed Facebook, giúp hỗ trợ tốt hơn cho bài viết nhóm và ẩn danh.",
+        "author": "An",
+        "date": "2026-07-12T20:06:27.981Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886787989_jv6dc",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:06:27.989Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886787996_qf1yr",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:06:27.996Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886787980_pkc",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886840097_jou4y",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:07:20.097Z",
+    "payload": {
+      "id": "aevum://lesson/1783886840096_7ov",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để tránh hỏng hóc do Facebook thay đổi class động liên tục, ta nên sử dụng thuật toán leo cấp cây DOM từ các nút tương tác ổn định (role=toolbar, role=button) để tìm thẻ cha chứa tiêu đề tác giả (h2, h3, h4) thay vì chỉ định lớp CSS tĩnh.",
+        "author": "An",
+        "date": "2026-07-12T20:07:20.097Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886840105_f1rwa",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:07:20.105Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886840114_onsgk",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:07:20.114Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886840096_7ov",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886892641_nsc5c",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:08:12.641Z",
+    "payload": {
+      "id": "aevum://lesson/1783886892640_ee3",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Luôn kiểm tra các dấu ngoặc đóng khi thực hiện thay thế code quy mô lớn và chạy node --check để đảm bảo cú pháp tệp tin JavaScript hoàn toàn hợp lệ trước khi bàn giao.",
+        "author": "An",
+        "date": "2026-07-12T20:08:12.641Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886892650_e7dn1",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:08:12.650Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886892658_j4r58",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:08:12.658Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886892640_ee3",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783886964830_iz6yl",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:09:24.830Z",
+    "payload": {
+      "id": "aevum://lesson/1783886964830_j58",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để ngăn chặn việc tiêm trùng lặp phần tử trên cấu trúc DOM phân cấp đa tầng (nested candidate cards), cần thực hiện duyệt ngược lên tổ tiên (ancestor check) và tìm kiếm xuống con cháu (descendant query) để chặn ngay khi đã có phần tử con hoặc cha nào đó được xử lý trước.",
+        "author": "An",
+        "date": "2026-07-12T20:09:24.830Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783886964839_lipeb",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:09:24.839Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783886964847_93ir7",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:09:24.847Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783886964830_j58",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783887125871_9zpzh",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:12:05.871Z",
+    "payload": {
+      "id": "aevum://lesson/1783887125852_bov",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Khi thực hiện kiểm tra lồng nhau đệ quy (nested elements check) cho các phần tử DOM, cần phân tách rõ ràng theo mode (POST / COMMENT). Tránh việc phần tử con thuộc mode này chặn phần tử cha thuộc mode kia.",
+        "author": "An",
+        "date": "2026-07-12T20:12:05.870Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783887125882_lvw47",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:12:05.882Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783887125895_qchpi",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:12:05.895Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783887125852_bov",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783887164513_33u8x",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:12:44.513Z",
+    "payload": {
+      "id": "aevum://lesson/1783887164512_p26",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Đối với Facebook status background, nội dung văn bản thường lặp lại hai lần trong DOM (một lần ẩn qua aria-hidden='true' làm hiệu ứng thị giác). Cần clone và loại bỏ toàn bộ các node có thuộc tính aria-hidden='true' bên trong data-ad-rendering-role='story_message' để nhận được văn bản sạch.",
+        "author": "An",
+        "date": "2026-07-12T20:12:44.512Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783887164523_0yt2t",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:12:44.523Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783887164531_lupmg",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:12:44.531Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783887164512_p26",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783887244297_4lxiy",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:14:04.297Z",
+    "payload": {
+      "id": "aevum://lesson/1783887244296_mk9",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Khi leo ngược cây DOM từ các nút tương tác của bài viết để tìm thẻ cha chứa tiêu đề tác giả, cần break dừng vòng lặp ngay lập tức khi tìm thấy thẻ cha gần nhất thỏa mãn. Tránh để vòng lặp leo lên các container cha cấp cao hơn như danh sách feed, khiến nút Nera bị chèn vào vị trí sai lệch.",
+        "author": "An",
+        "date": "2026-07-12T20:14:04.297Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783887244307_hi8ht",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:14:04.307Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783887244315_uh2oj",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:14:04.315Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783887244296_mk9",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783888108801_u3is5",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:28:28.801Z",
+    "payload": {
+      "id": "aevum://lesson/1783888108800_t0x",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Khi xây dựng chế độ Autopilot trực quan cho người dùng, cần tự động tương tác với chính các phần tử UI của extension (như click mở rộng, click nút quét gợi ý AI, click chọn phần tử ý đồ) để kích hoạt toàn bộ luồng xử lý và cập nhật UI thực tế của hệ thống, giúp người dùng dễ dàng theo dõi tiến độ hoạt động.",
+        "author": "An",
+        "date": "2026-07-12T20:28:28.800Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783888108810_s5qfk",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:28:28.810Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783888108825_moc0l",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:28:28.825Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783888108800_t0x",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783888776905_dl5rv",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:39:36.905Z",
+    "payload": {
+      "id": "aevum://lesson/1783888776904_mxu",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để đảm bảo tính nhất quán giữa bộ quét (injection) và bộ thực thi (Autopilot), nên truy vấn trực tiếp các phần tử đã được tiêm thành công (data-nera-infiltrated='true') làm mục tiêu cho Autopilot, thay vì sử dụng tập hợp các bộ chọn lớp phức tạp và dễ thay đổi.",
+        "author": "An",
+        "date": "2026-07-12T20:39:36.905Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783888776919_mcygw",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:39:36.919Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783888776928_ah5k1",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:39:36.928Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783888776904_mxu",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783889478170_zcdth",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:51:18.170Z",
+    "payload": {
+      "id": "aevum://lesson/1783889478169_70s",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Khi phân biệt giữa các thực thể lớn (Post) và thực thể nhỏ nằm bên trong (Comment), việc leo ngược cây DOM (DOM climbing) để phát hiện sự tồn tại của thực thể cha là POST hoặc kiểm tra sự hiện diện đồng thời của các từ khóa tác vụ (Thích + Trả lời / Like + Reply) là phương pháp chính xác và ổn định nhất, không phụ thuộc vào cấu trúc class động.",
+        "author": "An",
+        "date": "2026-07-12T20:51:18.170Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783889478179_25nw2",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:51:18.179Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783889478187_12jm4",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:51:18.187Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783889478169_70s",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783889814115_oonqc",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T20:56:54.115Z",
+    "payload": {
+      "id": "aevum://lesson/1783889814114_gjg",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Facebook sử dụng thuộc tính data-commentid (không có dấu gạch ngang) thay vì data-comment-id cho các phần tử bình luận của họ. Để phân loại chính xác, nên quét cả hai thuộc tính này kết hợp với aria-label chứa từ khóa 'bình luận' hoặc 'comment' thay vì phụ thuộc vào thẻ danh sách ul.",
+        "author": "An",
+        "date": "2026-07-12T20:56:54.115Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783889814124_s5cl2",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T20:56:54.124Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783889814135_6nqbh",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T20:56:54.135Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783889814114_gjg",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783890131832_ig0hv",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:02:11.832Z",
+    "payload": {
+      "id": "aevum://lesson/1783890131831_2a8",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để tránh việc chọn ý đồ một cách ngẫu nhiên, ta có thể yêu cầu LLM phân tích và chỉ định rõ lựa chọn phù hợp nhất (recommended) trong JSON trả về. Client side chỉ cần lắng nghe và mô phỏng sự kiện click lên phần tử tương ứng để khởi chạy synthesis tự động một cách tối ưu và trực quan.",
+        "author": "An",
+        "date": "2026-07-12T21:02:11.831Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783890131842_4uo39",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:02:11.842Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783890131851_gvocm",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:02:11.851Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783890131831_2a8",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783890588799_7ctiq",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:09:48.799Z",
+    "payload": {
+      "id": "aevum://lesson/1783890588799_0wz",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để tránh việc hành vi của Autopilot bị rập khuôn và bị phát hiện là bot, có thể yêu cầu Autopilot luôn sử dụng ý đồ tùy biến từ AI Suggest, bỏ qua hoàn toàn các ý đồ mặc định cố định, và chọn ngẫu nhiên một trong số các ý đồ tùy biến đó sau khi hoàn tất việc quét.",
+        "author": "An",
+        "date": "2026-07-12T21:09:48.799Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783890588808_9htx5",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:09:48.808Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783890588817_1ydf5",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:09:48.817Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783890588799_0wz",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783890727858_5qpc9",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:12:07.858Z",
+    "payload": {
+      "id": "aevum://lesson/1783890727857_a88",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để tăng tính an toàn và tự nhiên, nên tự động phát hiện tên profile người dùng đang hoạt động (qua nút profile hoặc ô bình luận) và quét cây bình luận hiện tại để tự động bỏ qua các bài viết đã có phản hồi của người dùng, tránh trùng lặp bình luận khi reload trang.",
+        "author": "An",
+        "date": "2026-07-12T21:12:07.858Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783890727869_l6kr9",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:12:07.869Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783890727877_8bhxw",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:12:07.877Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783890727857_a88",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783890869900_8xkke",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:14:29.900Z",
+    "payload": {
+      "id": "aevum://lesson/1783890869897_p4r",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để khóa và ẩn các badge mặc định trong chế độ Autopilot một cách an toàn và nhất quán, ta cần liệt kê đầy đủ tất cả các key intent chuẩn (như empathize, tease, ask, confirm, cta) trong mảng so khớp, ẩn chúng khỏi giao diện lúc chạy Autopilot, và khôi phục hiển thị khi đóng console để đảm bảo trải nghiệm sử dụng thủ công bình thường.",
+        "author": "An",
+        "date": "2026-07-12T21:14:29.899Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783890869912_qi8yw",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:14:29.912Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783890869928_q89pw",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:14:29.928Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783890869897_p4r",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783891087354_7ilmh",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:18:07.354Z",
+    "payload": {
+      "id": "aevum://lesson/1783891087353_a6l",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Khi thực hiện các tác vụ phụ trợ (như gợi ý ý đồ) qua AI, không nên sử dụng phương thức callProvider chính vì nó đính kèm sẵn các quy tắc tạo bình luận Facebook làm LLM bị xung đột cấu trúc JSON. Tạo một phương thức callRaw chuyên biệt để lấy dữ liệu thô và phân tích trực tiếp là giải pháp tối ưu.",
+        "author": "An",
+        "date": "2026-07-12T21:18:07.354Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783891087362_rjnvw",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:18:07.362Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783891087370_eoxya",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:18:07.370Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783891087353_a6l",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783891222832_nvlfv",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:20:22.832Z",
+    "payload": {
+      "id": "aevum://lesson/1783891222831_qjr",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Sử dụng sự kiện click giả lập trên trình duyệt để kích hoạt các tác vụ có thời gian chờ (như gọi API) trong vòng lặp Autopilot có thể không ổn định do lỗi luồng sự kiện. Cách tốt nhất là bọc logic API thành một hàm bất đồng bộ trả về Promise gắn trực tiếp vào console element để Autopilot có thể đợi kết quả một cách đồng bộ và chính xác.",
+        "author": "An",
+        "date": "2026-07-12T21:20:22.832Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783891222840_mhi86",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:20:22.840Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783891222848_u049m",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:20:22.848Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783891222831_qjr",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783891386018_a7nl7",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:23:06.018Z",
+    "payload": {
+      "id": "aevum://lesson/1783891386018_eb6",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Để Autopilot phản hồi nhanh, tự nhiên và đáng tin cậy tối đa, nên hỗ trợ ý đồ 'auto' trực tiếp tại API sinh bình luận. AI sẽ tự động phân tích bài viết và chọn ra chiến lược phản hồi phù hợp nhất trong một lần gọi duy nhất. Điều này giảm số lần gọi mạng và loại bỏ hoàn toàn các điểm nghẽn giao diện trung gian.",
+        "author": "An",
+        "date": "2026-07-12T21:23:06.018Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783891386027_433du",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:23:06.027Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783891386037_yfy26",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:23:06.037Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783891386018_eb6",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783891464633_q3aev",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:24:24.633Z",
+    "payload": {
+      "id": "aevum://lesson/1783891464632_old",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Khi thực hiện các thay đổi mã nguồn trong các phạm vi khối lệnh lớn (như vòng lặp while trong autopilot), cần cực kỳ cẩn trọng không được khai báo lại (redeclare) các biến block-scope như let hay const đã được định nghĩa ở cấp trên trong cùng khối, để tránh gây lỗi runtime hoặc lỗi biên dịch.",
+        "author": "An",
+        "date": "2026-07-12T21:24:24.633Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783891464642_0owcl",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:24:24.642Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783891464650_mes04",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:24:24.650Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783891464632_old",
+      "type": "hasLesson"
+    }
+  },
+  {
+    "id": "tx_node_1783891767631_26hlf",
+    "action": "ADD_NODE",
+    "timestamp": "2026-07-12T21:29:27.631Z",
+    "payload": {
+      "id": "aevum://lesson/1783891767630_p9v",
+      "type": "LESSON",
+      "label": "Lesson from auto_interaction_autopilot_plan.md",
+      "properties": {
+        "description": "Cung cấp phản hồi trực quan ngay lập tức trong các trường nhập liệu (như gán text tạm thời 'Auto...') giúp nâng cao đáng kể trải nghiệm người dùng, giúp họ dễ dàng nắm bắt được trạng thái hoạt động thực tế của Agent.",
+        "author": "An",
+        "date": "2026-07-12T21:29:27.630Z",
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_node_1783891767641_p9bzl",
+    "action": "UPDATE_NODE",
+    "timestamp": "2026-07-12T21:29:27.641Z",
+    "payload": {
+      "id": "aevum://plan/auto_interaction_autopilot_plan",
+      "type": "PLAN",
+      "label": "auto_interaction_autopilot_plan.md",
+      "properties": {
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "id": "tx_edge_1783891767650_jitjk",
+    "action": "ADD_EDGE",
+    "timestamp": "2026-07-12T21:29:27.650Z",
+    "payload": {
+      "source": "aevum://plan/auto_interaction_autopilot_plan",
+      "target": "aevum://lesson/1783891767630_p9v",
+      "type": "hasLesson"
+    }
+  }
+]

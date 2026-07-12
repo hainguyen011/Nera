@@ -28,7 +28,7 @@ export const NeraStyles = {
       .tactical-console {
         position: absolute;
         top: 12px;
-        right: -92px; 
+        right: 75px; 
         width: 86px; 
         height: 28px; 
         pointer-events: auto;

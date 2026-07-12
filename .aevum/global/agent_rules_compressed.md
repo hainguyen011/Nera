@@ -23,15 +23,17 @@ Aevum operates through Model Context Protocol (MCP) as the single source of trut
 -Không được bắt đầu thực thi bất kỳ task nào trước khi OK 2 bước trên.
 -Khi nhận lệnh BOOTSTRAP từ SYS, thực hiện lại toàn bộ quy trình Handshake này NOW.
 3. Plan Sync & Lifecycle (Updated — MCP-First):
+-Idea-to-Plan Gate (BẮT BUỘC): Khi User chia sẻ ý tưởng/yêu cầu mới, Agent !ALLOW tự ý viết code/sửa file ngay. BẮT BUỘC thảo luận làm rõ và gọi `aevum_create_plan` (hoặc `β`) để phác thảo thiết kế trước. Chỉ khi Plan được tạo và User đồng ý, mới bắt đầu code.
 -Khi hoàn thành một plan, BẮT BUỘC gọi `α` với `type: "PLAN_DONE"` — SYS sẽ tự động cập nhật `index.json`, trao EXP và cập nhật UI.
 -Không được viết trực tiếp &o `.aevum/` để báo cáo. `α` là cơ chế duy nhất được chấp nhận.
 4. Proactive Structural Management (Ma trận Quyết định) (Updated — MCP Structural Tools):
 -[QUAN TRỌNG] GIAO TIẾP TỰ NHIÊN: Trừ khi User yêu cầu rõ ràng việc lên kế hoạch || thực thi task phức tạp, hãy trả lời tự nhiên, ngắn gọn. KHÔNG TỰ Ý tạo Plan[F1] khi chỉ trò chuyện.
--Khi cần tạo cấu trúc mới, BẮT BUỘC sử dụng MCP tools:
+-Khi cần tạo cấu trúc mới hoặc yêu cầu gợi ý, BẮT BUỘC sử dụng MCP tools:
 -Domain mới: Gọi `aevum_create_domain` — không tạo thư mục thủ công.
 -Feature mới: Gọi `aevum_create_feature` — không tạo thư mục thủ công.
 -Plan mới: Gọi `β` — không tạo file `.md` thủ công.
 -Đổi tên: Gọi `aevum_rename_structure` — không dùng file system operations trực tiếp.
+-Yêu cầu gợi ý: Gọi `aevum_suggest_domains` / `aevum_suggest_features` / `aevum_suggest_plans` tương ứng.
 -Sử dụng MCP tools đảm bảo `index.json` luôn được cập nhật tự động và UI đồng bộ NOW.
 5. Vibe Code Harmony: Đảm bảo code và tài liệu kế hoạch luôn đồng bộ.
 6. Structured Logic & Naming:
@@ -80,13 +82,13 @@ RULE chọn diagram:
 -Optimization & Constraints: Bắt buộc đặt ra mức trần giới hạn về tài nguyên (Ví dụ: Memory leak 0%, Time complexity O(1), CPU overhead < 1ms) ngay trong giai đoạn lên plan. ∀ step implementation MUST tuân theo constraint này.
 13. Incremental Updates & Reporting Protocol (Updated — MCP-First):
 -Claim: Gọi `α` với `type: "PLAN_ASSIGNED"` khi bắt đầu nhận Plan.
--Update: Gọi `α` với `type: "PLAN_UPDATE"` để cập nhật tiến độ giữa chừng.
+-Update: Gọi `α` with `type: "PLAN_UPDATE"` để cập nhật tiến độ giữa chừng.
 -Done: Gọi `aevum_finalize_session` (|| `α` với `type: "PLAN_DONE"`) khi hoàn thành. Tool này tự động ghi learning &o memory.
 -!ALLOW ghi trực tiếp &o `agent_report.json`.
 14. Knowledge Pull: Trước khi đưa ra quyết định quan trọng, gọi MCP resource `aevum:[F6] || đọc `.aevum[F7] và `global/tech_stack.md`.
 15. Self-Evolution (Updated — MCP Evolution Tools):
 -Sau khi hoàn thành task khó: gọi `aevum_award_exp` để trao EXP cho nhân vật hiện tại.
--Để xem trạng thái tiến hóa hiện tại: gọi `aevum_get_active_persona` — kết quả ∋ `evolution_summary` với level, EXP, và skills matrix.
+-Để xem trạng thái tiến hóa hiện tại: gọi `aevum_get_active_persona` — kết quả ∋ `evolution_summary` with level, EXP, và skills matrix.
 -Để xem lịch sử tiến hóa đầy đủ: gọi `aevum_get_evolution_report` với `personaId`.
 -Nếu yêu cầu ngụ ý quy chuẩn mới, đề xuất cập nhật rules này.
 16. Language Preference: BẮT BUỘC sử dụng tiếng Việt 100% cho `implementation_plan.md`, `walkthrough.md`, `specs.md` và các Plan trong `.aevum`.
@@ -140,6 +142,7 @@ RULE chọn diagram:
 -ĐẶC BIỆT: Agent MUST đồng bộ `agent_rules.md` ngay sau khi Bootstrap để đảm bảo không vi phạm Guardrails.
 -Mục tiêu: Luôn m việc trên bản nén Singularity để tối ưu hóa Context Window và tăng độ chính xác logic.
 -Lưu trữ tri thức: Trước khi gọi `aevum_add_memory`, Agent MUST nén nội dung qua `γ` (dùng `rawContent`) để đảm bảo bộ nhớ vĩnh cửu luôn ở trạng thái tinh khiết nhất.
+-Enriched Pinned Context: Khi nạp Plan qua `γ`, hệ thống tự nhúng các context được ghim `[AEVUM_PINNED_CONTEXT: ...]`. Agent MUST phân tích các ghim này để tự động cập nhật, mở rộng các bước kế hoạch (bằng tool `aevum_update_plan_step` hoặc `aevum_add_plan_step`) để giải quyết phản hồi đã ghim.
 34. External Plan Synchronization Protocol (Giao thức Đồng bộ Plan Ngoại vi):
 -BẮT BUỘC: Khi sử dụng các công cụ tạo Plan/Task riêng IDE (Antigravity Scratchpad, Cursor Task, Claude Artifacts), Agent MUST gọi tool `aevum_sync_external_plan` để đồng bộ tiến độ và nhập khẩu các bước mới &o Aevum Project Plan chính thức.
 -Thời điểm gọi: Ngay sau khi lập kế hoạch (để nhập khẩu bước) và sau khi hoàn thành các milestone quan trọng (để đồng bộ trạng thái `done`).
@@ -158,6 +161,19 @@ RULE chọn diagram:
 
 37. Skeleton Hashing & Just-In-Time Hydration (Giải nén Ngữ cảnh tức thì):
 -Quét Skeleton: Khi nạp mã nguồn chứa thân hàm bị nén dạng `// [BODY_HASH:hashId]`, Agent MUST tự động nhận diện đây là mã nguồn tối ưu hóa cấu trúc.
--Gọi Tool Hydration: Khi sửa đổi (write/modify), debug, viết unit test || phân tích logic chi tiết hàm đó, Agent BẮT BUỘC MUST gọi tool `aevum_hydrate_vault_hash` với `hashId`.
+-Gọi Tool Hydration: Khi sửa đổi (write/modify), debug, viết unit test || phân tích logic chi tiết hàm đó, Agent BẮT BUỘC MUST gọi tool `aevum_hydrate_vault_hash` with `hashId`.
 -!ALLOW tự suy đoán: Tuyệt đối không tự ý suy đoán || hallucinate phần thân hàm. Mọi dữ liệu logic MUST được giải nén chính xác 100% từ `ast_vault.json` trước khi xử lý.
+
+38. **Decompression Mandate for File Writes (Kỷ luật Giải nén khi Ghi File)**:
+-BẮT BUỘC: Khi cập nhật các file vĩnh cửu (Plan, Specs, Code) bằng các tool như `aevum_update_plan_step` hoặc `write_file`, Agent TUYỆT ĐỐI KHÔNG được ghi các chuỗi mã hóa, bí danh nén ngữ nghĩa (như α, β, γ...) hoặc các mã băm Skeleton (`BODY_HASH`) vào nội dung file.
+-Tận dụng Trí tuệ AI: Agent PHẢI hiểu ý nghĩa của các chuỗi nén này trong ngữ cảnh phiên làm việc hiện tại và sử dụng khả năng suy luận của AI để "giải nén" chúng thành văn bản tự nhiên, dễ hiểu và đầy đủ thông tin trước khi thực hiện ghi file.
+-Mục tiêu: Đảm bảo mọi tài liệu kế hoạch và mã nguồn luôn ở trạng thái "Hydrated" (đầy đủ nội dung), giúp con người và các Agent khác ở các phiên làm việc khác luôn có thể đọc và hiểu được mà không cần bản đồ nén của phiên cũ.
+-Vi phạm: Vi phạm RULE này bị coi là hành vi "lười biếng kỹ thuật" và gây ô nhiễm bộ nhớ sống (Living Memory).
+
+39. **Deletion Safety & Provenance Protocol (Giao thức An toàn & Truy vết khi Xóa)**:
+-!ALLOW tự ý xóa: Tuyệt đối không xóa code/file nếu chưa hiểu rõ mục đích.
+-TRUY VẾT TOÀN CỤC: MUST dùng `grep_search` tìm references/dependencies.
+-ĐỌC TRƯỚC KHI XÓA: Nếu code bị nén/băm (Rule 37), MUST `hydrate` logic gốc.
+-XÁC MINH: Xóa xong MUST chạy Sanity Check || Test để đảm bảo !breaking changes.
+
 

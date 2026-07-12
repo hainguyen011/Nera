@@ -24,6 +24,9 @@ export const SidePanelManager = {
       logContainer: document.getElementById('logContainer'),
       tabBtns: document.querySelectorAll('.tab-btn'),
       tabPanes: document.querySelectorAll('.tab-pane'),
+      toggleAutopilotBtn: document.getElementById('toggleAutopilot'),
+      autopilotIcon: document.getElementById('autopilotIcon'),
+      autopilotText: document.getElementById('autopilotText'),
       
       // Forge Elements
       agentNameInput: document.getElementById('agentName'),
@@ -67,7 +70,7 @@ export const SidePanelManager = {
   },
 
   async loadConfig() {
-    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style']);
+    const config = await StorageManager.get(['apiKey', 'persona', 'customPrompt', 'provider', 'stealthLevel', 'model', 'tone', 'style', 'autopilotActive']);
     
     if (config.apiKey && this.elements.apiKeyInput) this.elements.apiKeyInput.value = config.apiKey;
     if (config.provider && this.elements.providerSelect) {
@@ -88,6 +91,8 @@ export const SidePanelManager = {
       this.elements.toneSelect.value = config.tone;
     }
 
+    // Update Autopilot Button UI
+    this.updateAutopilotUI(!!config.autopilotActive);
 
     // Fetch models if we have an API key
     if (config.apiKey && config.provider) {
@@ -123,6 +128,16 @@ export const SidePanelManager = {
 
     if (this.elements.saveBtn) {
       this.elements.saveBtn.addEventListener('click', () => this.saveConfig());
+    }
+
+    if (this.elements.toggleAutopilotBtn) {
+      this.elements.toggleAutopilotBtn.addEventListener('click', async () => {
+        const config = await StorageManager.get(['autopilotActive']);
+        const nextState = !config.autopilotActive;
+        await StorageManager.set({ autopilotActive: nextState });
+        this.updateAutopilotUI(nextState);
+        this.addLog(nextState ? "Autopilot Mode ENGAGED. Scanning feed..." : "Autopilot Mode DISENGAGED.", nextState ? "success" : "warning");
+      });
     }
     
     // Forge Listeners
@@ -207,6 +222,9 @@ export const SidePanelManager = {
             }
           });
         }
+        if (changes.autopilotActive) {
+          this.updateAutopilotUI(!!changes.autopilotActive.newValue);
+        }
       }
     });
   },
@@ -225,6 +243,19 @@ export const SidePanelManager = {
   toggleCustomGroup(value) {
     if (this.elements.customGroup) {
       this.elements.customGroup.style.display = value === 'Custom' ? 'block' : 'none';
+    }
+  },
+
+  updateAutopilotUI(isActive) {
+    if (!this.elements.toggleAutopilotBtn) return;
+    if (isActive) {
+      this.elements.toggleAutopilotBtn.style.background = '#ef4444';
+      this.elements.autopilotText.innerText = 'Stop Autopilot';
+      this.elements.autopilotIcon.innerHTML = '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>';
+    } else {
+      this.elements.toggleAutopilotBtn.style.background = '#2563eb';
+      this.elements.autopilotText.innerText = 'Start Autopilot';
+      this.elements.autopilotIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
     }
   },
 

@@ -15,43 +15,347 @@
           "plans": [
             {
               "name": "ai_brain_integration_plan.md",
-              "status": "todo",
-              "updatedAt": "2026-05-08T14:00:02.493Z"
+              "status": "in-progress",
+              "progress": 0,
+              "updatedAt": "2026-05-18T08:09:16.649Z"
             },
             {
               "name": "architecture_refactor_v1_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T03:09:17.604Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.768Z"
+            },
+            {
+              "name": "auto_interaction_autopilot_plan.md",
+              "status": "todo",
+              "progress": 10,
+              "updatedAt": "2026-07-12T21:29:27.896Z",
+              "history": [
+                {
+                  "timestamp": "2026-07-12T19:54:31.778Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Đã hoàn thành xuất sắc việc tích hợp chế độ Tự động tương tác (Autopilot Mode) với cơ chế tự động cuộn trang (Auto-scroll), xếp hàng đợi và giả lập độ trễ thông minh (Stealth delay) trên Facebook, X, LinkedIn. Đã cấu hình nút bật/tắt trên giao diện Side Panel."
+                },
+                {
+                  "timestamp": "2026-07-12T19:54:35.104Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode vào Nera Extension bao gồm UI điều khiển và logic tự động cuộn/quét/tương tác trên feed mạng xã hội."
+                },
+                {
+                  "timestamp": "2026-07-12T20:02:23.585Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã chuyển đổi tổ hợp phím tắt đóng/mở giao diện điều khiển từ Alt + Z sang Shift + Z theo phản hồi của người dùng."
+                },
+                {
+                  "timestamp": "2026-07-12T20:02:25.128Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode và thay đổi phím tắt đóng/mở giao diện từ Alt + Z sang Shift + Z."
+                },
+                {
+                  "timestamp": "2026-07-12T20:03:28.657Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa lỗi hiển thị của nút mở Nera Console bị che khuất bằng cách đưa vị trí của nút (khi thu gọn) vào bên trong bài viết tại right: 75px."
+                },
+                {
+                  "timestamp": "2026-07-12T20:03:30.374Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, và di chuyển vị trí của console khi thu gọn để tránh bị che khuất."
+                },
+                {
+                  "timestamp": "2026-07-12T20:04:37.051Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi DataMiner.js để trích xuất chính xác văn bản từ các bài viết Facebook có màu nền/hình nền thay vì nhận nhầm tên tác giả."
+                },
+                {
+                  "timestamp": "2026-07-12T20:04:38.797Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất và cải tiến trích xuất văn bản từ bài viết có màu nền."
+                },
+                {
+                  "timestamp": "2026-07-12T20:06:26.216Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để thay đổi bộ chọn div.x1n2onr6.x1ja2u2z[role='dialog'] thành div.x1n2onr6.x1ja2u2z giúp nhận dạng bài viết của Thành viên ẩn danh và bài viết trong Nhóm."
+                },
+                {
+                  "timestamp": "2026-07-12T20:06:27.944Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, và mở rộng bộ nhận dạng bài viết cho bài viết Nhóm và ẩn danh."
+                },
+                {
+                  "timestamp": "2026-07-12T20:07:17.314Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js và DataMiner.js để loại bỏ hoàn toàn các lớp CSS dễ bay màu/thay đổi liên tục của Facebook. Chuyển sang sử dụng bộ tìm kiếm truy ngược cấu trúc cây DOM và thuộc tính ổn định."
+                },
+                {
+                  "timestamp": "2026-07-12T20:07:20.055Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, và chuyển đổi toàn bộ cơ chế nhận dạng/trích xuất sang độc lập với các lớp CSS động."
+                },
+                {
+                  "timestamp": "2026-07-12T20:08:08.654Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã gỡ bỏ dấu ngoặc nhọn thừa tại dòng 109 trong Infiltrator.js để giải quyết triệt để lỗi SyntaxError trong quá trình khởi tạo mô-đun."
+                },
+                {
+                  "timestamp": "2026-07-12T20:08:12.608Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Sửa lỗi SyntaxError tại dòng 109 trong Infiltrator.js bằng cách loại bỏ dấu đóng ngoặc nhọn thừa."
+                },
+                {
+                  "timestamp": "2026-07-12T20:09:21.898Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để kiểm tra đệ quy phần tử cha/con trước khi tiêm Nera Console, tránh lặp nút trên cùng một bài viết."
+                },
+                {
+                  "timestamp": "2026-07-12T20:09:24.796Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, và loại bỏ hiện tượng trùng lặp nút Nera Console trên cùng một bài viết."
+                },
+                {
+                  "timestamp": "2026-07-12T20:12:02.781Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để kiểm tra trùng lặp đệ quy phân biệt theo chế độ POST và COMMENT, tránh việc bình luận được tiêm nút chặn nút bài viết cha."
+                },
+                {
+                  "timestamp": "2026-07-12T20:12:05.815Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, và loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT."
+                },
+                {
+                  "timestamp": "2026-07-12T20:12:41.656Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật DataMiner.js để trích xuất văn bản sạch từ data-ad-rendering-role='story_message', đồng thời loại bỏ phần tử aria-hidden='true' để tránh lặp văn bản."
+                },
+                {
+                  "timestamp": "2026-07-12T20:12:44.474Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, và lọc trùng lặp văn bản thông qua thuộc tính data-ad-rendering-role='story_message' và loại bỏ aria-hidden='true'."
+                },
+                {
+                  "timestamp": "2026-07-12T20:14:00.087Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để dừng ngay vòng lặp leo cấp cây DOM khi phát hiện thẻ cha gần nhất chứa tiêu đề tác giả, tránh nút bị chèn vào thẻ danh sách feed quá lớn."
+                },
+                {
+                  "timestamp": "2026-07-12T20:14:04.258Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, và tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM."
+                },
+                {
+                  "timestamp": "2026-07-12T20:27:22.889Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật Infiltrator.js để cải tiến luồng Autopilot tự động mở bảng, quét ý đồ bằng AI, chọn ý đồ tối ưu để sinh bình luận, gõ chữ và thu gọn bảng."
+                },
+                {
+                  "timestamp": "2026-07-12T20:28:28.761Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, và nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions."
+                },
+                {
+                  "timestamp": "2026-07-12T20:39:31.275Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để liên kết findNextAutopilotTarget trực tiếp với các bài viết đã được tiêm Nera (data-nera-infiltrated='true') và reset cờ khi bật lại Autopilot."
+                },
+                {
+                  "timestamp": "2026-07-12T20:39:36.868Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, và liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera."
+                },
+                {
+                  "timestamp": "2026-07-12T20:51:12.515Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để tối ưu hóa bộ nhận dạng mode (Post / Comment), loại bỏ hoàn toàn việc gán nhầm nút NERA POST lên các bình luận."
+                },
+                {
+                  "timestamp": "2026-07-12T20:51:18.129Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, và sửa lỗi nhận diện nhầm Comment thành Post."
+                },
+                {
+                  "timestamp": "2026-07-12T20:56:48.314Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để thay đổi logic isComment sang quét data-commentid và aria-label giúp phân biệt chính xác bình luận và bài viết, tránh gán nhầm NERA POST lên bình luận."
+                },
+                {
+                  "timestamp": "2026-07-12T20:56:54.069Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, và sửa lỗi phân loại POST/COMMENT cho bình luận."
+                },
+                {
+                  "timestamp": "2026-07-12T21:02:08.918Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật background.js và Infiltrator.js để AI phân tích bài viết và trả về ý đồ tối ưu nhất (recommended). Hệ thống sẽ tự động click ý đồ tối ưu này thay vì chọn ngẫu nhiên."
+                },
+                {
+                  "timestamp": "2026-07-12T21:02:11.793Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, và thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI."
+                },
+                {
+                  "timestamp": "2026-07-12T21:09:45.587Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật Infiltrator.js để trong Autopilot chỉ sử dụng ý đồ tùy biến từ AI Suggest, bỏ qua hoàn toàn các ý đồ mặc định, và chọn ngẫu nhiên một trong số các ý đồ tùy biến đó."
+                },
+                {
+                  "timestamp": "2026-07-12T21:09:48.757Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, khóa badge mặc định và chọn ngẫu nhiên trong số các ý đồ gợi ý."
+                },
+                {
+                  "timestamp": "2026-07-12T21:12:03.847Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật Infiltrator.js để tự động phát hiện tên người dùng và bỏ qua bài viết nếu người dùng đã bình luận trên bài viết đó trước đây."
+                },
+                {
+                  "timestamp": "2026-07-12T21:12:07.812Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, khóa badge mặc định và chọn ngẫu nhiên trong số các ý đồ gợi ý, và chống bình luận trùng lặp trên cùng một bài viết."
+                },
+                {
+                  "timestamp": "2026-07-12T21:14:25.113Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js để ẩn trực quan toàn bộ badge mặc định khi chạy Autopilot, bổ sung các ý đồ như 'empathize' vào danh sách standardIntents để tránh nhận diện nhầm, và khôi phục hiển thị badge mặc định khi đóng console."
+                },
+                {
+                  "timestamp": "2026-07-12T21:14:29.844Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, ẩn badge mặc định trực quan và chọn ngẫu nhiên trong số các ý đồ gợi ý của AI, và chống bình luận trùng lặp trên cùng một bài viết."
+                },
+                {
+                  "timestamp": "2026-07-12T21:18:04.528Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi AIHub.js và background.js để gửi yêu cầu suggest thô bằng callRaw, khắc phục lỗi xung đột cấu trúc JSON làm AI không trả về danh sách gợi ý."
+                },
+                {
+                  "timestamp": "2026-07-12T21:18:07.300Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, ẩn badge mặc định trực quan và chọn ngẫu nhiên trong số các ý đồ gợi ý của AI, chống bình luận trùng lặp trên cùng một bài viết, và sửa lỗi AI Suggest không trả về danh sách gợi ý."
+                },
+                {
+                  "timestamp": "2026-07-12T21:20:17.543Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã tái cấu trúc AI Suggest sang dạng Promise đồng bộ runAISuggest trong Infiltrator.js để gọi đồng bộ từ Autopilot."
+                },
+                {
+                  "timestamp": "2026-07-12T21:20:22.796Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, ẩn badge mặc định trực quan và chọn ngẫu nhiên trong số các ý đồ gợi ý của AI, chống bình luận trùng lặp trên cùng một bài viết, sửa lỗi AI Suggest không trả về danh sách gợi ý, và tái cấu trúc gọi AI Suggest bằng Promise đồng bộ."
+                },
+                {
+                  "timestamp": "2026-07-12T21:23:02.482Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật background.js và Infiltrator.js để hỗ trợ ý đồ 'auto' trong Autopilot, cho phép AI tự động phân tích và phản hồi phù hợp mà không cần gọi API gợi ý trung gian."
+                },
+                {
+                  "timestamp": "2026-07-12T21:23:05.964Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, ẩn badge mặc định trực quan và chọn ngẫu nhiên trong số các ý đồ gợi ý của AI, chống bình luận trùng lặp trên cùng một bài viết, sửa lỗi AI Suggest không trả về danh sách gợi ý, tái cấu trúc gọi AI Suggest bằng Promise đồng bộ, và tự động hóa chọn hướng phản hồi bằng AI (Single-Step AI Auto-Detect) trong Autopilot."
+                },
+                {
+                  "timestamp": "2026-07-12T21:24:20.762Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã sửa đổi Infiltrator.js loại bỏ khai báo trùng lặp biến anchoredBtn."
+                },
+                {
+                  "timestamp": "2026-07-12T21:24:24.594Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, ẩn badge mặc định trực quan và chọn ngẫu nhiên trong số các ý đồ gợi ý của AI, chống bình luận trùng lặp trên cùng một bài viết, sửa lỗi AI Suggest không trả về danh sách gợi ý, tái cấu trúc gọi AI Suggest bằng Promise đồng bộ, tự động hóa chọn hướng phản hồi bằng AI (Single-Step AI Auto-Detect) trong Autopilot, và sửa lỗi trùng lặp khai báo biến trong block scope."
+                },
+                {
+                  "timestamp": "2026-07-12T21:29:24.003Z",
+                  "status": "in-progress",
+                  "agent": "An",
+                  "summary": "Đã cập nhật Infiltrator.js để gán 'Auto...' vào khung editor khi Autopilot chạy nhằm chỉ báo trực quan trạng thái tự động cho người dùng."
+                },
+                {
+                  "timestamp": "2026-07-12T21:29:27.580Z",
+                  "status": "done",
+                  "agent": "An",
+                  "summary": "Tích hợp tính năng Autopilot Mode, thay đổi phím tắt sang Shift + Z, sửa lỗi nút mở Console bị che khuất, cải tiến trích xuất văn bản từ bài viết có màu nền, chuyển đổi sang độc lập với các lớp CSS động, loại bỏ hiện tượng trùng lặp nút Nera Console theo chế độ POST và COMMENT, lọc trùng lặp văn bản, tối ưu hóa điểm dừng vòng lặp leo cấp cây DOM, nâng cấp luồng Autopilot trực quan đầy đủ với AI Intent Suggestions, liên kết bộ quét Autopilot với các bài viết đã được tiêm Nera, sửa lỗi phân loại POST/COMMENT cho bình luận, thực hiện chọn ý đồ (badge) thông minh theo khuyến nghị từ AI, ẩn badge mặc định trực quan và chọn ngẫu nhiên trong số các ý đồ gợi ý của AI, chống bình luận trùng lặp trên cùng một bài viết, sửa lỗi AI Suggest không trả về danh sách gợi ý, tái cấu trúc gọi AI Suggest bằng Promise đồng bộ, tự động hóa chọn hướng phản hồi bằng AI (Single-Step AI Auto-Detect) trong Autopilot, sửa lỗi trùng lặp khai báo biến trong block scope, và hiển thị chỉ báo 'Auto...' khi chạy Autopilot."
+                }
+              ]
             },
             {
               "name": "bootstrap_nera_extension_structure_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-08T12:55:51.191Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.768Z"
             },
             {
               "name": "custom_ammo_plan.md",
-              "status": "todo",
-              "updatedAt": "2026-05-08T14:06:22.956Z"
+              "status": "in-progress",
+              "progress": 75,
+              "updatedAt": "2026-06-20T08:59:56.768Z"
             },
             {
               "name": "expand_tactical_console_ui_with_sentiment_radar_and_stealth_controls_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T05:55:14.277Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.768Z"
             },
             {
               "name": "refine_comment_interaction_and_auto_reply_flow_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T09:41:02.657Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.769Z"
             },
             {
               "name": "strengthen_post_detection_and_infiltration_heuristics_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:21:38.257Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.769Z"
             },
             {
               "name": "strict_reply_flow_protocol_implementation_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T11:01:41.573Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.769Z"
             }
           ]
         },
@@ -63,7 +367,8 @@
             {
               "name": "expand_tactical_console_ui_with_sentiment_radar_and_stealth_controls_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T07:41:07.314Z"
+              "progress": 0,
+              "updatedAt": "2026-07-08T05:03:49.697Z"
             }
           ]
         },
@@ -75,17 +380,20 @@
             {
               "name": "handle_dom_recycling_and_lazy_load_persistence_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:24:00.601Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.769Z"
             },
             {
               "name": "hydration_guard_protocol_implementation_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T07:41:06.332Z"
+              "progress": 0,
+              "updatedAt": "2026-06-20T08:59:56.769Z"
             },
             {
               "name": "universal_tactical_recognition_overhaul_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:38:45.449Z"
+              "progress": 0,
+              "updatedAt": "2026-05-09T13:18:40.695Z"
             }
           ]
         }
@@ -111,22 +419,26 @@
             {
               "name": "elevate_stacking_priority_for_tactical_console_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:02:15.906Z"
+              "progress": 0,
+              "updatedAt": "2026-05-09T13:18:40.696Z"
             },
             {
               "name": "fix_console_visibility_and_injection_specificity_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:28:52.411Z"
+              "progress": 0,
+              "updatedAt": "2026-05-09T13:18:40.696Z"
             },
             {
               "name": "refine_tactical_interface_ui_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T07:41:06.994Z"
+              "progress": 0,
+              "updatedAt": "2026-05-09T13:18:40.696Z"
             },
             {
               "name": "tactical_header_anchoring_and_collision_avoidance_plan.md",
               "status": "todo",
-              "updatedAt": "2026-05-09T10:44:48.218Z"
+              "progress": 0,
+              "updatedAt": "2026-05-09T13:18:40.696Z"
             }
           ]
         }
@@ -144,24 +456,33 @@
     "companion_persona": "global/companion_persona.json",
     "evolution_report": "global/evolution_report.md",
     "knowledge_rules": "Every active persona has a dedicated knowledge folder in `.aevum/global/personas/<id>/knowledge/`. Log project-specific patterns and agent-exclusive wisdom there.",
-    "agent_rules_compressed": "global/agent_rules_compressed.md"
+    "agent_rules_compressed": "global/agent_rules_compressed.md",
+    "debtHistory": [
+      28,
+      32,
+      30,
+      35,
+      33,
+      37,
+      40
+    ]
   },
   "agents": [
     "an",
     "hac",
-    {
-      "id": "VOD-HAC-9X0F2E",
-      "name": "Hawl",
-      "capability": "Offensive Security Auditing",
-      "level": 6,
-      "knowledgePath": ".aevum/global/personas/vod_hac_9x0f2e/knowledge"
-    },
     {
       "id": "ENG-AN-7B9F1D",
       "name": "An",
       "capability": "Context Optimization",
       "level": 4,
       "knowledgePath": ".aevum/global/personas/eng_an_7b9f1d/knowledge"
+    },
+    {
+      "id": "VOD-HAC-9X0F2E",
+      "name": "Hawl",
+      "capability": "Offensive Security Auditing",
+      "level": 6,
+      "knowledgePath": ".aevum/global/personas/vod_hac_9x0f2e/knowledge"
     }
   ]
 }

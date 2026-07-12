@@ -83,29 +83,72 @@ export const NeraDataMiner = {
             return clone.innerText.trim().split('\n')[0];
         }
 
-        // 1. Standard Comet Message Container
-        const messageEl = post.querySelector('div[data-ad-comet-preview="message"]') ||
-                          post.querySelector('div[data-ad-preview="message"]') ||
-                          post.querySelector('div[dir="auto"]');
-        
-        // 2. Status with Background (Text-over-Background)
-        const backgroundPost = post.querySelector('div[style*="background-image"] div[dir="auto"]') ||
-                               post.querySelector('div[style*="background-image"] span[dir="auto"]');
-        
-        let text = (backgroundPost?.innerText || messageEl?.innerText || "").trim();
+        // 1. Story Message / Ad Rendering Role (Extremely stable for Facebook posts)
+        const storyMessageEl = post.querySelector('[data-ad-rendering-role="story_message"]');
+        if (storyMessageEl) {
+            try {
+                const clone = storyMessageEl.cloneNode(true);
+                clone.querySelectorAll('[aria-hidden="true"]').forEach(el => el.remove());
+                const text = clone.innerText.trim();
+                if (text) return text;
+            } catch (e) {
+                console.error("Nera DataMiner: Story message extraction failed", e);
+            }
+        }
 
-        // 3. Brute force text extraction for status cards (if still empty)
-        if (!text) {
-          const largeText = post.querySelector('div[style*="font-size"]');
-          if (largeText) text = largeText.innerText;
+        // 2. Standard Comet Message Container (FB standard content)
+        const messageEl = post.querySelector('div[data-ad-comet-preview="message"]') ||
+                          post.querySelector('div[data-ad-preview="message"]');
+        if (messageEl) {
+            const text = messageEl.innerText.trim();
+            if (text) return text;
+        }
+        
+        // 2. Status with Background (Text-over-Background or Solid Background)
+        const backgroundPost = post.querySelector('div[style*="background-image"] div[dir="auto"]') ||
+                               post.querySelector('div[style*="background-image"] span[dir="auto"]') ||
+                               post.querySelector('div[style*="background"] div[dir="auto"]') ||
+                               post.querySelector('div[style*="background-color"] div[dir="auto"]');
+        if (backgroundPost) {
+            const text = backgroundPost.innerText.trim();
+            if (text) return text;
+        }
+
+        // 3. Brute force text extraction for status cards (Clone & strip headers/footers)
+        try {
+            const clone = post.cloneNode(true);
+            // Remove header elements
+            const headers = clone.querySelectorAll('h2, h3, h4, [role="heading"], a[role="link"], [data-ad-rendering-role="profile_name"]');
+            headers.forEach(h => h.remove());
+
+            // Remove footer, buttons, and form inputs
+            const footers = clone.querySelectorAll('[role="toolbar"], [aria-label*="Bình luận"], [aria-label*="Comment"], [role="button"], form, input, textarea, .nera-control');
+            footers.forEach(f => f.remove());
+
+            const text = clone.innerText.trim();
+            if (text && text.length > 5) {
+                return text;
+            }
+        } catch (e) {
+            console.error("Nera DataMiner: Brute-force extraction failed", e);
+        }
+
+        // 4. Ultimate Fallback: First long dir="auto" that is not the author's name
+        const author = this.getAuthor(post, type, mode);
+        const allDirAuto = Array.from(post.querySelectorAll('div[dir="auto"], span[dir="auto"]'));
+        for (const el of allDirAuto) {
+            const t = el.innerText.trim();
+            if (t && t !== author && !t.includes("Theo dõi") && !t.includes("Follow") && t.length > 10) {
+                return t;
+            }
         }
 
         if (type === 'SHARED') {
             const sharedMsg = post.querySelector('div[aria-labelledby*="shared_"] div[dir="auto"]')?.innerText;
-            if (sharedMsg) text = `[Context]: ${text} \n [Shared Content]: ${sharedMsg}`;
+            if (sharedMsg) return `[Shared Content]: ${sharedMsg}`;
         }
 
-        return text || (modality !== 'TEXT' ? `Visual Post (${modality})` : "Scanning failed: Metadata inaccessible.");
+        return modality !== 'TEXT' ? `Visual Post (${modality})` : "Scanning failed: Metadata inaccessible.";
     },
 
     getMetrics(post) {

@@ -78,6 +78,23 @@ export const AIHub = {
     }
   },
 
+  async callRaw(userPrompt, systemPrompt, config, forceJson = false) {
+    let responseText = "";
+    switch (config.provider) {
+      case 'gemini':
+        responseText = await this.callGemini(userPrompt, systemPrompt, config.apiKey, config.model, forceJson);
+        break;
+      case 'openai':
+        responseText = await this.callOpenAI(userPrompt, systemPrompt, config.apiKey, config.model, forceJson);
+        break;
+      case 'groq':
+      default:
+        responseText = await this.callGroq(userPrompt, systemPrompt, config.apiKey, config.model);
+        break;
+    }
+    return responseText;
+  },
+
   async callGroq(userPrompt, systemPrompt, apiKey, modelId) {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",

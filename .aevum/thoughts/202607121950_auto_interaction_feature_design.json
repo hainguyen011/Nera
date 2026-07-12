@@ -1,0 +1,9 @@
+{
+  "personaId": "AN",
+  "topic": "Auto Interaction Feature Design",
+  "content": "Phân tích thiết kế và rủi ro cho tính năng Tự động tương tác (Autopilot Mode). Chúng ta cần cấu hình nút bật/tắt Autopilot trên UI, thiết lập queue xử lý bài viết có khoảng trễ ngẫu nhiên (Stealth delay) để tránh bị chặn, và tích hợp luồng auto-synthesize + auto-deploy.",
+  "priority": "high",
+  "id": "thought_1783885823302",
+  "timestamp": "2026-07-12T19:50:23.302Z",
+  "isRead": false
+}

@@ -1,0 +1,12 @@
+{
+  "agents": {
+    "ENG-AN-7B9F1D": {
+      "status": "idle",
+      "lastPulse": "2026-07-12T21:29:27.657Z"
+    },
+    "VOD-HAC-9X0F2E": {
+      "status": "idle",
+      "lastPulse": "2026-07-08T04:37:56.814Z"
+    }
+  }
+}

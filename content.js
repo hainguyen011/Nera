@@ -962,10 +962,10 @@ class NeraOverlay {
   }
 
   init() {
-    console.log("[NERA] Tactical Overlay optimized. Ready for Alt + Z.");
+    console.log("[NERA] Tactical Overlay optimized. Ready for Shift + Z.");
 
     window.addEventListener('keydown', (e) => {
-      if (e.altKey && (e.code === 'KeyZ' || e.key === 'z' || e.key === 'Z')) {
+      if (e.shiftKey && (e.code === 'KeyZ' || e.key === 'z' || e.key === 'Z')) {
         e.preventDefault();
         e.stopPropagation();
         this.toggle();
